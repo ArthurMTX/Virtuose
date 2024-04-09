@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <title>Créer une VM</title>
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Envoyer</button>
+    </form>
+</body>
+</html>
