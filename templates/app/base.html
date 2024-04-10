@@ -1,0 +1,20 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark" data-bs-core="modern">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Mon Projet Django{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/halfmoon.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/halfmoon.modern.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+{% include 'app/navbar.html' %}
+{% block content %}
+    <!-- Page insert content here -->
+{% endblock %}
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+</body>
+</html>

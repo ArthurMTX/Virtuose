@@ -1,13 +1,35 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <title>Créer une VM</title>
-</head>
-<body>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Envoyer</button>
-    </form>
-</body>
-</html>
+{% extends 'app/base.html' %}
+
+{% block content %}
+<div class="container mt-20">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <h2 class="card-title">Créer une VM</h2>
+                <form method="post" class="card-body">
+                    {% csrf_token %}
+                    {% for field in fields_info %}
+                        <div class="form-group">
+                            <label for="id_{{ field.name }}">{{ field.name }}</label>
+                            {% if field.type == 'IntegerField' %}
+                                <input type="number" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" min="{{ field.attributes.min }}" max="{{ field.attributes.max }}" required>
+                            {% elif field.type == 'ChoiceField' %}
+                                <select class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required>
+                                    {% for value, name in field.attributes.choices %}
+                                        <option value="{{ value }}">{{ name }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% elif field.type == 'CharField' %}
+                                <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" maxlength="{{ field.attributes.max_length }}" required>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Envoyer</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

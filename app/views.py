@@ -1,11 +1,15 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from .vm_form import VMForm
+from .vm_form import VMForm, get_form_fields_info
 from uuid import uuid4
 import yaml
 
 
 def index(request):
+    return render(request, 'app/index.html')
+
+
+def vm_form(request):
     if request.method == "POST":
         form = VMForm(request.POST)
         if form.is_valid():
@@ -28,7 +32,8 @@ def index(request):
             except Exception as e:
                 return HttpResponse(f"Erreur lors de la création du fichier YAML : {e}")
         else:
-            return render(request, 'app/vm_form.html', {'form': form})
+            fields_info = get_form_fields_info()
+            return render(request, 'app/vm_form.html', {'fields_info': fields_info})
     else:
-        form = VMForm()
-        return render(request, 'app/vm_form.html', {'form': form})
+        fields_info = get_form_fields_info()
+        return render(request, 'app/vm_form.html', {'fields_info': fields_info})

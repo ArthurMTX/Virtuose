@@ -10,6 +10,7 @@ Virtualisation made simple :)
 - psycopg-binary (for PostgreSQL)
 - pyYAML (for YAML writing)
 - django-environ (for environment variables)
+- django-browser-reload (for automatic browser reload)
 
 ### Start the project
 

@@ -1,12 +1,34 @@
 from django import forms
 
 
+def get_form_fields_info():
+    form = VMForm()
+    fields_info = []
+    for field_name, field in form.fields.items():
+        field_info = {
+            'name': field.label,
+            'type': field.__class__.__name__,
+            'attributes': {}
+        }
+        if hasattr(field, 'min_value'):
+            field_info['attributes']['min'] = field.min_value
+        if hasattr(field, 'max_value'):
+            field_info['attributes']['max'] = field.max_value
+        if hasattr(field, 'choices'):
+            field_info['attributes']['choices'] = field.choices
+        if hasattr(field, 'max_length'):
+            field_info['attributes']['max_length'] = field.max_length
+
+        fields_info.append(field_info)
+    return fields_info
+
+
 class VMForm(forms.Form):
-    ram = forms.IntegerField(label='RAM', min_value=1, max_value=100)
-    cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100)
-    disk = forms.IntegerField(label='Disk', min_value=1, max_value=100)
-    os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')])
-    name = forms.CharField(label='Name', max_length=100)
+    ram = forms.IntegerField(label='RAM', min_value=1, max_value=100, required=True)
+    cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100, required=True)
+    disk = forms.IntegerField(label='Disk', min_value=1, max_value=100, required=True)
+    os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')], required=True)
+    name = forms.CharField(label='Name', max_length=100, required=True)
 
     def clean(self):
         cleaned_data = super().clean()
