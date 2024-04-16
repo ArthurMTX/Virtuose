@@ -1,0 +1,44 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %}Se connecter{% endblock %}
+
+{% block content %}
+    <body class="register-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="headline-container">
+                <img src="{% static 'assets/logo-white.png' %}" alt="logo" class="logo">
+                <a href="{% url 'index' %}">&#8592; Retour à l'accueil</a>
+                <h1 class="headline">Se connecter</h1>
+                <p class="text-white">Pas de compte ? <a href="{% url 'register' %}" class="text-blue-500">Inscrivez-vous</a></p>
+            </div>
+            <div class="form-container">
+                <form class="form" method="POST" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label class="text-white" for="email">Email</label>
+                        <input id="email" name="email" type="email" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Email">
+                        {% if form.email.errors %}
+                            <div class="error">{{ form.email.errors.as_text }}</div>
+                        {% endif %}
+                    </div>
+                    {% for field in form %}
+                        {% if field.name != 'username' %}
+                            <div class="form-group">
+                                <label class="text-white" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                <input id="{{ field.id_for_label }}" name="{{ field.name }}" type="{{ field.field.widget.input_type }}" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="{{ field.label }}">
+                                {% if field.errors %}
+                                    <div class="error">{{ field.errors.as_text }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <button class="form-submit-btn text-white" type="submit">Se connecter</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}
