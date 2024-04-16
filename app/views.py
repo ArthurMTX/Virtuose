@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .vm_form import VMForm, get_form_fields_info
 from uuid import uuid4
-import xml.etree.ElementTree as ET
+from xml.etree import ElementTree
 from xml.dom import minidom
 
 
@@ -19,17 +19,17 @@ def vm_form(request):
             vm_name = vm_data['name']
             uuid = str(uuid4())
 
-            root = ET.Element("VM")
-            ET.SubElement(root, "name").text = vm_name
-            ET.SubElement(root, "uuid").text = uuid
+            root = ElementTree.Element("VM")
+            ElementTree.SubElement(root, "name").text = vm_name
+            ElementTree.SubElement(root, "uuid").text = uuid
 
-            system = ET.SubElement(root, "system")
+            system = ElementTree.SubElement(root, "system")
             for key, value in vm_data.items():
                 if key != 'name':
-                    ET.SubElement(system, key).text = str(value)
+                    ElementTree.SubElement(system, key).text = str(value)
 
             try:
-                xml_str = ET.tostring(root, encoding='unicode')
+                xml_str = ElementTree.tostring(root, encoding='unicode')
                 xml_pretty = minidom.parseString(xml_str).toprettyxml(indent="    ")
 
                 with open(f'tmp./{vm_name}_{uuid}.xml', 'w') as f:
