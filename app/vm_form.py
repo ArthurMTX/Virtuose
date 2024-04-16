@@ -6,7 +6,8 @@ def get_form_fields_info():
     fields_info = []
     for field_name, field in form.fields.items():
         field_info = {
-            'name': field.label,
+            'label': field.label,
+            'name': field_name,
             'type': field.__class__.__name__,
             'attributes': {}
         }
@@ -24,11 +25,11 @@ def get_form_fields_info():
 
 
 class VMForm(forms.Form):
-    ram = forms.IntegerField(label='RAM', min_value=1, max_value=100, required=True)
+    ram = forms.IntegerField(label='RAM (en Go)', min_value=1, max_value=100, required=True)
     cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100, required=True)
-    disk = forms.IntegerField(label='Disk', min_value=1, max_value=100, required=True)
+    disk = forms.IntegerField(label='Taille du disque (en Go)', min_value=1, max_value=100, required=True)
     os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')], required=True)
-    name = forms.CharField(label='Name', max_length=100, required=True)
+    name = forms.CharField(label='Nom de la VM', max_length=100, required=True)
 
     def clean(self):
         cleaned_data = super().clean()

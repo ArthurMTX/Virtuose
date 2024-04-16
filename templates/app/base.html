@@ -5,7 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Mon Projet Django{% endblock %}</title>
+    <meta name="description" content="{% block description %}Mon Projet Django{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'assets/favicon.ico' %}">
     <link rel="stylesheet" href="{% static 'css/halfmoon.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/halfmoon.modern.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">

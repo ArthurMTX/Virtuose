@@ -1,35 +1,44 @@
 {% extends 'app/base.html' %}
 
+{% block title %}Créer une VM{% endblock %}
+
 {% block content %}
-<div class="container mt-20">
-    <div class="row justify-content-center">
-        <div class="col-12 col-md-8">
-            <div class="card">
-                <h2 class="card-title text-center">Nouvelle VM</h2>
-                <form method="post" class="card-body">
-                    {% csrf_token %}
-                    {% for field in fields_info %}
-                        <div class="form-group">
-                            <label for="id_{{ field.name }}">{{ field.name }}</label>
-                            {% if field.type == 'IntegerField' %}
-                                <input type="number" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" min="{{ field.attributes.min }}" max="{{ field.attributes.max }}" required>
-                            {% elif field.type == 'ChoiceField' %}
-                                <select class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required>
-                                    {% for value, name in field.attributes.choices %}
-                                        <option value="{{ value }}">{{ name }}</option>
-                                    {% endfor %}
-                                </select>
-                            {% elif field.type == 'CharField' %}
-                                <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" maxlength="{{ field.attributes.max_length }}" required>
-                            {% endif %}
+    <div class="container mt-20">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8">
+                <div class="card border-0">
+                    <h2 class="card-title text-center">Nouvelle VM</h2>
+                    <form method="post" class="card-body">
+                        {% csrf_token %}
+                        {% for field in fields_info %}
+                            <div class="form-group">
+                                <label for="id_{{ field.name }}">{{ field.label }}</label>
+                                {% if field.type == 'IntegerField' %}
+                                    <input type="number" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" min="{{ field.attributes.min }}" max="{{ field.attributes.max }}" required>
+                                {% elif field.type == 'ChoiceField' %}
+                                    <select class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required>
+                                        {% for value, name in field.attributes.choices %}
+                                            <option value="{{ value }}">{{ name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% elif field.type == 'CharField' %}
+                                    <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" maxlength="{{ field.attributes.max_length }}" required>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Envoyer</button>
                         </div>
-                    {% endfor %}
-                    <div class="text-center mt-3">
-                        <button type="submit" class="btn btn-primary">Envoyer</button>
-                    </div>
-                </form>
+                    </form>
+                    {% if errors %}
+                        <div class="card-footer">
+                            <div class="alert alert-danger">
+                                {{ errors }}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
