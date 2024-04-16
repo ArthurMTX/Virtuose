@@ -42,8 +42,8 @@ def vm_form(request):
         else:
             fields_info = get_form_fields_info()
             errors = form.errors
-            return render(request, 'app/vm_form.html', {'fields_info': fields_info, 'errors': errors})
+            return render(request, 'app/vm_form.html', {'fields_info': fields_info, 'errors': errors, 'form': form})
     else:
-
+        form = VMForm()
         fields_info = get_form_fields_info()
-        return render(request, 'app/vm_form.html', {'fields_info': fields_info})
+        return render(request, 'app/vm_form.html', {'fields_info': fields_info, 'form': form})

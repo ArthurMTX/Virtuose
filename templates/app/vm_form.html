@@ -10,19 +10,14 @@
                     <h2 class="card-title text-center">Nouvelle VM</h2>
                     <form method="post" class="card-body">
                         {% csrf_token %}
-                        {% for field in fields_info %}
+                        {% for field in form %}
                             <div class="form-group">
-                                <label for="id_{{ field.name }}">{{ field.label }}</label>
-                                {% if field.type == 'IntegerField' %}
-                                    <input type="number" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" min="{{ field.attributes.min }}" max="{{ field.attributes.max }}" required>
-                                {% elif field.type == 'ChoiceField' %}
-                                    <select class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" required>
-                                        {% for value, name in field.attributes.choices %}
-                                            <option value="{{ value }}">{{ name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% elif field.type == 'CharField' %}
-                                    <input type="text" class="form-control" id="id_{{ field.name }}" name="{{ field.name }}" maxlength="{{ field.attributes.max_length }}" required>
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ field.errors }}
+                                    </div>
                                 {% endif %}
                             </div>
                         {% endfor %}
@@ -30,10 +25,10 @@
                             <button type="submit" class="btn btn-primary">Envoyer</button>
                         </div>
                     </form>
-                    {% if errors %}
+                    {% if form.non_field_errors %}
                         <div class="card-footer">
                             <div class="alert alert-danger">
-                                {{ errors }}
+                                {{ form.non_field_errors }}
                             </div>
                         </div>
                     {% endif %}

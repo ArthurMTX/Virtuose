@@ -1,5 +1,5 @@
 from django import forms
-
+import re
 
 def get_form_fields_info():
     form = VMForm()
@@ -25,11 +25,16 @@ def get_form_fields_info():
 
 
 class VMForm(forms.Form):
-    ram = forms.IntegerField(label='RAM (en Go)', min_value=1, max_value=100, required=True)
-    cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100, required=True)
-    disk = forms.IntegerField(label='Taille du disque (en Go)', min_value=1, max_value=100, required=True)
-    os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')], required=True)
-    name = forms.CharField(label='Nom de la VM', max_length=100, required=True)
+    ram = forms.IntegerField(label='RAM (en Go)', min_value=1, max_value=100, required=True,
+                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100, required=True,
+                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    disk = forms.IntegerField(label='Taille du disque (en Go)', min_value=1, max_value=100, required=True,
+                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')], required=True,
+                           widget=forms.Select(attrs={'class': 'form-control'}))
+    name = forms.CharField(label='Nom de la VM', max_length=100, required=True,
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def clean(self):
         cleaned_data = super().clean()
@@ -41,10 +46,10 @@ class VMForm(forms.Form):
 
         if name:
             print(name)
-            if not name.isalnum():
-                self.add_error('name', 'Name doit être alphanumérique')
+            if not re.match(r'^[\w]+$', name):
+                self.add_error('name', 'Le nom doit être alphanumérique')
             if ' ' in name:
-                self.add_error('name', 'Name ne doit pas contenir d\'espaces')
+                self.add_error('name', 'Le nom ne doit pas contenir d\'espaces')
 
         if ram and cpu and disk and os and name:
             if os == 'Windows' and ram < 2:
@@ -52,5 +57,5 @@ class VMForm(forms.Form):
             if os == 'Linux' and ram < 1:
                 self.add_error('ram', 'Linux requiert au moins 1GB de RAM')
             if disk < 10:
-                self.add_error('disk', 'Disk doit être au moins de 10GB')
+                self.add_error('disk', 'Le disque doit être au moins de 10GB')
         return cleaned_data
