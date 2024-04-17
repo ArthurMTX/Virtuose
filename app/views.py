@@ -92,3 +92,11 @@ def login_view(request):
 @login_required
 def profile(request):
     return render(request, 'app/profile.html', {'user': request.user})
+
+
+def informations(request):
+    return render(request, 'app/informations.html')
+
+
+def securite(request):
+    return render(request, 'app/security.html')

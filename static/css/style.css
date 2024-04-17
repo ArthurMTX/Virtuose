@@ -9,7 +9,37 @@
   height: 50px;
 }
 
+.navbar-nav .active{
+  text-decoration: underline
+}
+
+.profile-sidebar {
+  flex: 0 0 250px;
+  max-width: 100%;
+}
+
+.profile-page-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 20px;
+  width: 100vw
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  .profile-sidebar {
+    width: 100%;
+    flex: 0 0 auto;
+  }
+  .profile-page-content {
+    order: 1;
+  }
+}
+
 .container {
+  display: flex;
   margin-top: 50px;
 }
 

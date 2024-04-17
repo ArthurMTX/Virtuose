@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 
 <nav class="navbar navbar-expand-md docs-navbar sticky-top" style="background-color: hsla(var(--bs-body-bg-hsl), 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: var(--bs-border-width) solid var(--bs-content-border-color);">
     <div class="container-fluid">
@@ -18,7 +19,7 @@
                         <a class="nav-link {% if request.resolver_match.url_name == 'vm_form' %}active{% endif %}" href="{% url 'vm_form' %}">Créer une VM</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' %}">Profil</a>
+                        <a class="nav-link {% if request.resolver_match.url_name|startswith:'profile' %}active{% endif %}" href="{% url 'profile/informations' %}">Profil</a>
                     </li>
                     <li>
                         <form action="{% url 'logout' %}" method="post">
