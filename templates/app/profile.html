@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+    <body class="register-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="headline-container">
+                <img src="{% static 'assets/logo-white.png' %}" alt="logo" class="logo">
+                <a href="{% url 'index' %}">&#8592; Retour à l'accueil</a>
+                <h1 class="headline">Profile</h1>
+            </div>
+            <div class="form-container">
+                <div class="form">
+                    <div class="form-group">
+                        <label class="text-white" for="username">Username</label>
+                        <p id="username" class="form-control">{{ user.username }}</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="text-white" for="email">Email</label>
+                        <p id="email" class="form-control">{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}

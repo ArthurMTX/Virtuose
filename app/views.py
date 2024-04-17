@@ -9,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
+
 
 def index(request):
     return render(request, 'app/index.html')
@@ -16,7 +18,6 @@ def index(request):
 
 def vm_form(request):
     if request.method == "POST":
-        print('POST submitted')
         form = VMForm(request.POST)
         if form.is_valid():
             vm_data = form.cleaned_data
@@ -78,11 +79,16 @@ def login_view(request):
                 auth_login(request, user)
                 return redirect('index')
             else:
-                messages.error(request, 'Invalid email or password.')
+                messages.error(request, 'Mot de passe ou email invalide.')
         except user_model.DoesNotExist:
-            messages.error(request, 'Invalid email or password.')
+            messages.error(request, 'Mot de passe ou email invalide.')
         form = AuthenticationForm()
         return render(request, 'registration/login.html', {'form': form})
     else:
         form = AuthenticationForm()
         return render(request, 'registration/login.html', {'form': form})
+
+
+@login_required
+def profile(request):
+    return render(request, 'app/profile.html', {'user': request.user})
