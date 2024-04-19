@@ -1,0 +1,44 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}Informations{% endblock %}
+
+{% block content %}
+    <body class="profile-page">
+    <div class="container">
+        <div class="profile-sidebar">
+            {% include 'app/profile_sidebar.html' %}
+        </div>
+        <div class="profile-page-content">
+            <h1> Liste des machines </h1>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered align-middle">
+                    <thead>
+                    <tr>
+                        <th colspan="2" scope="col">OS</th>
+                        <th scope="col">RAM</th>
+                        <th scope="col">VCPU</th>
+                        <th scope="col">System</th>
+                    </tr>
+                    </thead>
+                    <tbody class="table-group-divider table-secondary">
+                    {% for vm in vms %}
+                        <tr>
+                            <td colspan="2">
+                                <div class="os-info">
+                                    <img src="{{ vm.os_logo }}" alt="{{ vm.os_info }} logo" width="50" height="50">
+                                    <p> {{ vm.os_info }} </p>
+                                </div>
+                            </td>
+                            <td>{{ vm.name }}</td>
+                            <td>{{ vm.memory }}</td>
+                            <td>{{ vm.vcpu }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </body>
+{% endblock %}

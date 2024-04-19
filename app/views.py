@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from .vm_form import VMForm, get_form_fields_info
+from .vm_list import VMList
 from .register_form import CustomUserCreationForm
 from uuid import uuid4
 from xml.etree import ElementTree
@@ -100,3 +101,10 @@ def informations(request):
 
 def securite(request):
     return render(request, 'app/security.html')
+
+
+def vm_list(request):
+    vm_file = VMList('tmp/export.xml')
+    vms = vm_file.get_vms()
+
+    return render(request, 'app/vm_list.html', {'vms': vms})

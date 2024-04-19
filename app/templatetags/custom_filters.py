@@ -5,8 +5,6 @@ register = template.Library()
 
 @register.filter
 def startswith(text, starts):
-    print(f"text: {text}")
-    print(f"starts: {starts}")
     if isinstance(text, str):
         return text.startswith(starts)
     return False

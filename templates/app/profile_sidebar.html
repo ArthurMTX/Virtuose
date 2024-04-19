@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-<nav class="container sidebar offcanvas-start offcanvas-md" tabindex="-1" id="sidebar-example">
+<nav class="sidebar offcanvas-start offcanvas-md" tabindex="-1" id="sidebar-example">
     <div class="offcanvas-body">
         <ul class="sidebar-nav">
             <li>
@@ -18,7 +18,10 @@
             </li>
             <li><hr class="sidebar-divider"></li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Liste</a>
+                <a class="nav-link" href="#">Créer une machine</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'profile/vmlist' %}active{% endif %}" href="{% url 'profile/vmlist' %}">Liste des machines</a>
             </li>
         </ul>
     </div>
