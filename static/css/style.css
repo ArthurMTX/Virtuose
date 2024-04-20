@@ -19,6 +19,11 @@
   margin-top: 50px;
 }
 
+.table {
+    width: 100%;
+    table-layout: fixed;
+}
+
 .profile-sidebar {
   flex: 0 0 250px;
   max-width: 100%;
@@ -27,7 +32,7 @@
 }
 
 .profile-page-content {
-  flex: 1 1 auto;
+  flex: 1;
   min-width: 0;
   padding: 20px;
   width: auto;
@@ -71,6 +76,7 @@
   }
   .profile-page-content {
     order: 1;
+    margin-left: 0;
   }
 }
 

@@ -2,22 +2,32 @@ from xml.etree import ElementTree
 
 
 def get_os_logo(os_info):
-    # https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/ICONS.md
-    base_url = 'https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons/png/'
+    base_url = '/static/assets/os/'
+    if not os_info:
+        return base_url + 'default.png'
+
+    os_info_normalized = os_info.strip().lower()
 
     os_logo_mapping = {
-        'Ubuntu': 'ubuntu.png',
-        'Debian': 'debian.png',
-        'Arch Linux': 'arch.png',
-        'Windows Server 2019': 'windows-10.png',
-        'Fedora': 'fedora.png',
-        'CentOS': 'centos.png',
+        'ubuntu': 'ubuntu.png',
+        'debian': 'debian.png',
+        'arch linux': 'arch.png',
+        'red hat': 'rhel.png',
+        'rhel': 'rhel.png',
+        'windows server': 'windows-server.png',
+        'windows 10': 'windows-10.png',
+        'fedora': 'fedora.png',
+        'centos': 'centos.png',
+        'macos': 'macos.png',
+        'linux mint': 'mint.png',
+        'kali linux': 'kali.png',
     }
 
     for os_name, os_logo in os_logo_mapping.items():
-        if os_name in os_info:
+        if os_name in os_info_normalized:
             return base_url + os_logo
-    return base_url + 'vm.png'
+
+    return base_url + 'default.png'
 
 
 class VMList:
