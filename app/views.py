@@ -95,14 +95,17 @@ def profile(request):
     return render(request, 'app/profile.html', {'user': request.user})
 
 
+@login_required
 def informations(request):
     return render(request, 'app/informations.html')
 
 
+@login_required
 def securite(request):
     return render(request, 'app/security.html')
 
 
+@login_required
 def vm_list(request):
     vm_file = VMList('tmp/export.xml')
     vms = vm_file.get_vms()
