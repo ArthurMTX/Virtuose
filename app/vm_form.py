@@ -25,16 +25,57 @@ def get_form_fields_info():
 
 
 class VMForm(forms.Form):
-    ram = forms.IntegerField(label='RAM (en Go)', min_value=1, max_value=100, required=True,
-                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    cpu = forms.IntegerField(label='CPU', min_value=1, max_value=100, required=True,
-                             widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    disk = forms.IntegerField(label='Taille du disque (en Go)', min_value=1, max_value=100, required=True,
-                              widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    os = forms.ChoiceField(label='OS', choices=[('Windows', 'Windows'), ('Linux', 'Linux')], required=True,
-                           widget=forms.Select(attrs={'class': 'form-control'}))
-    name = forms.CharField(label='Nom de la VM', max_length=100, required=True,
-                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+    RAM_CHOICES = [
+        ('4', '4GB'),
+        ('8', '8GB'),
+        ('16', '16GB'),
+        ('32', '32GB'),
+    ]
+    CPU_CHOICES = [
+        ('1', '1'),
+        ('2', '2'),
+        ('4', '4'),
+        ('8', '8'),
+    ]
+    DISK_CHOICES = [
+        ('10', '10GB'),
+        ('20', '20GB'),
+        ('50', '50GB'),
+        ('100', '100GB'),
+        ('250', '250GB'),
+        ('500', '500GB'),
+    ]
+    OS_CHOICES = [
+        ('Windows', 'Windows'),
+        ('Linux', 'Linux'),
+    ]
+
+    ram = forms.ChoiceField(
+        label='RAM',
+        choices=RAM_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'}))
+    cpu = forms.IntegerField(
+        label='CPU',
+        choices=CPU_CHOICES,
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    disk = forms.IntegerField(
+        label='Taille du disque (en Go)',
+        choices=DISK_CHOICES,
+        required=True,
+        widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    os = forms.ChoiceField(
+        label='OS',
+        choices=OS_CHOICES,
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'}))
+    name = forms.CharField(
+        label='Nom de la VM',
+        min_length=5,
+        max_length=50,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def clean(self):
         cleaned_data = super().clean()

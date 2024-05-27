@@ -8,8 +8,9 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ("email", "password1", "password2")
+        fields = ("username","email", "password1", "password2")
         labels = {
+            "username": "Nom d'utilisateur",
             "email": "Email",
             "password1": "Mot de passe",
             "password2": "Confirmer le mot de passe",

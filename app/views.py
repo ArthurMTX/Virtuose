@@ -11,13 +11,15 @@ from django.contrib.auth import login as auth_login
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 
 def index(request):
     return render(request, 'app/index.html')
 
 
-def vm_form(request):
+@login_required
+def new_vm(request):
     if request.method == "POST":
         form = VMForm(request.POST)
         if form.is_valid():
@@ -48,20 +50,25 @@ def vm_form(request):
         else:
             fields_info = get_form_fields_info()
             errors = form.errors
-            return render(request, 'app/vm_form.html', {'fields_info': fields_info, 'errors': errors, 'form': form})
+            return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'errors': errors, 'form': form})
     else:
         form = VMForm()
         fields_info = get_form_fields_info()
-        return render(request, 'app/vm_form.html', {'fields_info': fields_info, 'form': form})
+        return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'form': form})
 
 
 def register(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            auth_login(request, user)
-            return redirect('index')
+            email = form.cleaned_data.get('email')
+            if User.objects.filter(email=email).exists():
+                form.add_error('email', 'Un utilisateur avec cet email existe déjà.')
+                return render(request, 'registration/register.html', {'form': form})
+            else:
+                user = form.save()
+                auth_login(request, user)
+                return redirect('index')
         else:
             return render(request, 'registration/register.html', {'form': form})
     else:
@@ -97,7 +104,10 @@ def profile(request):
 
 @login_required
 def informations(request):
-    return render(request, 'app/informations.html')
+    user = request.user
+    username = user.username
+    email = user.email
+    return render(request, 'app/informations.html', {'username': username, 'email': email})
 
 
 @login_required

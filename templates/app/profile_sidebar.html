@@ -18,7 +18,7 @@
             </li>
             <li><hr class="sidebar-divider"></li>
             <li class="nav-item">
-                <a class="nav-link" href="#">Créer une machine</a>
+                <a class="nav-link {% if request.resolver_match.url_name == 'profile/newvm' %}active{% endif %}" href="{% url 'profile/newvm' %}">Créer une machine</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {% if request.resolver_match.url_name == 'profile/vmlist' %}active{% endif %}" href="{% url 'profile/vmlist' %}">Liste des machines</a>

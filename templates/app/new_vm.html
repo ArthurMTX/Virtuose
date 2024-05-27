@@ -1,0 +1,40 @@
+{% extends 'app/base.html' %}
+
+{% block title %}Créer une VM{% endblock %}
+
+{% block content %}
+    <body class="profile-page">
+    <div class="container">
+        <div class="profile-sidebar">
+            {% include 'app/profile_sidebar.html' %}
+        </div>
+        <div class="profile-page-content">
+            <h1> Créer une VM </h1>
+            <form method="post" class="form_create_vm">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </form>
+            {% if form.non_field_errors %}
+                <div class="card-footer">
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    </body>
+{% endblock %}

@@ -16,9 +16,6 @@
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'vm_form' %}active{% endif %}" href="{% url 'vm_form' %}">Créer une VM</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link {% if request.resolver_match.url_name|startswith:'profile' %}active{% endif %}" href="{% url 'profile/informations' %}">Profil</a>
                     </li>
                     <li>
