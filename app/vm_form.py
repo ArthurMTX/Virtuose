@@ -55,12 +55,12 @@ class VMForm(forms.Form):
         choices=RAM_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
-    cpu = forms.IntegerField(
+    cpu = forms.ChoiceField(
         label='CPU',
         choices=CPU_CHOICES,
         required=True,
         widget=forms.NumberInput(attrs={'class': 'form-control'}))
-    disk = forms.IntegerField(
+    disk = forms.ChoiceField(
         label='Taille du disque (en Go)',
         choices=DISK_CHOICES,
         required=True,
