@@ -94,8 +94,12 @@ class VMForm(forms.Form):
         }
 
         for field, data in fields.items():
-            if data['value'] not in [int(choice[0]) for choice in data['choices']]:
-                self.add_error(field, data['error'])
+            if field == 'os':
+                if data['value'] not in [choice[0] for choice in data['choices']]:
+                    self.add_error(field, data['error'])
+            else:
+                if data['value'] not in [int(choice[0]) for choice in data['choices'] if choice[0].isdigit()]:
+                    self.add_error(field, data['error'])
 
         if name:
             if not re.match(r'^[\w]+$', name):
