@@ -86,18 +86,28 @@ class VMForm(forms.Form):
         os = cleaned_data.get('os')
         name = cleaned_data.get('name').strip()
 
+        fields = {
+            'ram': {'value': ram, 'choices': self.RAM_CHOICES, 'error': context_processors.CREATE_VM_ERROR_RAM_GENERIC},
+            'cpu': {'value': cpu, 'choices': self.CPU_CHOICES, 'error': context_processors.CREATE_VM_ERROR_CPU_GENERIC},
+            'disk': {'value': disk, 'choices': self.DISK_CHOICES, 'error': context_processors.CREATE_VM_ERROR_DISK_GENERIC},
+            'os': {'value': os, 'choices': self.OS_CHOICES, 'error': context_processors.CREATE_VM_ERROR_OS_GENERIC},
+        }
+
+        for field, data in fields.items():
+            if data['value'] not in [int(choice[0]) for choice in data['choices']]:
+                self.add_error(field, data['error'])
+
         if name:
-            print(name)
             if not re.match(r'^[\w]+$', name):
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_NOT_ALPHANUMERIC)
             if ' ' in name:
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_SPACE)
 
         if ram and cpu and disk and os and name:
-            if os == 'Windows' and ram < 2:
-                self.add_error('ram', context_processors.CREATE_VM_ERROR_WINDOWS_RAM)
-            if os == 'Linux' and ram < 1:
-                self.add_error('ram', context_processors.CREATE_VM_ERROR_LINUX_RAM)
+            os_ram_requirements = {'Windows': 2, 'Linux': 1}
+            if ram < os_ram_requirements.get(os, 0):
+                self.add_error('ram', context_processors.CREATE_VM_ERROR_WINDOWS_RAM if os == 'Windows' else context_processors.CREATE_VM_ERROR_LINUX_RAM)
             if disk < 10:
                 self.add_error('disk', context_processors.CREATE_VM_ERROR_DISK)
+
         return cleaned_data

@@ -76,6 +76,11 @@ CREATE_VM_ERROR_NAME_SPACE = "Le nom de la machine virtuelle ne doit pas conteni
 CREATE_VM_ERROR_WINDOWS_RAM = "Windows requiert au moins 2GB de RAM."
 CREATE_VM_ERROR_LINUX_RAM = "Linux requiert au moins 1GB de RAM."
 CREATE_VM_ERROR_DISK = "Le disque doit être au moins de 10GB."
+CREATE_VM_ERROR_RAM_GENERIC = "La RAM n'est pas valide."
+CREATE_VM_ERROR_CPU_GENERIC = "Le CPU n'est pas valide."
+CREATE_VM_ERROR_DISK_GENERIC = "Le disque n'est pas valide."
+CREATE_VM_ERROR_OS_GENERIC = "Le système d'exploitation n'est pas valide."
+
 
 
 def constants_processor(request):
