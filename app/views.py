@@ -46,7 +46,7 @@ def new_vm(request):
                 return HttpResponse("Fichier XML créé avec succès.")
             except Exception as e:
                 print(e)
-                return HttpResponse(f"Erreur lors de la création du fichier YAML : {e}")
+                return HttpResponse(f"Erreur lors de la création du fichier XML : {e}")
         else:
             fields_info = get_form_fields_info()
             errors = form.errors

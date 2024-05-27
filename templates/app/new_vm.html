@@ -10,23 +10,31 @@
         </div>
         <div class="profile-page-content">
             <h1> Créer une VM </h1>
-            <form method="post" class="form_create_vm">
-                {% csrf_token %}
-                {% for field in form %}
-                    <div class="form-group">
-                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        {{ field }}
-                        {% if field.errors %}
-                            <div class="alert alert-danger">
-                                {{ field.errors }}
+            <div class="create-vm">
+                <div class="form-create-vm">
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                {{ field }}
+                                {% if field.errors %}
+                                    <div class="alert alert-danger">
+                                        {{ field.errors }}
+                                    </div>
+                                {% endif %}
                             </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-                <div class="text-center mt-3">
-                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                        {% endfor %}
+                        <div class="text-center mt-3">
+                            <button type="submit" class="btn btn-primary">Créer</button>
+                        </div>
+                    </form>
                 </div>
-            </form>
+                <div class="templates-create-vm">
+                    <h3>Templates</h3>
+                    <p> Envie d'une VM déjà prête à l'emploi ? Choisissez parmi nos templates ! </p>
+                </div>
+            </div>
             {% if form.non_field_errors %}
                 <div class="card-footer">
                     <div class="alert alert-danger">

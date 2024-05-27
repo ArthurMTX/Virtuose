@@ -61,7 +61,7 @@ class VMForm(forms.Form):
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     disk = forms.ChoiceField(
-        label='Taille du disque (en Go)',
+        label='Taille du disque',
         choices=DISK_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
