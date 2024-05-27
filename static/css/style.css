@@ -42,10 +42,10 @@
 }
 
 .container {
-  display: flex;
+  /* display: flex; */
   flex-wrap: wrap;
   margin-top: 50px;
-  height: calc(100vh - 50px);
+  /* height: calc(100vh - 50px); */
   width: 100%;
 }
 
