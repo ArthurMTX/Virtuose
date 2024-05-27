@@ -12,24 +12,24 @@
         <div class="collapse navbar-collapse" id="navbar-collapse-2">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">Accueil</a>
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">{{ NAVBAR_HOME }}</a>
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name|startswith:'profile' %}active{% endif %}" href="{% url 'profile/informations' %}">Profil</a>
+                        <a class="nav-link {% if request.resolver_match.url_name|startswith:'profile' %}active{% endif %}" href="{% url 'profile/informations' %}">{{ NAVBAR_PROFILE }}</a>
                     </li>
                     <li>
                         <form action="{% url 'logout' %}" method="post">
                             {% csrf_token %}
-                            <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">Déconnexion</button>
+                            <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">{{ NAVBAR_LOGOUT }}</button>
                         </form>
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">Connexion</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">{{ NAVBAR_LOGIN }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">Inscription</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">{{ NAVBAR_REGISTER }}</a>
                     </li>
                 {% endif %}
             </ul>

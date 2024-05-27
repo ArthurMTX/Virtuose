@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}Créer un compte{% endblock %}
+{% block title %}{{ REGISTER_PAGE_TITLE }}{% endblock %}
 
 {% block content %}
     <body class="register-page">
@@ -10,9 +10,9 @@
         <div class="row justify-content-center">
             <div class="headline-container">
                 <img src="{% static 'assets/logo-white.png' %}" alt="logo" class="logo">
-                <a href="{% url 'index' %}">&#8592; Retour à l'accueil</a>
-                <h1 class="headline">Créer un compte</h1>
-                <p class="text-white">Déjà un compte ? <a href="{% url 'login' %}" class="text-blue-500">Connectez-vous</a></p>
+                <a href="{% url 'index' %}">{{ GO_TO_HOME }}</a>
+                <h1 class="headline">{{ REGISTER_PAGE_TITLE }}</h1>
+                <p class="text-white">{{ GO_TO_LOGIN }} <a href="{% url 'login' %}" class="text-blue-500">{{ LOG_TO_ACCOUNT }}</a></p>
             </div>
             <div class="form-container">
                 <form class="form" method="POST">
@@ -26,7 +26,7 @@
                             {% endif %}
                         </div>
                     {% endfor %}
-                    <button class="form-submit-btn text-white" type="submit">S'inscrire</button>
+                    <button class="form-submit-btn text-white" type="submit">{{ REGISTER_BUTTON }}</button>
                 </form>
             </div>
         </div>

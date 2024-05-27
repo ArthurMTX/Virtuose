@@ -4,11 +4,10 @@
 <html lang="fr" data-bs-theme="dark" data-bs-core="modern">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Mon Projet Django{% endblock %}</title>
-    <meta name="description" content="{% block description %}Mon Projet Django{% endblock %}">
+    <title>{% block title %}{{ PROJECT_NAME }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ PROJECT_NAME }}{% endblock %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'assets/favicon.ico' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reset-css@5.0.2/reset.min.css">
     <link rel="stylesheet" href="{% static 'css/halfmoon.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/halfmoon.modern.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -16,7 +15,6 @@
 <body>
 {% include 'app/navbar.html' %}
 {% block content %}
-    <!-- Page insert content here -->
 {% endblock %}
 <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
 </body>

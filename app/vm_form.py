@@ -1,4 +1,5 @@
 from django import forms
+from . import context_processors
 import re
 
 def get_form_fields_info():
@@ -26,52 +27,52 @@ def get_form_fields_info():
 
 class VMForm(forms.Form):
     RAM_CHOICES = [
-        ('4', '4GB'),
-        ('8', '8GB'),
-        ('16', '16GB'),
-        ('32', '32GB'),
+        ('4', context_processors.CREATE_VM_RAM_LABEL_4GB),
+        ('8', context_processors.CREATE_VM_RAM_LABEL_8GB),
+        ('16', context_processors.CREATE_VM_RAM_LABEL_16GB),
+        ('32', context_processors.CREATE_VM_RAM_LABEL_32GB),
     ]
     CPU_CHOICES = [
-        ('1', '1'),
-        ('2', '2'),
-        ('4', '4'),
-        ('8', '8'),
+        ('1', context_processors.CREATE_VM_CPU_LABEL_1),
+        ('2', context_processors.CREATE_VM_CPU_LABEL_2),
+        ('4', context_processors.CREATE_VM_CPU_LABEL_4),
+        ('8', context_processors.CREATE_VM_CPU_LABEL_8),
     ]
     DISK_CHOICES = [
-        ('10', '10GB'),
-        ('20', '20GB'),
-        ('50', '50GB'),
-        ('100', '100GB'),
-        ('250', '250GB'),
-        ('500', '500GB'),
+        ('10', context_processors.CREATE_VM_DISK_LABEL_10GB),
+        ('20', context_processors.CREATE_VM_DISK_LABEL_20GB),
+        ('50', context_processors.CREATE_VM_DISK_LABEL_50GB),
+        ('100', context_processors.CREATE_VM_DISK_LABEL_100GB),
+        ('250', context_processors.CREATE_VM_DISK_LABEL_250GB),
+        ('500', context_processors.CREATE_VM_DISK_LABEL_500GB),
     ]
     OS_CHOICES = [
-        ('Windows', 'Windows'),
-        ('Linux', 'Linux'),
+        ('Windows', context_processors.CREATE_VM_OS_LABEL_WINDOWS),
+        ('Linux', context_processors.CREATE_VM_OS_LABEL_LINUX),
     ]
 
     ram = forms.ChoiceField(
-        label='RAM',
+        label=context_processors.CREATE_VM_RAM_LABEL,
         choices=RAM_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     cpu = forms.ChoiceField(
-        label='CPU',
+        label=context_processors.CREATE_VM_CPU_LABEL,
         choices=CPU_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     disk = forms.ChoiceField(
-        label='Taille du disque',
+        label=context_processors.CREATE_VM_DISK_LABEL,
         choices=DISK_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     os = forms.ChoiceField(
-        label='OS',
+        label=context_processors.CREATE_VM_OS_LABEL,
         choices=OS_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     name = forms.CharField(
-        label='Nom de la VM',
+        label=context_processors.CREATE_VM_NAME_LABEL,
         min_length=5,
         max_length=50,
         required=True,
@@ -79,24 +80,24 @@ class VMForm(forms.Form):
 
     def clean(self):
         cleaned_data = super().clean()
-        ram = cleaned_data.get('ram')
-        cpu = cleaned_data.get('cpu')
-        disk = cleaned_data.get('disk')
+        ram = int(cleaned_data.get('ram'))
+        cpu = int(cleaned_data.get('cpu'))
+        disk = int(cleaned_data.get('disk'))
         os = cleaned_data.get('os')
-        name = cleaned_data.get('name')
+        name = cleaned_data.get('name').strip()
 
         if name:
             print(name)
             if not re.match(r'^[\w]+$', name):
-                self.add_error('name', 'Le nom doit être alphanumérique')
+                self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_NOT_ALPHANUMERIC)
             if ' ' in name:
-                self.add_error('name', 'Le nom ne doit pas contenir d\'espaces')
+                self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_SPACE)
 
         if ram and cpu and disk and os and name:
             if os == 'Windows' and ram < 2:
-                self.add_error('ram', 'Windows requiert au moins 2GB de RAM')
+                self.add_error('ram', context_processors.CREATE_VM_ERROR_WINDOWS_RAM)
             if os == 'Linux' and ram < 1:
-                self.add_error('ram', 'Linux requiert au moins 1GB de RAM')
+                self.add_error('ram', context_processors.CREATE_VM_ERROR_LINUX_RAM)
             if disk < 10:
-                self.add_error('disk', 'Le disque doit être au moins de 10GB')
+                self.add_error('disk', context_processors.CREATE_VM_ERROR_DISK)
         return cleaned_data

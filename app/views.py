@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from .vm_form import VMForm, get_form_fields_info
 from .vm_list import VMList
+from . import context_processors
 from .register_form import CustomUserCreationForm
 from uuid import uuid4
 from xml.etree import ElementTree
@@ -43,10 +44,10 @@ def new_vm(request):
                 with open(f'tmp./{vm_name}_{uuid}.xml', 'w') as f:
                     f.write(xml_pretty)
 
-                return HttpResponse("Fichier XML créé avec succès.")
+                return HttpResponse(context_processors.CREATE_VM_SUCCESS)
             except Exception as e:
                 print(e)
-                return HttpResponse(f"Erreur lors de la création du fichier XML : {e}")
+                return HttpResponse(f"{context_processors.CREATE_VM_ERROR} : {e}")
         else:
             fields_info = get_form_fields_info()
             errors = form.errors
@@ -63,7 +64,7 @@ def register(request):
         if form.is_valid():
             email = form.cleaned_data.get('email')
             if User.objects.filter(email=email).exists():
-                form.add_error('email', 'Un utilisateur avec cet email existe déjà.')
+                form.add_error('email', context_processors.ERROR_EMAIL_EXISTS)
                 return render(request, 'registration/register.html', {'form': form})
             else:
                 user = form.save()

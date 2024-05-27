@@ -1,6 +1,6 @@
 {% extends 'app/base.html' %}
 
-{% block title %}Créer une VM{% endblock %}
+{% block title %}{{ CREATE_VM_PAGE_TITLE }}{% endblock %}
 
 {% block content %}
     <body class="profile-page">
@@ -9,7 +9,7 @@
             {% include 'app/profile_sidebar.html' %}
         </div>
         <div class="profile-page-content">
-            <h1> Créer une VM </h1>
+            <h1>{{ CREATE_VM_PAGE_TITLE }}</h1>
             <div class="create-vm">
                 <div class="form-create-vm">
                     <form method="post">
@@ -26,13 +26,13 @@
                             </div>
                         {% endfor %}
                         <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary">Créer</button>
+                            <button type="submit" class="btn btn-primary">{{ CREATE_VM_BUTTON }}</button>
                         </div>
                     </form>
                 </div>
                 <div class="templates-create-vm">
-                    <h3>Templates</h3>
-                    <p> Envie d'une VM déjà prête à l'emploi ? Choisissez parmi nos templates ! </p>
+                    <h3>{{ TEMPLATE_LABEL }}</h3>
+                    <p>{{ TEMPLATE_TEXT}}</p>
                 </div>
             </div>
             {% if form.non_field_errors %}

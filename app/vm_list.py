@@ -2,9 +2,11 @@ from xml.etree import ElementTree
 
 
 def get_os_logo(os_info):
-    base_url = '/static/assets/os/'
+    BASE_URL = '/static/assets/os/'
+    DEFAULT_LOGO = 'default.png'
+
     if not os_info:
-        return base_url + 'default.png'
+        return BASE_URL + DEFAULT_LOGO
 
     os_info_normalized = os_info.strip().lower()
 
@@ -25,9 +27,9 @@ def get_os_logo(os_info):
 
     for os_name, os_logo in os_logo_mapping.items():
         if os_name in os_info_normalized:
-            return base_url + os_logo
+            return BASE_URL + os_logo
 
-    return base_url + 'default.png'
+    return BASE_URL + DEFAULT_LOGO
 
 
 class VMList:
