@@ -82,7 +82,6 @@ CREATE_VM_ERROR_DISK_GENERIC = "Le disque n'est pas valide."
 CREATE_VM_ERROR_OS_GENERIC = "Le système d'exploitation n'est pas valide."
 
 
-
 def constants_processor(request):
     all_globals = globals()
     constants = {k: v for k, v in all_globals.items() if k.isupper()}
