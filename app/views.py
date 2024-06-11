@@ -1,4 +1,6 @@
 from django.http import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .vm_form import VMForm, get_form_fields_info
 from .vm_list import VMList
 from . import context_processors
@@ -26,6 +28,7 @@ def new_vm(request):
         if form.is_valid():
             vm_data = form.cleaned_data
             vm_name = vm_data['name']
+            # selon le RFC4122
             uuid = str(uuid4())
 
             root = ElementTree.Element("VM")
@@ -118,6 +121,14 @@ def securite(request):
 
 @login_required
 def vm_list(request):
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        data_id = request.POST.get('data_id')
+
+        print(action, data_id)
+
+        return JsonResponse({'status': 'success'})
+
     vm_file = VMList('tmp/export.xml')
     vms = vm_file.get_vms()
 

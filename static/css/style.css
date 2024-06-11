@@ -264,3 +264,12 @@
     gap: 2px;
     margin-bottom: 10px;
 }
+
+.dropdown {
+    margin-right: 15px;
+}
+
+.icon-action {
+    width: 10px;
+    margin-right: 10px;
+}

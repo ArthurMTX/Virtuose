@@ -23,9 +23,22 @@
                     </thead>
                     <tbody class="table-group-divider table-secondary">
                     {% for vm in vms %}
-                        <tr>
+                        <tr class="vm" data-id="{{ vm.uuid }}">
                             <td colspan="2">
                                 <div class="os-info">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fa-solid fa-gears"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
+                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
+                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
+                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
+                                        </ul>
+                                    </div>
                                     <img src="{{ vm.os_logo }}" alt="{{ vm.os_info }} logo" width="50" height="50">
                                     <p> {{ vm.os_info }} </p>
                                 </div>
@@ -40,6 +53,8 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static 'js/vm_list.js' %}"></script>
     <script src="{% static 'js/sorttable.js' %}"></script>
     </body>
 {% endblock %}

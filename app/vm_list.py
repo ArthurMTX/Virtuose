@@ -41,6 +41,7 @@ class VMList:
 
         for domain in root.findall('domain'):
             vm_data = {
+                'uuid': domain.find('uuid').text,
                 'name': domain.find('name').text,
                 'memory': domain.find('memory').text,
                 'vcpu': domain.find('vcpu').text,
