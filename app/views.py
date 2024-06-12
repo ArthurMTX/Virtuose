@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .vm_form import VMForm, get_form_fields_info
 from .vm_list import VMList
@@ -11,7 +10,7 @@ from xml.dom import minidom
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -133,3 +132,9 @@ def vm_list(request):
     vms = vm_file.get_vms()
 
     return render(request, 'app/vm_list.html', {'vms': vms})
+
+
+@login_required
+def vm_view(request, vm_uuid):
+    websocket_url = f'ws://127.0.0.1:6080/vnc_auto.html?path=vnc_lite.html?uuid={vm_uuid}'
+    return render(request, 'app/view.html', {'websocket_url': websocket_url})
