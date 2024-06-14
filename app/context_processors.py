@@ -84,6 +84,32 @@ CREATE_VM_ERROR_CPU_GENERIC = "Le CPU n'est pas valide."
 CREATE_VM_ERROR_DISK_GENERIC = "Le disque n'est pas valide."
 CREATE_VM_ERROR_OS_GENERIC = "Le système d'exploitation n'est pas valide."
 
+DOMAIN_NOT_FOUND = "Domaine introuvable"
+FAILED_TO_GET_DOMAIN_NAMES = "Échec de récupération des noms de domaine"
+FAILED_TO_GET_DOMAIN_IDS = "Échec de récupération des IDs de domaine"
+NO_POOLS_STORAGE = "Aucun pool de stockage"
+FAILED_TO_GET_STORAGE_POOL = "Échec de récupération du pool de stockage"
+
+VM_NO_STATE = "no state"
+VM_STATE_RUNNING = "running"
+VM_STATE_BLOCKED = "blocked"
+VM_STATE_PAUSED = "paused"
+VM_STATE_SHUTDOWN = "shutdown"
+VM_STATE_SHUTOFF = "shutoff"
+VM_STATE_CRASHED = "crashed"
+VM_STATE_PMSUSPENDED = "pmsuspended"
+UNKNOWN = "unknown"
+
+VM_ALREADY_RUNNING = "La machine virtuelle est déjà en cours d'exécution"
+VM_ALREADY_STOPPED = "La machine virtuelle est déjà arrêtée"
+VM_INVALID_ACTION = "Action non valide"
+VM_INVALID_METHOD = "Méthode non valide"
+
+VOLUME_FILE = "VOLUME_FILE"
+VOLUME_BLOCK = "VOLUME_BLOCK"
+VOLUME_DIR = "VOLUME_DIR"
+VOLUME_NETWORK = "VOLUME_NETWORK"
+VOLUME_NETDIR = "VOLUME_NETDIR"
 
 def constants_processor(request):
     all_globals = globals()

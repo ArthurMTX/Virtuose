@@ -36,7 +36,9 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['virtuose','159.31.247.240']
+QEMU_URI = "qemu:///system"
+
+ALLOWED_HOSTS = ['virtuose', '159.31.247.240']
 
 LOGIN_URL = '/login/'
 
