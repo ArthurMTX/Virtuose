@@ -133,6 +133,8 @@ def vm_list(request):
     vms_list = list_all_domain()
     vms = []
 
+    print(vms_list)
+
     for vm in vms_list:
         vms.append(list_dom_info_uuid(vm['uuid']))
 
