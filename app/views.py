@@ -14,6 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from api.domains import list_dom_info_uuid
 
 
 def index(request):
@@ -121,10 +122,11 @@ def securite(request):
 @login_required
 def vm_list(request):
     if request.method == 'POST':
-        action = request.POST.get('action')
-        data_id = request.POST.get('data_id')
+        action = request.POST.get('action').upper()
+        vm_uuid = request.POST.get('data_id')
 
-        print(action, data_id)
+        if action == 'CONSOLE VIEW':
+            return redirect('vm_view', vm_uuid=vm_uuid)
 
         return JsonResponse({'status': 'success'})
 
@@ -136,6 +138,9 @@ def vm_list(request):
 
 @login_required
 def vm_view(request, vm_uuid):
+    vm = list_dom_info_uuid(vm_uuid)
+    print(vm.name)
+
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
 
