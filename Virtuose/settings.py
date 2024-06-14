@@ -25,10 +25,18 @@ environ.Env.read_env(env_file=BASE_DIR / '.env')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['virtuose','159.31.247.240']
 
 LOGIN_URL = '/login/'
 
@@ -37,6 +45,7 @@ LOGIN_URL = '/login/'
 INSTALLED_APPS = [
     'app',
     'tailwind',
+    'django_werkzeug',
     'django_browser_reload',
     'django.contrib.admin',
     'django.contrib.auth',

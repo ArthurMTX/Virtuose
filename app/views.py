@@ -136,5 +136,6 @@ def vm_list(request):
 
 @login_required
 def vm_view(request, vm_uuid):
-    websocket_url = f'ws://127.0.0.1:6080/vnc_auto.html?path=vnc_lite.html?uuid={vm_uuid}'
+    websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
+

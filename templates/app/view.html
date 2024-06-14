@@ -1,17 +1,13 @@
-{% extends 'app/base.html' %}
 {% load static %}
 
-{% block title %}{{ LIST_VM_PAGE_TITLE }}{% endblock %}
-
 {% block content %}
-<link rel="stylesheet" type="text/css" href="{% static 'noVNC/app/styles/base.css' %}">
-<script type="module">
-    import RFB from "{% static 'noVNC/core/rfb.js' %}";
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const rfb = new RFB(document.getElementById('noVNC_screen'), "{{ websocket_url }}");
-        rfb.connect('vnc_username', 'vnc_password');
-    });
-</script>
-<div id="noVNC_screen" style="width:100%; height:100vh;"></div>
+<style>
+body {
+    margin: 0;
+}
+iframe {
+    border: 0;
+}
+</style>
+<iframe id="myIframe" allowfullscreen="true" src="http://virtuose:6081/vnc.html?host=virtuose&port=6081&autoconnect=true&resize=scale" style="width:100vw; height:100vh;"></iframe>
 {% endblock %}

@@ -1,0 +1,255 @@
+<vm_definitions>
+    <domain type='kvm'>
+        <uuid>d3af939a-5b4d-474d-a4eb-5e38b7ed89ad</uuid>
+        <name>UbuntuServer</name>
+        <memory unit='MiB'>2048</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+            <bootmenu enable='yes'/>
+        </os>
+        <metadata>
+            <os_info>Ubuntu 20.04</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/ubuntu_server.qcow2'/>
+                <target dev='vda' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>74aa3037-4439-4774-a039-50892ca92ee8</uuid>
+        <name>WindowsServer</name>
+        <memory unit='MiB'>4096</memory>
+        <vcpu placement='static'>4</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='cdrom'/>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Windows Server 2019</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/windows_server.qcow2'/>
+                <target dev='vdb' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>c80bc5bc-bd4a-486b-bf37-60376e175248</uuid>
+        <name>CentOSVM</name>
+        <memory unit='MiB'>1024</memory>
+        <vcpu placement='static'>1</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='network'/>
+        </os>
+        <metadata>
+            <os_info>CentOS 8</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/centos.qcow2'/>
+                <target dev='vdc' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>a91b841d-6569-4e84-b73a-65b3f81aae1a</uuid>
+        <name>DebianMinimal</name>
+        <memory unit='MiB'>512</memory>
+        <vcpu placement='static'>1</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Debian 10 Minimal</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/debian_minimal.qcow2'/>
+                <target dev='vdd' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>f846c6cc-50ab-494a-b64a-0f24477ec6fd</uuid>
+        <name>FedoraWorkstation</name>
+        <memory unit='MiB'>3072</memory>
+        <vcpu placement='static'>3</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Fedora 34</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/fedora_workstation.qcow2'/>
+                <target dev='vde' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>bc9c6e83-9c41-40b7-9297-0198fe3f72f2</uuid>
+        <name>ArchLinux</name>
+        <memory unit='MiB'>2048</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Arch Linux Latest</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/arch_linux.qcow2'/>
+                <target dev='vdf' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>3ac0e87a-57c1-445e-83ce-a88177c7937d</uuid>
+        <name>RHELVm</name>
+        <memory unit='MiB'>4096</memory>
+        <vcpu placement='static'>4</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Red Hat Enterprise Linux 8</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/rhel8.qcow2'/>
+                <target dev='vdg' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>1259aab2-db6d-4963-b4d0-98eef6fdfc04</uuid>
+        <name>Windows10VM</name>
+        <memory unit='MiB'>4096</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Windows 10</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/windows10.qcow2'/>
+                <target dev='vdh' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>5f229905-30be-4167-b5a3-f276b182f7a6</uuid>
+        <name>MacOSVM</name>
+        <memory unit='MiB'>8192</memory>
+        <vcpu placement='static'>4</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>MacOS Catalina</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='raw'/>
+                <source file='/var/lib/libvirt/images/macos_catalina.img'/>
+                <target dev='vdi' bus='sata'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>a77182bd-5bf5-43cc-8821-357a03087ce5</uuid>
+        <name>LinuxMintVM</name>
+        <memory unit='MiB'>2048</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Linux Mint 20</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/linux_mint_20.qcow2'/>
+                <target dev='vdj' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>fcc500a6-6d7e-4e83-b903-8c08b1f3c911</uuid>
+        <name>PentestVM</name>
+        <memory unit='MiB'>2048</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Kali Linux Latest</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/kali_linux_latest.qcow2'/>
+                <target dev='vdk' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+
+    <domain type='kvm'>
+        <uuid>d5fe7fb2-e54c-4723-a8d5-3d6d02403f59</uuid>
+        <name>Test</name>
+        <memory unit='MiB'>1024</memory>
+        <vcpu placement='static'>2</vcpu>
+        <os>
+            <type arch='x86_64'>hvm</type>
+            <boot dev='hd'/>
+        </os>
+        <metadata>
+            <os_info>Test pour VM inconnue</os_info>
+        </metadata>
+        <devices>
+            <disk type='file' device='disk'>
+                <driver name='qemu' type='qcow2'/>
+                <source file='/var/lib/libvirt/images/test.qcow2'/>
+                <target dev='vdl' bus='virtio'/>
+            </disk>
+        </devices>
+    </domain>
+</vm_definitions>
