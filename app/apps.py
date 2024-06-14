@@ -22,7 +22,7 @@ class MyAppConfig(AppConfig):
     name = 'app'
 
     def ready(self):
-        check_requirements()
+        #check_requirements()
 
         required_env_vars = [
             'SECRET_KEY',
