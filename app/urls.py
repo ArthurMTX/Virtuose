@@ -1,5 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
+from rest_framework_swagger.views import get_swagger_view
 
 from . import views
 from . import routes
@@ -17,6 +18,7 @@ urlpatterns = [
     path('profile/newvm', views.new_vm, name='profile/newvm'),
 
     # API
+    path('api/', get_swagger_view(title='Virtuose API')),
     path('api/pools/', routes.get_pools),
     path('api/domains/', routes.get_all_domain),
     path('api/domains/<str:dom_name>/', routes.domain_info_by_name),

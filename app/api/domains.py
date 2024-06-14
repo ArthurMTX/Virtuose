@@ -144,7 +144,6 @@ def list_dom_info_uuid(dom_uuid: str):
         dom_info["ID"] = dom.ID()
         dom_info["UUID"] = dom.UUIDString()
 
-        # Information sur la RAM / VCPU
         state, max_mem, mem, num_cpu, cpu_time = dom.info()
         state_str = {
             0: context_processors.VM_NO_STATE,
@@ -157,27 +156,22 @@ def list_dom_info_uuid(dom_uuid: str):
             7: context_processors.VM_STATE_PMSUSPENDED
         }.get(state, context_processors.UNKNOWN)
         dom_info["state"] = state_str
-        dom_info["memory_gb"] = mem / (1024 ** 2)  # Convertir de KBytes à GBytes
-        dom_info["VCPU"] = num_cpu  # Nombre de vCPUs utilisés
+        dom_info["memory_gb"] = mem / (1024 ** 2)
+        dom_info["VCPU"] = num_cpu
 
-        # Informations sur l'OS
         xml_desc = dom.XMLDesc()
         root = ET.fromstring(xml_desc)
 
-        # Information sur le l'architecture de l'OS
         os_arch = root.find('os/type').attrib.get('arch', context_processors.UNKNOWN)
         dom_info["os_arch"] = os_arch
 
-        # Espace de noms pour libosinfo
         namespaces = {'libosinfo': 'http://libosinfo.org/xmlns/libvirt/domain/1.0'}
 
-        # Récupérer l'élément libosinfo:os
         libosinfo_os = root.find('metadata/libosinfo:libosinfo/libosinfo:os', namespaces)
         if libosinfo_os is not None:
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
 
         if state == 1:
-            # Récupérer les adresses IPs du domaine
             ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
             ips = []
             for iface in ifaces.values():
@@ -187,7 +181,6 @@ def list_dom_info_uuid(dom_uuid: str):
                             ips.append(addr['addr'])
             dom_info["IPs"] = ips
 
-        # Récupérer les volumes associés
         volumes = []
         disks = root.findall('devices/disk')
         for disk in disks:
@@ -202,7 +195,3 @@ def list_dom_info_uuid(dom_uuid: str):
         return dom_info, None
     finally:
         conn.close()
-
-
-def domain_interactions():
-    pass
