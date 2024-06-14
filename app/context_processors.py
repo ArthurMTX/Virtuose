@@ -1,5 +1,8 @@
 # General
 PROJECT_NAME = "Virtuose"
+MISSING_ENV_VAR = "Variable d'environnement manquante"
+MISSING_FILE = "Fichier manquant"
+MISSING_REQUIREMENT = "Module Python manquant"
 
 # Header
 NAVBAR_HOME = "Accueil"
