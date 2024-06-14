@@ -1,20 +1,9 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from rest_framework_swagger.views import get_swagger_view
-from drf_yasg.views import get_schema_view
-from drf_yasg import openapi
+from rest_framework.schemas import get_schema_view
 
 from . import views
 from . import routes
-
-schema_view = get_schema_view(
-   openapi.Info(
-      title="Virtuose API",
-      default_version='v1',
-      description="API documentation for Virtuose",
-   ),
-   public=True,
-)
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -29,7 +18,7 @@ urlpatterns = [
     path('profile/newvm', views.new_vm, name='profile/newvm'),
 
     # API
-    path('api/', get_swagger_view(title='Virtuose API')),
+    path('api/', get_schema_view("Virtuose API")),
     path('api/pools/', routes.get_pools),
     path('api/domains/', routes.get_all_domain),
     path('api/domains/<str:dom_name>/', routes.domain_info_by_name),
