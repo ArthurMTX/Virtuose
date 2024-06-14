@@ -7,8 +7,10 @@ from . import context_processors
 def check_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
+        print(requirements)
 
     for requirement in requirements:
+        print(requirement)
         try:
             __import__(requirement)
         except ImportError:
@@ -20,6 +22,8 @@ class MyAppConfig(AppConfig):
     name = 'app'
 
     def ready(self):
+        check_requirements()
+
         required_env_vars = [
             'SECRET_KEY',
             'DB_NAME',
