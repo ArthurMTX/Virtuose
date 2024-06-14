@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_swagger',
     'rest_framework',
-    'drf_yasg'
+    'drf_spectacular'
 ]
 
 INTERNAL_IPS = [

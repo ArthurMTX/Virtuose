@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from rest_framework.schemas import get_schema_view
+from drf_spectacular.views import SpectacularAPIView
 
 from . import views
 from . import routes
@@ -18,7 +18,7 @@ urlpatterns = [
     path('profile/newvm', views.new_vm, name='profile/newvm'),
 
     # API
-    path('api/', get_schema_view("Virtuose API")),
+    path('api/', SpectacularAPIView.as_view(), name='Virtuose API'),
     path('api/pools/', routes.get_pools),
     path('api/domains/', routes.get_all_domain),
     path('api/domains/<str:dom_name>/', routes.domain_info_by_name),
