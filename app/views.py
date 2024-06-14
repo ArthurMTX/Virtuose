@@ -132,11 +132,14 @@ def vm_list(request):
 
     vms_list = list_all_domain()
     vms = []
-
     print(vms_list)
 
     for vm in vms_list:
-        vms.append(list_dom_info_uuid(vm['uuid']))
+        if isinstance(vm, dict) and 'uuid' in vm:
+            vms.append(list_dom_info_uuid(vm['uuid']))
+        elif isinstance(vm, list):
+            for uuid in vm:
+                vms.append(list_dom_info_uuid(uuid))
 
     print(vms)
 
