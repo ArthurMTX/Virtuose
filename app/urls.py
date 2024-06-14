@@ -1,9 +1,20 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from rest_framework_swagger.views import get_swagger_view
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
 from . import views
 from . import routes
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Virtuose API",
+      default_version='v1',
+      description="API documentation for Virtuose",
+   ),
+   public=True,
+)
 
 urlpatterns = [
     path("", views.index, name="index"),
