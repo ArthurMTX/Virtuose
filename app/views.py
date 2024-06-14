@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from api.domains import list_dom_info_uuid, list_all_domain
+from app.api.domains import list_dom_info_uuid, list_all_domain
 
 
 def index(request):
