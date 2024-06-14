@@ -14,7 +14,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from api.domains import list_dom_info_uuid
+from api.domains import list_dom_info_uuid, list_all_domain
 
 
 def index(request):
@@ -130,8 +130,13 @@ def vm_list(request):
 
         return JsonResponse({'status': 'success'})
 
-    vm_file = VMList('tmp/export.xml')
-    vms = vm_file.get_vms()
+    vms_list = list_all_domain()
+    vms = []
+
+    for vm in vms_list:
+        vms.append(list_dom_info_uuid(vm['uuid']))
+
+    print(vms)
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
