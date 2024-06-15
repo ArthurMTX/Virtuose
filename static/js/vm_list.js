@@ -12,15 +12,3 @@ $('.dropdown-item').click(function() {
         }
     });
 });
-
-$(document).ready(function() {
-    $('.dropdown-toggle').each(function() {
-        let vmState = $(this).data('state');
-        if (vmState === 'running') {
-            $(this).siblings('.dropdown-menu').find('[data-action="start"]').addClass('dropdown-item-disabled');
-        }
-        if (vmState === 'stopped') {
-            $(this).siblings('.dropdown-menu').find('[data-action="stop"]').addClass('dropdown-item-disabled');
-        }
-    });
-});
