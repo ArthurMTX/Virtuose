@@ -273,3 +273,8 @@
     width: 10px;
     margin-right: 10px;
 }
+
+.table-responsive {
+    overflow-x: visible;
+    -webkit-overflow-scrolling: touch;
+}
