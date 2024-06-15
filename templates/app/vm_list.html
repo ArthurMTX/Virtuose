@@ -27,34 +27,36 @@
                         {% for vm in vms %}
                             <tr class="vm" data-id="{{ vm.UUID }}">
                                 <td>
-                                    <div class="dropdown">
-                                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-solid fa-gears"></i>
-                                        </button>
-                                        <ul class="dropdown-menu">
-                                            <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
-                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li><a class="dropdown-item {% if vm.state == 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
-                                            <li><a class="dropdown-item {% if vm.state != 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
-                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-skull"></i> Kill </a></li>
-                                            <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.UUID %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
-                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
-                                            <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="vm-state">
-                                        {% if vm.state == VM_STATE_RUNNING %}
-                                            <i class="fa-solid fa-check" style="color: #74c93b;"></i>
-                                        {% elif vm.state == VM_STATE_PAUSED %}
-                                            <i class="fa-solid fa-pause" style="color: #ffbb00;"></i>
-                                        {% elif vm.state == VM_STATE_SHUTDOWN or vm.state == VM_STATE_SHUTOFF or vm.state == VM_STATE_PMSUSPENDED %}
-                                            <i class="fa-solid fa-stop" style="color: #d30d0d;"></i>
-                                        {% elif vm.state == VM_STATE_CRASHED or vm.state == VM_STATE_BLOCKED %}
-                                            <i class="fa-solid fa-burst" style="color: #cd13b4;"></i>
-                                        {% elif vm.state == UNKNOWN %}
-                                            <i class="fa-solid fa-question" style="color: #185ed8;"></i>
-                                        {% endif %}
+                                    <div>
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-gears"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
+                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item {% if vm.state == 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
+                                                <li><a class="dropdown-item {% if vm.state != 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
+                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-skull"></i> Kill </a></li>
+                                                <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.UUID %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
+                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
+                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="vm-state">
+                                            {% if vm.state == VM_STATE_RUNNING %}
+                                                <i class="fa-solid fa-check" style="color: #74c93b;"></i>
+                                            {% elif vm.state == VM_STATE_PAUSED %}
+                                                <i class="fa-solid fa-pause" style="color: #ffbb00;"></i>
+                                            {% elif vm.state == VM_STATE_SHUTDOWN or vm.state == VM_STATE_SHUTOFF or vm.state == VM_STATE_PMSUSPENDED %}
+                                                <i class="fa-solid fa-stop" style="color: #d30d0d;"></i>
+                                            {% elif vm.state == VM_STATE_CRASHED or vm.state == VM_STATE_BLOCKED %}
+                                                <i class="fa-solid fa-burst" style="color: #cd13b4;"></i>
+                                            {% elif vm.state == UNKNOWN %}
+                                                <i class="fa-solid fa-question" style="color: #185ed8;"></i>
+                                            {% endif %}
+                                        </div>
                                     </div>
                                 </td>
                                 <td>
