@@ -140,7 +140,19 @@ def vm_list(request):
         if vm is not None:
             vms.append(list_dom_info_name(vm[0]))
 
-    print(vms)
+    for vm in vms:
+        if vm[0] is not None:
+            print("Name:", vm[0]['name'])
+            print("ID:", vm[0]['ID'])
+            print("UUID:", vm[0]['UUID'])
+            print("State:", vm[0]['state'])
+            print("Memory in GB:", vm[0]['memory_gb'])
+            print("VCPU:", vm[0]['VCPU'])
+            print("OS Architecture:", vm[0]['os_arch'])
+            print("OS ID:", vm[0]['libosinfo_os_id'])
+            print("IP Addresses:", ", ".join(vm[0]['IPs']))
+            print("Volumes:", ", ".join(vm[0]['volumes']))
+            print()
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
