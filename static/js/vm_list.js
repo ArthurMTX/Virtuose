@@ -12,3 +12,12 @@ $('.dropdown-item').click(function() {
         }
     });
 });
+
+$(document).ready(function() {
+    $('.modal-body pre').each(function() {
+        let rawContent = $(this).text();
+        let beautifiedContent = js_beautify(rawContent);
+        let trimmedContent = beautifiedContent.replace(/^\s+/gm, '');
+        $(this).text(trimmedContent);
+    });
+});
