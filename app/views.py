@@ -140,9 +140,9 @@ def vm_list(request):
         if vm is not None:
             vms.append(list_dom_info_name(vm[0]))
 
-    vms = [vm[0] for vm in vms if vm[0] is not None]
+    sanitized_vms = [vm[0] for vm in vms if vm[0] is not None]
 
-    for vm in vms:
+    for vm in sanitized_vms:
         print("Name:", vm['name'])
         print("ID:", vm['ID'])
         print("UUID:", vm['UUID'])
@@ -155,7 +155,9 @@ def vm_list(request):
         print("Volumes:", ", ".join(vm['volumes']))
         print()
 
-    return render(request, 'app/vm_list.html', {'vms': vms})
+    print(sanitized_vms)
+
+    return render(request, 'app/vm_list.html', {'vms': sanitized_vms})
 
 
 @login_required

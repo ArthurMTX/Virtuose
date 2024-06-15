@@ -24,7 +24,7 @@
                     <tbody class="table-group-divider table-secondary">
                     {% if vms %}
                         {% for vm in vms %}
-                            <tr class="vm" data-id="{{ vm.uuid }}">
+                            <tr class="vm" data-id="{{ vm.UUID }}">
                                 <td colspan="2">
                                     <div class="os-info">
                                         <div class="dropdown">
@@ -36,18 +36,18 @@
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
-                                                <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.uuid %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
+                                                <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.UUID %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
                                             </ul>
                                         </div>
                                         <img src="{{ vm.os_logo }}" alt="{{ vm.os_info }} logo" width="50" height="50">
-                                        <p> {{ vm.os_info }} </p>
+                                        <p> {{ vm.libosinfo_os_id }} </p>
                                     </div>
                                 </td>
                                 <td>{{ vm.name }}</td>
-                                <td>{{ vm.memory }}</td>
-                                <td>{{ vm.vcpu }}</td>
+                                <td>{{ vm.memory_gb }}</td>
+                                <td>{{ vm.VCPU }}</td>
                             </tr>
                         {% endfor %}
                     {% else %}
