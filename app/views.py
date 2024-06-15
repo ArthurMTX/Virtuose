@@ -136,7 +136,7 @@ def vm_list(request):
     print(vms_list)
 
     for vm in vms_list:
-        vms.append(list_dom_info_name(vm['name']))
+        vms.append(list_dom_info_name(vm))
 
     print(vms)
 
