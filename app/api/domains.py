@@ -1,7 +1,6 @@
 import libvirt
 import sys
 import xml.etree.ElementTree as ET
-from uuid import UUID
 from .. import context_processors
 from Virtuose.settings import QEMU_URI
 
@@ -128,7 +127,7 @@ def list_dom_info_name(dom_name: str):
         conn.close()
 
 
-def list_dom_info_uuid(dom_uuid: UUID):
+def list_dom_info_uuid(dom_uuid: str):
     dom_info = {}
     try:
         conn = libvirt.open(QEMU_URI)

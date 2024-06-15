@@ -159,7 +159,7 @@ def vm_list(request):
 
 @login_required
 def vm_view(request, vm_uuid):
-    vm = list_dom_info_uuid(vm_uuid)
+    vm = list_dom_info_uuid(str(vm_uuid))
     print(vm.name)
 
     websocket_url = f'ws://127.0.0.1:6080'
