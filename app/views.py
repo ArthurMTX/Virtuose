@@ -126,7 +126,10 @@ def vm_list(request):
         vm_uuid = request.POST.get('data_id')
 
         if action == 'CONSOLE VIEW':
-            return redirect('vm_view', vm_uuid=vm_uuid)
+            if vm_uuid:
+                return redirect('vm_view', vm_uuid=vm_uuid)
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
 
         return JsonResponse({'status': 'success'})
 
@@ -136,6 +139,8 @@ def vm_list(request):
     for vm in vms_list:
         if vm is not None:
             vms.append(list_dom_info_name(vm[0]))
+
+    print(vms)
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
