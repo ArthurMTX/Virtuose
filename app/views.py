@@ -134,7 +134,7 @@ def vm_list(request):
     vms = []
 
     for vm in vms_list:
-        vms.append(list_dom_info_name(vm[0][0]))
+        vms.append(list_dom_info_name(vm[0]))
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
