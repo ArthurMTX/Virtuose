@@ -140,7 +140,7 @@ def vm_list(request):
         if vm is not None:
             vms.append(list_dom_info_name(vm[0]))
 
-    vms = [vm for vm in vms if vm[0] is not None]
+    vms = [vm[0] for vm in vms if vm[0] is not None]
 
     for vm in vms:
         print("Name:", vm[0]['name'])
