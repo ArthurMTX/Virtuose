@@ -3,6 +3,7 @@ import sys
 import xml.etree.ElementTree as ET
 from .. import context_processors
 from Virtuose.settings import QEMU_URI
+from ..vm_list import get_os_logo
 
 
 def is_domain_active(dom_name: str):
@@ -99,6 +100,8 @@ def list_dom_info_name(dom_name: str):
         if libosinfo_os is not None:
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
             dom_info["os"] = dom_info["libosinfo_os_id"].split('/')[-2].lower()
+
+        dom_info["os_logo"] = get_os_logo(dom_info["os"])
 
         if state == 1:
             # Récupérer les adresses IPs du domaine

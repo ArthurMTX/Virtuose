@@ -142,21 +142,6 @@ def vm_list(request):
 
     sanitized_vms = [vm[0] for vm in vms if vm[0] is not None]
 
-    for vm in sanitized_vms:
-        print("Name:", vm['name'])
-        print("ID:", vm['ID'])
-        print("UUID:", vm['UUID'])
-        print("State:", vm['state'])
-        print("Memory in GB:", vm['memory_gb'])
-        print("VCPU:", vm['VCPU'])
-        print("OS Architecture:", vm['os_arch'])
-        print("OS ID:", vm['libosinfo_os_id'])
-        print("IP Addresses:", ", ".join(vm['IPs']))
-        print("Volumes:", ", ".join(vm['volumes']))
-        print()
-
-    print(sanitized_vms)
-
     return render(request, 'app/vm_list.html', {'vms': sanitized_vms})
 
 
