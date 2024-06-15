@@ -12,3 +12,15 @@ $('.dropdown-item').click(function() {
         }
     });
 });
+
+$(document).ready(function() {
+    $('.dropdown-toggle').each(function() {
+        let vmState = $(this).data('state');
+        if (vmState === 'running') {
+            $(this).addClass('button-disabled');
+        }
+        if (vmState === 'stopped') {
+            $(this).addClass('button-disabled');
+        }
+    });
+});

@@ -17,6 +17,7 @@
                     <tr>
                         <th colspan="2" scope="col">{{ LIST_VM_OS_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_NAME_LABEL }}</th>
+                        <th scope="col">{{ LIST_VM_STATE_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_RAM_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_CPU_LABEL }}</th>
                     </tr>
@@ -28,14 +29,16 @@
                                 <td colspan="2">
                                     <div class="os-info">
                                         <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-state="{{ vm.state }}">
                                                 <i class="fa-solid fa-gears"></i>
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
+                                                <li><a class="dropdown-item"> <i class="fa-solid fa-circle-info"></i> Info </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
+                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-skull"></i> Kill </a></li>
                                                 <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.UUID %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
@@ -46,6 +49,7 @@
                                     </div>
                                 </td>
                                 <td>{{ vm.name }}</td>
+                                <td>{{ vm.state }}</td>
                                 <td>{{ vm.memory_gb }}</td>
                                 <td>{{ vm.VCPU }}</td>
                             </tr>

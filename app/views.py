@@ -1,7 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 from .vm_form import VMForm, get_form_fields_info
-from .vm_list import VMList
 from . import context_processors
 from .register_form import CustomUserCreationForm
 from uuid import uuid4

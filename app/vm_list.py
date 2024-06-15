@@ -30,25 +30,3 @@ def get_os_logo(os_info):
             return BASE_URL + os_logo
 
     return BASE_URL + DEFAULT_LOGO
-
-
-class VMList:
-    def __init__(self, xml_file_path):
-        self.vms = []
-
-        tree = ElementTree.parse(xml_file_path)
-        root = tree.getroot()
-
-        for domain in root.findall('domain'):
-            vm_data = {
-                'uuid': domain.find('uuid').text,
-                'name': domain.find('name').text,
-                'memory': domain.find('memory').text,
-                'vcpu': domain.find('vcpu').text,
-                'os_info': domain.find('metadata/os_info').text,
-                'os_logo': get_os_logo(domain.find('metadata/os_info').text),
-            }
-            self.vms.append(vm_data)
-
-    def get_vms(self):
-        return self.vms
