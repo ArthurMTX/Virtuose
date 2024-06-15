@@ -22,9 +22,9 @@
                     </tr>
                     </thead>
                     <tbody class="table-group-divider table-secondary">
-                    {% for vm in vms %}
-                        {% if vm.0 %}
-                            <tr class="vm" data-id="{{ vm.0.uuid }}">
+                    {% if vms %}
+                        {% for vm in vms %}
+                            <tr class="vm" data-id="{{ vm.uuid }}">
                                 <td colspan="2">
                                     <div class="os-info">
                                         <div class="dropdown">
@@ -32,25 +32,27 @@
                                                 <i class="fa-solid fa-gears"></i>
                                             </button>
                                             <ul class="dropdown-menu">
-                                                <li><h6 class="dropdown-header">{{ vm.0.name }}</h6></li>
+                                                <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
-                                                <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.0.uuid %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
+                                                <li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.uuid %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
                                             </ul>
                                         </div>
-                                        <img src="{{ vm.0.os_logo }}" alt="{{ vm.0.os_info }} logo" width="50" height="50">
-                                        <p> {{ vm.0.os_info }} </p>
+                                        <img src="{{ vm.os_logo }}" alt="{{ vm.os_info }} logo" width="50" height="50">
+                                        <p> {{ vm.os_info }} </p>
                                     </div>
                                 </td>
-                                <td>{{ vm.0.name }}</td>
-                                <td>{{ vm.0.memory }}</td>
-                                <td>{{ vm.0.vcpu }}</td>
+                                <td>{{ vm.name }}</td>
+                                <td>{{ vm.memory }}</td>
+                                <td>{{ vm.vcpu }}</td>
                             </tr>
-                        {% endif %}
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <p>Aucune machine virtuelle trouvée.</p>
+                    {% endif %}
                     </tbody>
                 </table>
             </div>
