@@ -15,7 +15,7 @@
                 <table class="table table-hover table-bordered align-middle sortable">
                     <thead>
                     <tr>
-                        <th scope="col"></th>
+                        <th scope="col" style="width:10%"></th>
                         <th scope="col">{{ LIST_VM_OS_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_NAME_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_RAM_LABEL }}</th>
@@ -27,7 +27,7 @@
                         {% for vm in vms %}
                             <tr class="vm" data-id="{{ vm.UUID }}">
                                 <td>
-                                    <div>
+                                    <div class="os-info">
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 <i class="fa-solid fa-gears"></i>
