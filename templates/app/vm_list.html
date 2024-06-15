@@ -18,7 +18,6 @@
                         <th scope="col"></th>
                         <th scope="col">{{ LIST_VM_OS_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_NAME_LABEL }}</th>
-                        <th scope="col">{{ LIST_VM_STATE_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_RAM_LABEL }}</th>
                         <th scope="col">{{ LIST_VM_CPU_LABEL }}</th>
                     </tr>
@@ -44,6 +43,19 @@
                                             <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
                                         </ul>
                                     </div>
+                                    <div class="vm-state">
+                                        {% if vm.state == VM_STATE_RUNNING %}
+                                            <i class="fa-solid fa-check" style="color: #74c93b;"></i>
+                                        {% elif vm.state == VM_STATE_PAUSED %}
+                                            <i class="fa-solid fa-pause" style="color: #ffbb00;"></i>
+                                        {% elif vm.state == VM_STATE_SHUTDOWN or vm.state == VM_STATE_SHUTOFF or vm.state == VM_STATE_PMSUSPENDED %}
+                                            <i class="fa-solid fa-stop" style="color: #d30d0d;"></i>
+                                        {% elif vm.state == VM_STATE_CRASHED or vm.state == VM_STATE_BLOCKED %}
+                                            <i class="fa-solid fa-burst" style="color: #cd13b4;"></i>
+                                        {% elif vm.state == UNKNOWN %}
+                                            <i class="fa-solid fa-question" style="color: #185ed8;"></i>
+                                        {% endif %}
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="os-info">
@@ -52,7 +64,6 @@
                                     </div>
                                 </td>
                                 <td>{{ vm.name }}</td>
-                                <td>{{ vm.state }}</td>
                                 <td>{{ vm.memory_gb }}</td>
                                 <td>{{ vm.VCPU }}</td>
                             </tr>
