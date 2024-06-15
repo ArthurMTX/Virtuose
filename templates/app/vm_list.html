@@ -34,7 +34,7 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
-                                                <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#vmInfoModal{{ vm.UUID }}"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item {% if vm.state == 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
                                                 <li><a class="dropdown-item {% if vm.state != 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
@@ -69,6 +69,25 @@
                                 <td>{{ vm.memory_gb }}</td>
                                 <td>{{ vm.VCPU }}</td>
                             </tr>
+                            <div class="modal fade" id="vmInfoModal{{ vm.UUID }}" tabindex="-1" aria-labelledby="vmInfoModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="vmInfoModalLabel">VM Info</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Name: {{ vm.name }}</p>
+                                            <p>OS: {{ vm.os }}</p>
+                                            <p>RAM: {{ vm.memory_gb }}</p>
+                                            <p>CPU: {{ vm.VCPU }}</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         {% endfor %}
                     {% else %}
                         <p>Aucune machine virtuelle trouvée.</p>
