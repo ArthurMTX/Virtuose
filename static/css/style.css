@@ -278,3 +278,9 @@
     overflow-x: visible;
     -webkit-overflow-scrolling: touch;
 }
+
+.dropdown-item-disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
