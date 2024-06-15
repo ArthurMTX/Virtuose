@@ -98,6 +98,7 @@ def list_dom_info_name(dom_name: str):
         libosinfo_os = root.find('metadata/libosinfo:libosinfo/libosinfo:os', namespaces)
         if libosinfo_os is not None:
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
+            dom_info["os"] = dom_info["libosinfo_os_id"].split('/')[-2].lower()
 
         if state == 1:
             # Récupérer les adresses IPs du domaine
