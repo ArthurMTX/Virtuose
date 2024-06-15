@@ -140,19 +140,20 @@ def vm_list(request):
         if vm is not None:
             vms.append(list_dom_info_name(vm[0]))
 
+    vms = [vm for vm in vms if vm[0] is not None]
+
     for vm in vms:
-        if vm[0] is not None:
-            print("Name:", vm[0]['name'])
-            print("ID:", vm[0]['ID'])
-            print("UUID:", vm[0]['UUID'])
-            print("State:", vm[0]['state'])
-            print("Memory in GB:", vm[0]['memory_gb'])
-            print("VCPU:", vm[0]['VCPU'])
-            print("OS Architecture:", vm[0]['os_arch'])
-            print("OS ID:", vm[0]['libosinfo_os_id'])
-            print("IP Addresses:", ", ".join(vm[0]['IPs']))
-            print("Volumes:", ", ".join(vm[0]['volumes']))
-            print()
+        print("Name:", vm[0]['name'])
+        print("ID:", vm[0]['ID'])
+        print("UUID:", vm[0]['UUID'])
+        print("State:", vm[0]['state'])
+        print("Memory in GB:", vm[0]['memory_gb'])
+        print("VCPU:", vm[0]['VCPU'])
+        print("OS Architecture:", vm[0]['os_arch'])
+        print("OS ID:", vm[0]['libosinfo_os_id'])
+        print("IP Addresses:", ", ".join(vm[0]['IPs']))
+        print("Volumes:", ", ".join(vm[0]['volumes']))
+        print()
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
@@ -164,4 +165,3 @@ def vm_view(request, vm_uuid):
 
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
-
