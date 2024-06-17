@@ -1,6 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-
-from .services import get_all_domains, get_domain_uuid
+from .services import get_all_domains, get_domain_by_name
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -10,11 +9,11 @@ from xml.dom import minidom
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from app.api.domains import list_dom_info_uuid, list_all_domain, list_dom_info_name
+from app.api.domains import list_dom_info_uuid
 
 
 def index(request):
@@ -139,7 +138,7 @@ def vm_list(request):
     print(vms_list)
 
     for vm in vms_list:
-        vms.append(get_domain_uuid(vm['uuid']))
+        vms.append(get_domain_by_name(vm))
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
