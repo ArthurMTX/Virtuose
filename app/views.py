@@ -191,11 +191,16 @@ def release_port(request):
         if port:
             try:
                 result = subprocess.run(['lsof', '-t', '-i', f':{port}'], capture_output=True, text=True)
+                print(f"Result from lsof: {result.stdout}")
                 pid = int(result.stdout.strip())
                 os.kill(pid, signal.SIGTERM)
+                print(f"Process {pid} killed successfully")
                 return JsonResponse({'status': 'success'})
             except Exception as e:
+                print(f"Error: {e}")
                 return JsonResponse({'status': 'error', 'message': str(e)})
         else:
+            print("No port provided")
             return JsonResponse({'status': 'error', 'message': 'No port provided'})
+    print("Invalid request method")
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
