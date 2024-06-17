@@ -137,8 +137,10 @@ def vm_list(request):
     vms = []
 
     for vm in vms_list:
-        vm.append(get_os_logo(vm.get('os')))
         vms.append(get_domain_by_name(vm))
+
+    for vm in vms:
+        vm['os_logo'] = get_os_logo(vm.get('os_info'))
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
