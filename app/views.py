@@ -169,7 +169,7 @@ def vm_view(request, vm_uuid):
     host = request.get_host()
 
     command = f'websockify --web {VNC_URL} {port} 0.0.0.0:{vm_port} --target-config=/tmp/{vm_uuid}.json'
-    subprocess.Popen(command)
+    subprocess.Popen(command, shell=True)
 
     websocket_url = f'{host}:{port}'
     return render(request, 'app/view.html', {'websocket_url': websocket_url, 'port': port, 'host': host})
