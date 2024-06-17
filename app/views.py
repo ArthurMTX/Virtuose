@@ -168,7 +168,7 @@ def vm_view(request, vm_uuid):
     view_port = get_free_port()
     host = request.get_host()
 
-    command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port} --target-config=/tmp/{vm_uuid}.json'
+    command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port}'
     print(command)
     subprocess.Popen(command, shell=True)
 
