@@ -175,6 +175,13 @@ def list_dom_info_uuid(dom_uuid: str):
         os_arch = root.find('os/type').attrib.get('arch', context_processors.UNKNOWN)
         dom_info["os_arch"] = os_arch
 
+        graphics_protocol = root.find('devices/graphics').attrib.get('type', context_processors.UNKNOWN)
+        graphics_port = root.find('devices/graphics').attrib.get('port', context_processors.UNKNOWN)
+        graphics_addr = root.find('devices/graphics').attrib.get('listen', context_processors.UNKNOWN)
+        dom_info["graphics_protocol"] = graphics_protocol
+        dom_info["graphics_port"] = graphics_port
+        dom_info["graphics_addr"] = graphics_addr
+
         namespaces = {'libosinfo': 'http://libosinfo.org/xmlns/libvirt/domain/1.0'}
 
         libosinfo_os = root.find('metadata/libosinfo:libosinfo/libosinfo:os', namespaces)
