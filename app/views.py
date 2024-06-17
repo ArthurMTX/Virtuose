@@ -2,17 +2,14 @@ from django.http import HttpResponse, JsonResponse
 import os
 import signal
 import json
-
 from django.views.decorators.csrf import csrf_exempt
-
 from Virtuose.settings import VNC_URL
-from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid
+from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
 from uuid import uuid4
 import subprocess
-import socket
 from xml.etree import ElementTree
 from xml.dom import minidom
 from django.contrib import messages
@@ -157,27 +154,16 @@ def vm_list(request):
 @login_required
 def vm_view(request, vm_uuid):
     vm = get_domain_by_uuid(str(vm_uuid))
-    print(vm)
     vm_port = vm.get('graphics_port')
-
-    def get_free_port():
-        for port in range(6080, 6981):
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-                try:
-                    s.bind(('', port))
-                    return port
-                except OSError:
-                    pass
-        return None
-
     view_port = get_free_port()
     host = request.get_host()
 
-    command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port}'
-    print(command)
-    subprocess.Popen(command, shell=True)
+    websockify_command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port}'
+    websockify_process = subprocess.Popen(websockify_command, shell=True, preexec_fn=os.setsid)
+    request.session['websockify_pid'] = websockify_process.pid
 
     websocket_url = f'{host}:{view_port}'
+
     return render(request, 'app/view.html', {'websocket_url': websocket_url, 'port': view_port, 'host': host})
 
 
@@ -196,8 +182,11 @@ def release_port(request):
                 print(f"Result from lsof: {pids}")
 
                 for pid in pids:
-                    os.kill(int(pid), signal.SIGTERM)
-                    print(f"Process {pid} killed successfully")
+                    try:
+                        os.killpg(os.getpgid(int(pid)), signal.SIGTERM)
+                        print(f"Process group {pid} killed successfully")
+                    except ProcessLookupError as e:
+                        print(f"Process {pid} already terminated: {e}")
 
                 return JsonResponse({'status': 'success'})
             except Exception as e:
@@ -208,4 +197,3 @@ def release_port(request):
             return JsonResponse({'status': 'error', 'message': 'No port provided'})
     print("Invalid request method")
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
-

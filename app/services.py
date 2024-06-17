@@ -1,6 +1,17 @@
+import socket
 import requests
 from Virtuose.settings import API_URL
 
+
+def get_free_port():
+    for port in range(6080, 6981):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            try:
+                s.bind(('', port))
+                return port
+            except OSError:
+                pass
+    return None
 
 def get_all_domains():
     response = requests.get(f"{API_URL}/domains/")
