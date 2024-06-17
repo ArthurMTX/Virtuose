@@ -2,6 +2,9 @@ from django.http import HttpResponse, JsonResponse
 import os
 import signal
 import json
+
+from django.views.decorators.csrf import csrf_exempt
+
 from Virtuose.settings import VNC_URL
 from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid
 from .vm_form import VMForm, get_form_fields_info
@@ -178,6 +181,7 @@ def vm_view(request, vm_uuid):
     return render(request, 'app/view.html', {'websocket_url': websocket_url, 'port': view_port, 'host': host})
 
 
+@csrf_exempt
 @login_required
 def release_port(request):
     if request.method == 'POST':
