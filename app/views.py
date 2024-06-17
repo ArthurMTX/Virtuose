@@ -1,5 +1,5 @@
 from django.http import HttpResponse, JsonResponse
-from .services import get_all_domains, get_domain_by_name
+from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -145,7 +145,9 @@ def vm_list(request):
 
 @login_required
 def vm_view(request, vm_uuid):
-    vm = list_dom_info_uuid(str(vm_uuid))
+    vm = get_domain_by_uuid(str(vm_uuid))
+
+    print(vm)
 
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
