@@ -13,6 +13,7 @@ def get_free_port():
                 pass
     return None
 
+
 def get_all_domains():
     response = requests.get(f"{API_URL}/domains/")
     if response.status_code == 200:
@@ -35,4 +36,3 @@ def get_domain_by_name(name):
         return response.json()
     else:
         return None
-
