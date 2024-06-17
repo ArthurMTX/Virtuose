@@ -37,8 +37,8 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 DEBUG = True
 
 QEMU_URI = "qemu:///system"
-
 API_URL = "http://127.0.0.1/api"
+VNC_URL = "/opt/virtuose/static/noVNC/"
 
 ALLOWED_HOSTS = ['127.0.0.1', 'virtuose', '159.31.247.240']
 

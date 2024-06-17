@@ -1,9 +1,13 @@
 from django.http import HttpResponse, JsonResponse
+
+from Virtuose.settings import VNC_URL
 from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
 from uuid import uuid4
+import subprocess
+import socket
 from xml.etree import ElementTree
 from xml.dom import minidom
 from django.contrib import messages
@@ -148,8 +152,23 @@ def vm_list(request):
 @login_required
 def vm_view(request, vm_uuid):
     vm = get_domain_by_uuid(str(vm_uuid))
+    vm_port = vm.get('graphics_port')
 
-    # execute websockify : websockify --web /opt/virtuose/static/noVNC/ 6080 0.0.0.0:5900
+    def get_free_port():
+        for port in range(6080, 6981):
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                try:
+                    s.bind(('', port))
+                    return port
+                except OSError:
+                    pass
+        return None
 
-    websocket_url = f'ws://127.0.0.1:6080'
-    return render(request, 'app/view.html', {'websocket_url': websocket_url})
+    port = get_free_port()
+    host = request.get_host()
+
+    command = [f'websockify --web {VNC_URL} {port} 0.0.0.0:{vm_port} --target-config=/tmp/{vm_uuid}.json']
+    subprocess.Popen(command)
+
+    websocket_url = f'{host}:{port}'
+    return render(request, 'app/view.html', {'websocket_url': websocket_url, 'port': port, 'host': host})
