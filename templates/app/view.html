@@ -10,4 +10,9 @@ iframe {
 }
 </style>
 <iframe id="myIframe" allowfullscreen="true" src="http://{{ websocket_url }}/vnc.html?host={{ host }}&port={{ port }}&autoconnect=true&resize=scale" style="width:100vw; height:100vh;"></iframe>
+<script>
+window.addEventListener('beforeunload', function () {
+    navigator.sendBeacon('/release_port/', JSON.stringify({ port: {{ port }} }));
+});
+</script>
 {% endblock %}

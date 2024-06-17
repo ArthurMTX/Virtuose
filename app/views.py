@@ -1,5 +1,7 @@
 from django.http import HttpResponse, JsonResponse
-
+import os
+import signal
+import json
 from Virtuose.settings import VNC_URL
 from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid
 from .vm_form import VMForm, get_form_fields_info
@@ -174,3 +176,22 @@ def vm_view(request, vm_uuid):
 
     websocket_url = f'{host}:{view_port}'
     return render(request, 'app/view.html', {'websocket_url': websocket_url, 'port': view_port, 'host': host})
+
+
+@login_required
+def release_port(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        port = data.get('port')
+
+        if port:
+            try:
+                result = subprocess.run(['lsof', '-t', '-i', f':{port}'], capture_output=True, text=True)
+                pid = int(result.stdout.strip())
+                os.kill(pid, signal.SIGTERM)
+                return JsonResponse({'status': 'success'})
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'message': str(e)})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'No port provided'})
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})

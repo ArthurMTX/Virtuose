@@ -16,6 +16,7 @@ urlpatterns = [
     path('profile/securite', views.securite, name='profile/securite'),
     path('profile/vmlist', views.vm_list, name='profile/vmlist'),
     path('profile/newvm', views.new_vm, name='profile/newvm'),
+    path('release_port/', views.release_port, name='release_port'),
 
     # API
     path('api/', SpectacularAPIView.as_view(), name='Virtuose API'),
