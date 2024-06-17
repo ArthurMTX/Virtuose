@@ -146,7 +146,8 @@ def vm_list(request):
 @login_required
 def vm_view(request, vm_uuid):
     vm = list_dom_info_uuid(str(vm_uuid))
-    print(vm.name)
+    print(vm)
+    print(vm.get('name'))
 
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
