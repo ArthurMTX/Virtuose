@@ -152,6 +152,7 @@ def vm_list(request):
 @login_required
 def vm_view(request, vm_uuid):
     vm = get_domain_by_uuid(str(vm_uuid))
+    print(vm)
     vm_port = vm.get('graphics_port')
 
     def get_free_port():
@@ -167,7 +168,7 @@ def vm_view(request, vm_uuid):
     port = get_free_port()
     host = request.get_host()
 
-    command = [f'websockify --web {VNC_URL} {port} 0.0.0.0:{vm_port} --target-config=/tmp/{vm_uuid}.json']
+    command = f'websockify --web {VNC_URL} {port} 0.0.0.0:{vm_port} --target-config=/tmp/{vm_uuid}.json'
     subprocess.Popen(command)
 
     websocket_url = f'{host}:{port}'
