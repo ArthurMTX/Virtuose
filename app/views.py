@@ -140,7 +140,7 @@ def vm_list(request):
         vms.append(get_domain_by_name(vm))
 
     for vm in vms:
-        vm['os_logo'] = get_os_logo(vm.get('os_info'))
+        vm['os_logo'] = get_os_logo(vm.get('os'))
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
