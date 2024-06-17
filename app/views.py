@@ -190,6 +190,7 @@ def release_port(request):
 
         if port:
             try:
+                print(f"Trying to kill process on port {port}")
                 result = subprocess.run(['lsof', '-t', '-i', f':{port}'], capture_output=True, text=True)
                 print(f"Result from lsof: {result.stdout}")
                 pid = int(result.stdout.strip())
