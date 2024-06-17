@@ -4,6 +4,7 @@ from Virtuose.settings import API_URL
 
 def get_all_domains():
     response = requests.get(f"{API_URL}/domains/")
+    print(response)
     if response.status_code == 200:
         return response.json()
     else:
