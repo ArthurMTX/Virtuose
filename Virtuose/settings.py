@@ -38,7 +38,7 @@ DEBUG = True
 
 QEMU_URI = "qemu:///system"
 
-API_URL = "http://127.0.0.1/api/"
+API_URL = "http://127.0.0.1/api"
 
 ALLOWED_HOSTS = ['127.0.0.1', 'virtuose', '159.31.247.240']
 
