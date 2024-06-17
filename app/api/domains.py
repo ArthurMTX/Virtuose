@@ -3,7 +3,6 @@ import sys
 import xml.etree.ElementTree as ET
 from .. import context_processors
 from Virtuose.settings import QEMU_URI
-from ..vm_list import get_os_logo
 
 
 def is_domain_active(dom_name: str):
@@ -101,12 +100,11 @@ def list_dom_info_name(dom_name: str):
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
             dom_info["os"] = dom_info["libosinfo_os_id"].split('/')[-2].lower()
 
-        graphics_protocol = root.find('devices/graphics').attrib.get('type', context_processors.UNKNOWN)
-        graphics_port = root.find('devices/graphics').attrib.get('port', context_processors.UNKNOWN)
-        graphics_addr = root.find('devices/graphics').attrib.get('listen', context_processors.UNKNOWN)
-        dom_info["graphics_protocol"] = graphics_protocol
-        dom_info["graphics_port"] = graphics_port
-        dom_info["graphics_addr"] = graphics_addr
+        for graphics in root.findall('devices/graphics'):
+            graphics_info = {}
+            graphics_info["listen"] = graphics.attrib.get('listen', 'unknow')
+            graphics_info["port"] = graphics.attrib.get('port', 'unknow')
+            dom_info[graphics.attrib.get('type')] = graphics_info
 
 
         if state == 1:
@@ -175,12 +173,11 @@ def list_dom_info_uuid(dom_uuid: str):
         os_arch = root.find('os/type').attrib.get('arch', context_processors.UNKNOWN)
         dom_info["os_arch"] = os_arch
 
-        graphics_protocol = root.find('devices/graphics').attrib.get('type', context_processors.UNKNOWN)
-        graphics_port = root.find('devices/graphics').attrib.get('port', context_processors.UNKNOWN)
-        graphics_addr = root.find('devices/graphics').attrib.get('listen', context_processors.UNKNOWN)
-        dom_info["graphics_protocol"] = graphics_protocol
-        dom_info["graphics_port"] = graphics_port
-        dom_info["graphics_addr"] = graphics_addr
+        for graphics in root.findall('devices/graphics'):
+            graphics_info = {}
+            graphics_info["listen"] = graphics.attrib.get('listen', 'unknow')
+            graphics_info["port"] = graphics.attrib.get('port', 'unknow')
+            dom_info[graphics.attrib.get('type')] = graphics_info
 
         namespaces = {'libosinfo': 'http://libosinfo.org/xmlns/libvirt/domain/1.0'}
 
