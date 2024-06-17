@@ -101,7 +101,13 @@ def list_dom_info_name(dom_name: str):
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
             dom_info["os"] = dom_info["libosinfo_os_id"].split('/')[-2].lower()
 
-        dom_info["os_logo"] = get_os_logo(dom_info["os"])
+        graphics_protocol = root.find('devices/graphics').attrib.get('type', context_processors.UNKNOWN)
+        graphics_port = root.find('devices/graphics').attrib.get('port', context_processors.UNKNOWN)
+        graphics_addr = root.find('devices/graphics').attrib.get('listen', context_processors.UNKNOWN)
+        dom_info["graphics_protocol"] = graphics_protocol
+        dom_info["graphics_port"] = graphics_port
+        dom_info["graphics_addr"] = graphics_addr
+
 
         if state == 1:
             # Récupérer les adresses IPs du domaine

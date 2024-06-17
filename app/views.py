@@ -14,6 +14,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from app.api.domains import list_dom_info_uuid
+from .vm_list import get_os_logo
 
 
 def index(request):
@@ -135,9 +136,8 @@ def vm_list(request):
     vms_list = get_all_domains()
     vms = []
 
-    print(vms_list)
-
     for vm in vms_list:
+        vm.append(get_os_logo(vm.get('os')))
         vms.append(get_domain_by_name(vm))
 
     return render(request, 'app/vm_list.html', {'vms': vms})
@@ -147,7 +147,7 @@ def vm_list(request):
 def vm_view(request, vm_uuid):
     vm = get_domain_by_uuid(str(vm_uuid))
 
-    print(vm)
+    # execute websockify : websockify --web /opt/virtuose/static/noVNC/ 6080 0.0.0.0:5900
 
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
