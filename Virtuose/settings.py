@@ -38,6 +38,8 @@ DEBUG = True
 
 QEMU_URI = "qemu:///system"
 
+API_URL = "http://localhost/api/"
+
 ALLOWED_HOSTS = ['virtuose', '159.31.247.240']
 
 LOGIN_URL = '/login/'

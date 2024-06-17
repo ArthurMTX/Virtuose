@@ -1,4 +1,6 @@
 from django.http import HttpResponse, JsonResponse
+
+from .services import get_all_domains, get_domain_uuid
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -131,23 +133,18 @@ def vm_list(request):
 
         return JsonResponse({'status': 'success'})
 
-    vms_list = list_all_domain()
+    vms_list = get_all_domains()
     vms = []
 
     for vm in vms_list:
-        if vm is not None:
-            vms.append(list_dom_info_name(vm[0]))
+        vms.append(get_domain_uuid(vm['uuid']))
 
-    sanitized_vms = [vm[0] for vm in vms if vm[0] is not None]
-
-    return render(request, 'app/vm_list.html', {'vms': sanitized_vms})
+    return render(request, 'app/vm_list.html', {'vms': vms})
 
 
 @login_required
 def vm_view(request, vm_uuid):
     vm = list_dom_info_uuid(str(vm_uuid))
-    print(vm)
-    print(vm[0].get("name"))
 
     websocket_url = f'ws://127.0.0.1:6080'
     return render(request, 'app/view.html', {'websocket_url': websocket_url})
