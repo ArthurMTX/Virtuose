@@ -21,11 +21,7 @@ def get_free_port():
 def get_all_domains():
     response = requests.get(f"{API_URL}/domains/")
     if response.status_code == 200:
-        domains = response.json()
-        for domain in domains:
-            if domain['state'] == 'running' and not check_guest_agent_active(domain['uuid']):
-                domain['state'] = 'Starting'
-        return domains
+        return response.json()
     else:
         return None
 

@@ -3,6 +3,7 @@ import sys
 import xml.etree.ElementTree as ET
 from .. import context_processors
 from Virtuose.settings import QEMU_URI
+from ..services import check_guest_agent_active
 
 
 def is_domain_active(dom_name: str):
@@ -82,6 +83,9 @@ def list_dom_info_name(dom_name: str):
         dom_info["state"] = state_str
         dom_info["memory_gb"] = mem / (1024 ** 2)  # Convertir de KBytes à GBytes
         dom_info["VCPU"] = num_cpu  # Nombre de vCPUs utilisés
+
+        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['uuid']):
+            dom_info['state'] = 'Starting'
 
         # Informations sur l'OS
         xml_desc = dom.XMLDesc()
@@ -166,6 +170,9 @@ def list_dom_info_uuid(dom_uuid: str):
         dom_info["state"] = state_str
         dom_info["memory_gb"] = mem / (1024 ** 2)
         dom_info["VCPU"] = num_cpu
+
+        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['uuid']):
+            dom_info['state'] = 'Starting'
 
         xml_desc = dom.XMLDesc()
         root = ET.fromstring(xml_desc)
