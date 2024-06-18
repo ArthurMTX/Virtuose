@@ -28,8 +28,28 @@ $(document).ready(function() {
             success: function(response) {
                 console.log(response);
                 let vmStateElement = document.querySelector(`tr[data-id='${vm_uuid}'] .vm-state`);
-                vmStateElement.textContent = response.state;
-                console.log('VM ' + vm_uuid + ' state refreshed');
+                switch (response.state) {
+                    case 'running':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-check" style="color: #74c93b;"></i>';
+                        break;
+                    case 'shutoff':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>'
+                        break;
+                    case 'paused':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-pause" style="color: #ffbb00;"></i>';
+                        break;
+                    case 'crashed':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>';
+                        break;
+                    case 'suspended':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>';
+                        break;
+                    case 'starting':
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>';
+                        break;
+                    default:
+                        vmStateElement.innerHTML = '<i class="fa-solid fa-question" style="color: #185ed8;"></i>';
+                }
             },
             error: function(error) {
                 console.log(error);
