@@ -21,6 +21,7 @@
                         <div class="modal-body">
                             <p> <i class="icon-action fa-solid fa-check" style="color: #74c93b;"></i> Running </p>
                             <p> <i class="icon-action fa-solid fa-pause" style="color: #ffbb00;"></i> Paused </p>
+                            <p> <i class="icon-action fa-solid fa-hourglass-half" style="color: #fbff00;"></i> Starting </p>
                             <p> <i class="icon-action fa-solid fa-stop" style="color: #d30d0d;"></i> Stopped </p>
                             <p> <i class="icon-action fa-solid fa-burst" style="color: #cd13b4;"></i> Crashed </p>
                             <p> <i class="icon-action fa-solid fa-question" style="color: #185ed8;"></i> Unknown </p>
@@ -67,6 +68,8 @@
                                         <div class="vm-state">
                                             {% if vm.state == VM_STATE_RUNNING %}
                                                 <i class="fa-solid fa-check" style="color: #74c93b;"></i>
+                                            {% elif vm.state == VM_STATE_STARTING %}
+                                                <i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>
                                             {% elif vm.state == VM_STATE_PAUSED %}
                                                 <i class="fa-solid fa-pause" style="color: #ffbb00;"></i>
                                             {% elif vm.state == VM_STATE_SHUTDOWN or vm.state == VM_STATE_SHUTOFF or vm.state == VM_STATE_PMSUSPENDED %}

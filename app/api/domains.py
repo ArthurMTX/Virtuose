@@ -85,7 +85,7 @@ def list_dom_info_name(dom_name: str):
         dom_info["VCPU"] = num_cpu
 
         if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['UUID']):
-            dom_info['state'] = 'Starting'
+            dom_info['state'] = 'starting'
 
         # Informations sur l'OS
         xml_desc = dom.XMLDesc()
@@ -175,7 +175,7 @@ def list_dom_info_uuid(dom_uuid: str):
         dom_info["VCPU"] = num_cpu
 
         if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['UUID']):
-            dom_info['state'] = 'Starting'
+            dom_info['state'] = 'starting'
 
         xml_desc = dom.XMLDesc()
         root = ET.fromstring(xml_desc)

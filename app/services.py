@@ -84,7 +84,7 @@ def check_guest_agent_active(vm_uuid):
                     return True
             except libvirt.libvirtError:
                 pass
-            time.sleep(1)
+            time.sleep(3)
     except libvirt.libvirtError:
         return False
     return False
