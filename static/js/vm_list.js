@@ -31,7 +31,6 @@ $(document).ready(function() {
                         .then(vm_data => {
                             let vmElement = document.querySelector(`tr[data-id='${vm_data.UUID}']`);
                             vmElement.querySelector('.vm-state').innerHTML = getVmStateIcon(vm_data.state);
-                            vmElement.querySelector('.os-info img').src = vm_data.os_logo;
                             vmElement.querySelector('.os-info p').textContent = vm_data.os;
                             vmElement.querySelector('td:nth-child(4)').textContent = vm_data.memory_gb;
                             vmElement.querySelector('td:nth-child(5)').textContent = vm_data.VCPU;
