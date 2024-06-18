@@ -11,13 +11,31 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# Vérification des commandes apt, python3, pip et python3.11-venv
-for cmd in apt python3 pip; do
+# Fonction pour installer une commande si elle n'est pas présente
+install_if_missing() {
+  local cmd=$1
+  local package=$2
+
+  # shellcheck disable=SC2086
   if ! command -v $cmd &> /dev/null; then
-    echo -e "${RED}La commande $cmd n'est pas installée. Veuillez l'installer avant de continuer.${NC}"
-    exit 1
+    echo -e "${RED}La commande $cmd n'est pas installée.${NC}"
+    echo -e "${GREEN}Installation de $package...${NC}"
+    apt update && apt install -y "$package"
+
+    if [ $? -ne 0 ]; then
+      echo -e "${RED}Échec de l'installation de $package.${NC}"
+      exit 1
+    fi
+  else
+    echo -e "${GREEN}La commande $cmd est déjà installée.${NC}"
   fi
-done
+}
+
+# Vérification et installation de apt, python3, pip et python3.11-venv
+install_if_missing "apt" "apt"
+install_if_missing "python3" "python3"
+install_if_missing "pip" "python3-pip"
+install_if_missing "python3.11-venv" "python3.11-venv"
 
 # Mise à jour des paquets et installation des dépendances
 echo -e "${GREEN}Mise à jour des paquets et installation des dépendances...${NC}"
@@ -29,7 +47,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-cd .. 
+cd ..
 
 # Création de l'environnement virtuel Python
 if [ ! -d "venv" ]; then
