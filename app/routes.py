@@ -95,5 +95,5 @@ def dom_actions(request, dom_uuid, action):
             return JsonResponse({"error": str(e)}, status=400)
         finally:
             conn.close()
-        return JsonResponse({"status": f"{action} OK"}, status=200)
+            return JsonResponse({"status": f"{action} OK"}, status=200)
     return JsonResponse({"error": context_processors.VM_INVALID_METHOD}, status=405)
