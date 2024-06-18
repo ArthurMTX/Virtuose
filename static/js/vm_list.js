@@ -1,32 +1,34 @@
 $('.dropdown-item').click(function() {
     let action = $(this).text().trim().toUpperCase();
     let vm_uuid = $(this).closest('.vm').data('id');
+    let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
 
-$.ajax({
-    url: '/api/domains/actions/' + vm_uuid + '/' + action,
-    method: 'POST',
-    success: function(response) {
-        if (response) {
-            try {
-                console.log(response);
-                showToast(response.status);
-            } catch (e) {
-                console.error('Error parsing JSON:', e);
+    $.ajax({
+        url: '/api/domains/actions/' + vm_uuid + '/' + action,
+        method: 'POST',
+        success: function(response) {
+            if (response) {
+                try {
+                    console.log(response);
+                    showToast(response.status, vm_name);
+                } catch (e) {
+                    console.error('Error parsing JSON:', e);
+                }
+            } else {
+                console.error('response is undefined');
             }
-        } else {
-            console.error('response is undefined');
+        },
+        error: function(response) {
+            console.log(response);
+            showToast(response.status);
         }
-    },
-    error: function(response) {
-        console.log(response);
-        showToast(response.status);
-    }
-});
+    });
 });
 
-function showToast(message) {
+function showToast(message, vmName) {
     let toastElement = document.querySelector('.toast');
     let toastInstance = new bootstrap.Toast(toastElement);
+    toastElement.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     toastElement.querySelector('.toast-body').textContent = message;
     toastInstance.show();
 }

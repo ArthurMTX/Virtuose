@@ -55,45 +55,45 @@ def dom_actions(request, dom_uuid, action):
         conn = libvirt.open(QEMU_URI)
         dom = conn.lookupByUUIDString(dom_uuid)
     except libvirt.libvirtError as e:
-        return JsonResponse({"error": str(e)}, status=400)
+        return JsonResponse({"error": "Unable to find the virtual machine. Please check the VM UUID."}, status=400)
 
     if request.method == "POST":
         try:
             if action == "START":
                 if dom.isActive() == 1:
-                    return JsonResponse({"status": context_processors.VM_ALREADY_RUNNING}, status=200)
+                    return JsonResponse({"status": "The virtual machine is already running."}, status=200)
                 dom.create()
-                return JsonResponse({"status": context_processors.VM_STATE_RUNNING}, status=200)
+                return JsonResponse({"status": "The virtual machine has been successfully started."}, status=200)
             elif action == "RESTART":
                 if dom.isActive() == 1:
                     dom.reboot()
-                    return JsonResponse({"status": context_processors.VM_RESTARTED}, status=200)
+                    return JsonResponse({"status": "The virtual machine has been successfully restarted."}, status=200)
                 else:
                     dom.create()
-                    return JsonResponse({"status": context_processors.VM_STATE_RUNNING}, status=200)
+                    return JsonResponse({"status": "The virtual machine has been successfully started."}, status=200)
             elif action == "STOP":
                 if dom.isActive() == 1:
                     dom.shutdown()
-                    return JsonResponse({"status": context_processors.VM_STOPPED}, status=200)
+                    return JsonResponse({"status": "The virtual machine has been successfully stopped."}, status=200)
                 else:
-                    return JsonResponse({"status": context_processors.VM_ALREADY_STOPPED}, status=200)
+                    return JsonResponse({"status": "The virtual machine is already stopped."}, status=200)
             elif action == "KILL":
                 if dom.isActive() == 1:
                     dom.destroy()
-                    return JsonResponse({"status": context_processors.VM_KILLED}, status=200)
+                    return JsonResponse({"status": "The virtual machine has been forcefully stopped."}, status=200)
                 else:
-                    return JsonResponse({"status": context_processors.VM_ALREADY_RUNNING}, status=200)
+                    return JsonResponse({"status": "The virtual machine is not running."}, status=200)
             elif action == "DELETE":
                 if dom.isActive() == 1:
                     dom.destroy()
-                    return JsonResponse({"status": context_processors.VM_DESTROYED}, status=200)
+                    return JsonResponse({"status": "The virtual machine has been forcefully stopped."}, status=200)
                 dom.undefine()
-                return JsonResponse({"status": context_processors.VM_DELETED}, status=200)
+                return JsonResponse({"status": "The virtual machine has been successfully deleted."}, status=200)
             else:
-                return JsonResponse({"error": context_processors.VM_INVALID_ACTION}, status=400)
+                return JsonResponse({"error": "Invalid action. Please check the action and try again."}, status=400)
         except libvirt.libvirtError as e:
-            return JsonResponse({"error": str(e)}, status=400)
+            return JsonResponse({"error": "An error occurred while performing the action. Please try again."}, status=400)
         finally:
             conn.close()
-            return JsonResponse({"status": f"{action} OK"}, status=200)
-    return JsonResponse({"error": context_processors.VM_INVALID_METHOD}, status=405)
+            return JsonResponse({"status": f"Action {action} completed successfully."}, status=200)
+    return JsonResponse({"error": "Invalid method. Please use the POST method."}, status=405)
