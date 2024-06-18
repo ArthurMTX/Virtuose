@@ -2,18 +2,26 @@ $('.dropdown-item').click(function() {
     let action = $(this).text().trim().toUpperCase();
     let vm_uuid = $(this).closest('.vm').data('id');
 
-    $.ajax({
-        url: '/api/domains/actions/' + vm_uuid + '/' + action,
-        method: 'POST',
-        success: function(response) {
-            console.log(response);
-            showToast(response.status);
-        },
-        error: function(response) {
-            console.log(response);
-            showToast(response.status);
+$.ajax({
+    url: '/api/domains/actions/' + vm_uuid + '/' + action,
+    method: 'POST',
+    success: function(response) {
+        if (response) {
+            try {
+                console.log(response);
+                showToast(response.status);
+            } catch (e) {
+                console.error('Error parsing JSON:', e);
+            }
+        } else {
+            console.error('response is undefined');
         }
-    });
+    },
+    error: function(response) {
+        console.log(response);
+        showToast(response.status);
+    }
+});
 });
 
 function showToast(message) {
