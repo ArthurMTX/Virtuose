@@ -142,23 +142,23 @@ def vm_list(request):
             if vm.get('state') == 'running':
                 return JsonResponse({'status': 'error', 'message': 'VM already running'})
             else:
-                return interact_with_domain(vm_uuid, action.lower())
+                return interact_with_domain(vm_uuid, action)
 
         elif action == 'STOP':
             if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action.lower())
+                return interact_with_domain(vm_uuid, action)
             else:
                 return JsonResponse({'status': 'error', 'message': 'VM not running'})
 
         elif action == 'RESTART':
             if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action.lower())
+                return interact_with_domain(vm_uuid, action)
             else:
                 return JsonResponse({'status': 'error', 'message': 'VM not running'})
 
         elif action == 'KILL':
             if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action.lower())
+                return interact_with_domain(vm_uuid, action)
             else:
                 return JsonResponse({'status': 'error', 'message': 'VM not running'})
 
@@ -166,7 +166,7 @@ def vm_list(request):
             if vm.get('state') == 'running':
                 return JsonResponse({'status': 'error', 'message': 'VM must be stopped before deletion'})
             else:
-                return interact_with_domain(vm_uuid, action.lower())
+                return interact_with_domain(vm_uuid, action)
 
         return JsonResponse({'status': 'success'})
 
