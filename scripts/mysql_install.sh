@@ -14,8 +14,8 @@ fi
 # Vérification des commandes apt, python3, pip et python3.11-venv
 for cmd in apt python3 pip; do
   if ! command -v $cmd &> /dev/null; then
-    echo -e "${RED}La commande $cmd n'est pas installée. Veuillez l'installer avant de continuer.${NC}"
-    exit 1
+    echo -e "${RED}La commande $cmd n'est pas installée.${NC}"
+    apt install -y $cmd
   fi
 done
 
