@@ -51,49 +51,54 @@ def volumes_info_all(request):
 
 @csrf_exempt
 def dom_actions(request, dom_uuid, action):
+    logs = []
     try:
         conn = libvirt.open(QEMU_URI)
         dom = conn.lookupByUUIDString(dom_uuid)
     except libvirt.libvirtError as e:
-        return JsonResponse({"error": "Unable to find the virtual machine. Please check the VM UUID."}, status=400)
+        logs.append({"error": "Unable to find the virtual machine. Please check the VM UUID."})
+        return JsonResponse(logs, safe=False, status=400)
 
     if request.method == "POST":
         try:
             if action == "START":
                 if dom.isActive() == 1:
-                    return JsonResponse({"status": "The virtual machine is already running."}, status=200)
-                dom.create()
-                return JsonResponse({"status": "The virtual machine has been successfully started."}, status=200)
+                    logs.append({"status": "The virtual machine is already running."})
+                else:
+                    dom.create()
+                    logs.append({"status": "The virtual machine has been successfully started."})
             elif action == "RESTART":
                 if dom.isActive() == 1:
                     dom.reboot()
-                    return JsonResponse({"status": "The virtual machine has been successfully restarted."}, status=200)
+                    logs.append({"status": "The virtual machine has been successfully restarted."})
                 else:
                     dom.create()
-                    return JsonResponse({"status": "The virtual machine has been successfully started."}, status=200)
+                    logs.append({"status": "The virtual machine has been successfully started."})
             elif action == "STOP":
                 if dom.isActive() == 1:
                     dom.shutdown()
-                    return JsonResponse({"status": "The virtual machine has been successfully stopped."}, status=200)
+                    logs.append({"status": "The virtual machine has been successfully stopped."})
                 else:
-                    return JsonResponse({"status": "The virtual machine is already stopped."}, status=200)
+                    logs.append({"status": "The virtual machine is already stopped."})
             elif action == "KILL":
                 if dom.isActive() == 1:
                     dom.destroy()
-                    return JsonResponse({"status": "The virtual machine has been forcefully stopped."}, status=200)
+                    logs.append({"status": "The virtual machine has been forcefully stopped."})
                 else:
-                    return JsonResponse({"status": "The virtual machine is not running."}, status=200)
+                    logs.append({"status": "The virtual machine is not running."})
             elif action == "DELETE":
                 if dom.isActive() == 1:
                     dom.destroy()
-                    return JsonResponse({"status": "The virtual machine has been forcefully stopped."}, status=200)
+                    logs.append({"status": "The virtual machine has been forcefully stopped."})
                 dom.undefine()
-                return JsonResponse({"status": "The virtual machine has been successfully deleted."}, status=200)
+                logs.append({"status": "The virtual machine has been successfully deleted."})
             else:
-                return JsonResponse({"error": "Invalid action. Please check the action and try again."}, status=400)
+                logs.append({"error": "Invalid action. Please check the action and try again."})
         except libvirt.libvirtError as e:
-            return JsonResponse({"error": "An error occurred while performing the action. Please try again."}, status=400)
+            logs.append({"error": "An error occurred while performing the action. Please try again."})
         finally:
             conn.close()
-            return JsonResponse({"status": f"Action {action} completed successfully."}, status=200)
-    return JsonResponse({"error": "Invalid method. Please use the POST method."}, status=405)
+            logs.append({"status": f"Action {action} completed successfully."})
+            return JsonResponse(logs, safe=False, status=200)
+    logs.append({"error": "Invalid method. Please use the POST method."})
+    return JsonResponse(logs, safe=False, status=405)
