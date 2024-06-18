@@ -288,6 +288,6 @@
 .modalIconsButton {
     background-color: transparent;
     border: none;
-    cursor: pointer;
+    cursor: help;
     font-size: 12px;
 }
