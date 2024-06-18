@@ -6,7 +6,8 @@ $('.dropdown-item').click(function() {
         url: '/api/domains/actions/' + vm_uuid + '/' + action,
         method: 'POST',
         success: function(response) {
-            showToast(response);
+            let message = JSON.parse(response.responseText).status;
+            showToast(message);
         },
         error: function(response) {
             showToast(response.responseText);
