@@ -27,7 +27,7 @@ $(document).ready(function() {
             type: 'GET',
             success: function(response) {
                 console.log(response);
-                let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
+                let vmStateElement = document.querySelector(`tr[data-id='${vm_uuid}'] .vm-state`);
                 vmStateElement.textContent = response.state;
                 console.log('VM ' + vm_uuid + ' state refreshed');
             },
