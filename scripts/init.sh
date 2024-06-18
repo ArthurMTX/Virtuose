@@ -19,7 +19,9 @@ execute_script() {
   local script=$1
 
   if [ -f "$script" ]; alors
+    echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
     echo -e "${GREEN}Exécution de $script...${NC}" | tee -a "$LOG_FILE"
+    echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
     if bash "$script" >> "$LOG_FILE" 2>&1; then
       echo -e "${GREEN}$script terminé avec succès.${NC}" | tee -a "$LOG_FILE"
     else
