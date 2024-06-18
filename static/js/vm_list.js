@@ -23,7 +23,7 @@ $(document).ready(function() {
 
     function refreshVmState(vm_uuid) {
         $.ajax({
-            url: '/api/vm_state/' + vm_uuid,
+            url: '/api/domains/UUID/' + vm_uuid,
             type: 'GET',
             success: function(response) {
                 let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
