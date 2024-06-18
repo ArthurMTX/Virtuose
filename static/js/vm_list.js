@@ -29,6 +29,7 @@ function refreshVmState(vm_uuid) {
         success: function(response) {
             let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
             vmStateElement.textContent = response.state;
+            console.log('VM ' + vm_uuid + ' state refreshed');
         },
         error: function(error) {
             console.log(error);
