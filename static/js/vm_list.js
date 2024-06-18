@@ -1,5 +1,5 @@
 $('.dropdown-item').click(function() {
-    let action = $(this).text().trim();
+    let action = $(this).text().trim().toUpperCase();
     let vm_uuid = $(this).closest('.vm').data('id');
 
     $.ajax({
