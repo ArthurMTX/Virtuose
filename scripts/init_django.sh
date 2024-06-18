@@ -35,7 +35,7 @@ install_if_missing() {
 install_if_missing "apt" "apt"
 install_if_missing "python3" "python3"
 install_if_missing "pip" "python3-pip"
-install_if_missing "python3.11-venv" "python3.11-venv"
+install_if_missing "python3-venv" "python3-venv"
 
 # Mise à jour des paquets et installation des dépendances
 echo -e "${GREEN}Mise à jour des paquets et installation des dépendances...${NC}"
