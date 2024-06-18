@@ -21,27 +21,37 @@ $(document).ready(function() {
         $(this).text(trimmedContent);
     });
 
-    function refreshData() {
-        fetch('/api/domains/')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(vm_name => {
-                    fetch('/api/domains/' + vm_name)
-                        .then(response => response.json())
-                        .then(vm_data => {
-                            let vmElement = document.querySelector(`tr[data-id='${vm_data.UUID}']`);
-                            vmElement.querySelector('.vm-state').innerHTML = getVmStateIcon(vm_data.state);
-                            vmElement.querySelector('.os-info p').textContent = vm_data.os;
-                            vmElement.querySelector('td:nth-child(4)').textContent = vm_data.memory_gb;
-                            vmElement.querySelector('td:nth-child(5)').textContent = vm_data.VCPU;
-                        })
-                        .catch(error => console.error('Error:', error));
-                });
-            })
-            .catch(error => console.error('Error:', error));
-    }
+function refreshData() {
+    fetch('/api/domains/')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(vm_name => {
+                fetch('/api/domains/' + vm_name)
+                    .then(response => response.json())
+                    .then(vm_data => {
+                        let vmElement = document.querySelector(`tr[data-id='${vm_data.UUID}']`);
+                        vmElement.querySelector('.vm-state').innerHTML = getVmStateIcon(vm_data.state);
+                        vmElement.querySelector('.os-info p').textContent = vm_data.os;
+                        vmElement.querySelector('td:nth-child(4)').textContent = vm_data.memory_gb;
+                        vmElement.querySelector('td:nth-child(5)').textContent = vm_data.VCPU;
 
-    setInterval(refreshData, 2000);
+                        let dropdownItems = vmElement.querySelectorAll('.dropdown-item');
+                        dropdownItems.forEach(item => {
+                            let action = item.textContent.trim();
+                            if ((action === 'Start' && vm_data.state === 'running') || (action === 'Stop' && vm_data.state !== 'running')) {
+                                item.classList.add('dropdown-item-disabled');
+                            } else {
+                                item.classList.remove('dropdown-item-disabled');
+                            }
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+setInterval(refreshData, 2000);
 
     function getVmStateIcon(state) {
         switch (state) {
