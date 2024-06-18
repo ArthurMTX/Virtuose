@@ -131,7 +131,6 @@ def vm_list(request):
         action = request.POST.get('action').upper()
         vm_uuid = request.POST.get('data_id')
         vm_info = get_domain_by_uuid(vm_uuid)
-        print(vm_info)
 
         if vm_info is None:
             print(f"VM with UUID {vm_uuid} not found")
@@ -172,6 +171,8 @@ def vm_list(request):
         if vm_info:
             vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
             vms.append(vm_info)
+
+    print(vms)
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
