@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 function refreshVmState(vm_uuid) {
     $.ajax({
-        url: '/api/vm_state/' + vm_uuid,  // Remplacez par l'URL de votre API
+        url: '/api/vm_state/' + vm_uuid,
         type: 'GET',
         success: function(response) {
             let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
@@ -38,6 +38,7 @@ function refreshVmState(vm_uuid) {
 }
 
 setInterval(function() {
+    print('Refreshing VM states...');
     let vmUuids = Array.from(document.querySelectorAll('.vm')).map(function(vm) {
         return vm.dataset.id;
     });
