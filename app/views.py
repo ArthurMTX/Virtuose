@@ -1,11 +1,11 @@
-import requests
 from django.http import HttpResponse, JsonResponse
 import os
 import signal
 import json
 from django.views.decorators.csrf import csrf_exempt
 from Virtuose.settings import VNC_URL
-from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port, interact_with_domain
+from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port, interact_with_domain, \
+    check_guest_agent_active
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -132,35 +132,26 @@ def vm_list(request):
         vm_uuid = request.POST.get('data_id')
         vm = get_domain_by_uuid(vm_uuid)
 
+        if vm is None:
+            return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
+
         if action == 'CONSOLE VIEW':
-            if vm_uuid:
-                return redirect('vm_view', vm_uuid=vm_uuid)
-            else:
-                return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
+            return redirect('vm_view', vm_uuid=vm_uuid)
 
-        elif action == 'START':
+        elif action in ['START', 'STOP', 'RESTART', 'KILL']:
             if vm.get('state') == 'running':
-                return JsonResponse({'status': 'error', 'message': 'VM already running'})
+                if action == 'START':
+                    return JsonResponse({'status': 'error', 'message': 'VM already running'})
+                else:
+                    if action == 'STOP' and not check_guest_agent_active(vm):
+                        return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
+                    return interact_with_domain(vm_uuid, action)
             else:
-                return interact_with_domain(vm_uuid, action)
-
-        elif action == 'STOP':
-            if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action)
-            else:
-                return JsonResponse({'status': 'error', 'message': 'VM not running'})
-
-        elif action == 'RESTART':
-            if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action)
-            else:
-                return JsonResponse({'status': 'error', 'message': 'VM not running'})
-
-        elif action == 'KILL':
-            if vm.get('state') == 'running':
-                return interact_with_domain(vm_uuid, action)
-            else:
-                return JsonResponse({'status': 'error', 'message': 'VM not running'})
+                if action == 'START':
+                    if not check_guest_agent_active(vm):
+                        return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
+                    return interact_with_domain(vm_uuid, action)
+                return JsonResponse({'status': 'error', 'message': f'VM not running, cannot {action.lower()}'})
 
         elif action == 'DELETE':
             if vm.get('state') == 'running':
@@ -173,11 +164,11 @@ def vm_list(request):
     vms_list = get_all_domains()
     vms = []
 
-    for vm in vms_list:
-        vms.append(get_domain_by_name(vm))
-
-    for vm in vms:
-        vm['os_logo'] = get_os_logo(vm.get('os'))
+    for vm_name in vms_list:
+        vm_info = get_domain_by_name(vm_name)
+        if vm_info:
+            vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
+            vms.append(vm_info)
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 

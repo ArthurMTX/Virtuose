@@ -1,4 +1,6 @@
 import socket
+import libvirt
+import time
 import requests
 from django.http import JsonResponse
 
@@ -48,3 +50,12 @@ def interact_with_domain(dom_uuid, action):
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error', 'message': response.text})
+
+
+def check_guest_agent_active(vm):
+    max_retries = 5
+    for attempt in range(max_retries):
+        if vm.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0):
+            return True
+        time.sleep(1)
+    return False
