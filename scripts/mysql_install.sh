@@ -21,7 +21,8 @@ done
 
 # Mise à jour des paquets et installation des dépendances
 echo -e "${GREEN}Mise à jour des paquets et installation des dépendances...${NC}"
-apt update && apt install -y python3-pip python3.11-venv libvirt-dev postgresql-client-16 postgresql-16 postgresql-doc-16
+apt update 
+apt install -y python3-pip python3.11-venv libvirt-dev postgresql-client-16 postgresql-16 postgresql-doc-16
 
 # Vérification de l'installation des dépendances
 if [ $? -ne 0 ]; then
