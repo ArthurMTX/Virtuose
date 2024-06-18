@@ -52,16 +52,26 @@ def interact_with_domain(dom_uuid, action):
         return JsonResponse({'status': 'error', 'message': response.text})
 
 
-def check_guest_agent_active(vm):
-    max_retries = 5
-    for attempt in range(max_retries):
-        if vm.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0):
-            return True
-        time.sleep(1)
-    return False
-
-
 def get_dom_object(dom_uuid):
     conn = libvirt.open(QEMU_URI)
     dom = conn.lookupByUUIDString(dom_uuid)
     return dom
+
+
+def check_guest_agent_active(dom_uuid):
+    try:
+        vm = get_dom_object(dom_uuid)
+        if vm.isActive() == 0:
+            return False
+
+        max_retries = 5
+        for attempt in range(max_retries):
+            try:
+                if vm.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0):
+                    return True
+            except libvirt.libvirtError:
+                pass
+            time.sleep(1)
+    except libvirt.libvirtError:
+        return False
+    return False
