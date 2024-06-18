@@ -133,7 +133,7 @@ def vm_list(request):
         vm = get_domain_by_uuid(vm_uuid)
 
         if vm is None:
-            return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
+            print(f"VM with UUID {vm_uuid} not found")
 
         if action == 'CONSOLE VIEW':
             return redirect('vm_view', vm_uuid=vm_uuid)
@@ -141,25 +141,25 @@ def vm_list(request):
         elif action in ['START', 'STOP', 'RESTART', 'KILL']:
             if vm.get('state') == 'running':
                 if action == 'START':
-                    return JsonResponse({'status': 'error', 'message': 'VM already running'})
+                    print(f"VM {vm.get('name')} already running")
                 else:
                     if action == 'STOP' and not check_guest_agent_active(vm_uuid):
-                        return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
+                        print(f"Guest agent not responding for VM {vm.get('name')}")
                     return interact_with_domain(vm_uuid, action)
             else:
                 if action == 'START':
                     if not check_guest_agent_active(vm_uuid):
-                        return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
+                        print(f"Guest agent not responding for VM {vm.get('name')}")
                     return interact_with_domain(vm_uuid, action)
-                return JsonResponse({'status': 'error', 'message': f'VM not running, cannot {action.lower()}'})
+                print(f"VM {vm.get('name')} already stopped")
 
         elif action == 'DELETE':
             if vm.get('state') == 'running':
-                return JsonResponse({'status': 'error', 'message': 'VM must be stopped before deletion'})
+                print(f"VM {vm.get('name')} is running, stop it first")
             else:
                 return interact_with_domain(vm_uuid, action)
 
-        return JsonResponse({'status': 'success'})
+        print(f"Action {action} on VM {vm.get('name')} successful")
 
     vms_list = get_all_domains()
     vms = []
