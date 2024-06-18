@@ -26,6 +26,7 @@ $(document).ready(function() {
             url: '/api/domains/UUID/' + vm_uuid,
             type: 'GET',
             success: function(response) {
+                console.log(response);
                 let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
                 vmStateElement.textContent = response.state;
                 console.log('VM ' + vm_uuid + ' state refreshed');
