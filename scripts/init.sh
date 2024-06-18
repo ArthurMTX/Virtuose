@@ -18,7 +18,7 @@ fi
 execute_script() {
   local script=$1
 
-  if [ -f "$script" ]; alors
+  if [ -f "$script" ]; then
     echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
     echo -e "${GREEN}Exécution de $script...${NC}" | tee -a "$LOG_FILE"
     echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
