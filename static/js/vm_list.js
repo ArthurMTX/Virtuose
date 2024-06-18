@@ -8,16 +8,31 @@ $('.dropdown-item').click(function() {
 
     let responseBuffer = '';
 
-    xhr.onprogress = function() {
-        if (xhr.readyState === 3) {
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 3 || xhr.readyState === 4) {
             responseBuffer += xhr.responseText;
             let lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
 
             for (let line of lines) {
                 if (line) {
-                    let response = JSON.parse(line);
-                    showToast(response.status, vm_name);
+                    try {
+                        let response = JSON.parse(line);
+                        showToast(response.status, vm_name);
+                    } catch (e) {
+                        console.error('Error parsing JSON response: ', e);
+                    }
+                }
+            }
+
+            if (xhr.readyState === 4) {
+                if (responseBuffer) {
+                    try {
+                        let response = JSON.parse(responseBuffer);
+                        showToast(response.status, vm_name);
+                    } catch (e) {
+                        console.error('Error parsing final JSON response: ', e);
+                    }
                 }
             }
         }
