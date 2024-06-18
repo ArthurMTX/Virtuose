@@ -4,20 +4,19 @@ Virtualisation made simple :)
 
 ## Dev setup
 
-### Prerequisites
+### Installation
 
-- Django (for the backend)
-- psycopg-binary (for PostgreSQL)
-- django-environ (for environment variables)
-- django-browser-reload (for automatic browser reload)
+```bash
+cd ./scripts
+chmod +x ./init.sh
+./init.sh
+```
 
 ### Start the project
-
-(tested in PowerShell on Windows 11)
 
 To start the project, run the following command :
     
 ```shell
-.\.venv\Scripts\activate
-python manage.py runserver
+source venv/bin/activate
+python manage.py runserver 0.0.0.0:80
 ```
