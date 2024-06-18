@@ -1,9 +1,11 @@
+import json
 from django.http import JsonResponse
 from .api.pools import *
 from .api.domains import *
 from .api.volumes import *
 from django.views.decorators.csrf import csrf_exempt
 from . import context_processors
+from django.http import StreamingHttpResponse
 from Virtuose.settings import QEMU_URI
 
 
@@ -51,54 +53,55 @@ def volumes_info_all(request):
 
 @csrf_exempt
 def dom_actions(request, dom_uuid, action):
-    logs = []
-    try:
-        conn = libvirt.open(QEMU_URI)
-        dom = conn.lookupByUUIDString(dom_uuid)
-    except libvirt.libvirtError as e:
-        logs.append({"error": "Unable to find the virtual machine. Please check the VM UUID."})
-        return JsonResponse(logs, safe=False, status=400)
-
-    if request.method == "POST":
+    def stream_logs():
         try:
-            if action == "START":
-                if dom.isActive() == 1:
-                    logs.append({"status": "The virtual machine is already running."})
-                else:
-                    dom.create()
-                    logs.append({"status": "The virtual machine has been successfully started."})
-            elif action == "RESTART":
-                if dom.isActive() == 1:
-                    dom.reboot()
-                    logs.append({"status": "The virtual machine has been successfully restarted."})
-                else:
-                    dom.create()
-                    logs.append({"status": "The virtual machine has been successfully started."})
-            elif action == "STOP":
-                if dom.isActive() == 1:
-                    dom.shutdown()
-                    logs.append({"status": "The virtual machine has been successfully stopped."})
-                else:
-                    logs.append({"status": "The virtual machine is already stopped."})
-            elif action == "KILL":
-                if dom.isActive() == 1:
-                    dom.destroy()
-                    logs.append({"status": "The virtual machine has been forcefully stopped."})
-                else:
-                    logs.append({"status": "The virtual machine is not running."})
-            elif action == "DELETE":
-                if dom.isActive() == 1:
-                    dom.destroy()
-                    logs.append({"status": "The virtual machine has been forcefully stopped."})
-                dom.undefine()
-                logs.append({"status": "The virtual machine has been successfully deleted."})
-            else:
-                logs.append({"error": "Invalid action. Please check the action and try again."})
+            conn = libvirt.open(QEMU_URI)
+            dom = conn.lookupByUUIDString(dom_uuid)
         except libvirt.libvirtError as e:
-            logs.append({"error": "An error occurred while performing the action. Please try again."})
-        finally:
-            conn.close()
-            logs.append({"status": f"Action {action} completed successfully."})
-            return JsonResponse(logs, safe=False, status=200)
-    logs.append({"error": "Invalid method. Please use the POST method."})
-    return JsonResponse(logs, safe=False, status=405)
+            yield json.dumps({"error": "Unable to find the virtual machine. Please check the VM UUID."}) + "\n"
+            return
+
+        if request.method == "POST":
+            try:
+                if action == "START":
+                    if dom.isActive() == 1:
+                        yield json.dumps({"status": "The virtual machine is already running."}) + "\n"
+                    else:
+                        dom.create()
+                        yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                elif action == "RESTART":
+                    if dom.isActive() == 1:
+                        dom.reboot()
+                        yield json.dumps({"status": "The virtual machine has been successfully restarted."}) + "\n"
+                    else:
+                        dom.create()
+                        yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                elif action == "STOP":
+                    if dom.isActive() == 1:
+                        dom.shutdown()
+                        yield json.dumps({"status": "The virtual machine has been successfully stopped."}) + "\n"
+                    else:
+                        yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
+                elif action == "KILL":
+                    if dom.isActive() == 1:
+                        dom.destroy()
+                        yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                    else:
+                        yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
+                elif action == "DELETE":
+                    if dom.isActive() == 1:
+                        dom.destroy()
+                        yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                    dom.undefine()
+                    yield json.dumps({"status": "The virtual machine has been successfully deleted."}) + "\n"
+                else:
+                    yield json.dumps({"error": "Invalid action. Please use one of the following actions: START, RESTART, STOP, KILL, DELETE."}) + "\n"
+            except libvirt.libvirtError as e:
+                yield json.dumps({"error": f"An error occurred while trying to perform the action: {e}"}) + "\n"
+            finally:
+                conn.close()
+                yield json.dumps({"status": f"Action {action} has been completed."}) + "\n"
+        else:
+            yield json.dumps({"error": "Invalid method. Please use the POST method."}) + "\n"
+
+    return StreamingHttpResponse(stream_logs(), content_type='application/json')
