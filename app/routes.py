@@ -63,25 +63,32 @@ def dom_actions(request, dom_uuid, action):
                 if dom.isActive() == 1:
                     return JsonResponse({"status": context_processors.VM_ALREADY_RUNNING}, status=200)
                 dom.create()
+                return JsonResponse({"status": context_processors.VM_STATE_RUNNING}, status=200)
             elif action == "RESTART":
                 if dom.isActive() == 1:
                     dom.reboot()
+                    return JsonResponse({"status": context_processors.VM_RESTARTED}, status=200)
                 else:
                     dom.create()
+                    return JsonResponse({"status": context_processors.VM_STATE_RUNNING}, status=200)
             elif action == "STOP":
                 if dom.isActive() == 1:
                     dom.shutdown()
+                    return JsonResponse({"status": context_processors.VM_STOPPED}, status=200)
                 else:
                     return JsonResponse({"status": context_processors.VM_ALREADY_STOPPED}, status=200)
             elif action == "KILL":
                 if dom.isActive() == 1:
                     dom.destroy()
+                    return JsonResponse({"status": context_processors.VM_KILLED}, status=200)
                 else:
                     return JsonResponse({"status": context_processors.VM_ALREADY_RUNNING}, status=200)
             elif action == "DELETE":
                 if dom.isActive() == 1:
                     dom.destroy()
+                    return JsonResponse({"status": context_processors.VM_DESTROYED}, status=200)
                 dom.undefine()
+                return JsonResponse({"status": context_processors.VM_DELETED}, status=200)
             else:
                 return JsonResponse({"error": context_processors.VM_INVALID_ACTION}, status=400)
         except libvirt.libvirtError as e:
