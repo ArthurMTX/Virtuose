@@ -21,3 +21,26 @@ $(document).ready(function() {
         $(this).text(trimmedContent);
     });
 });
+
+function refreshVmState(vm_uuid) {
+    $.ajax({
+        url: '/api/vm_state/' + vm_uuid,  // Remplacez par l'URL de votre API
+        type: 'GET',
+        success: function(response) {
+            let vmStateElement = document.querySelector('.vm-state-' + vm_uuid);
+            vmStateElement.textContent = response.state;
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+
+setInterval(function() {
+    let vmUuids = Array.from(document.querySelectorAll('.vm')).map(function(vm) {
+        return vm.dataset.id;
+    });
+    vmUuids.forEach(function(vm_uuid) {
+        refreshVmState(vm_uuid);
+    });
+}, 5000);
