@@ -5,7 +5,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from Virtuose.settings import VNC_URL
 from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port, interact_with_domain, \
-    check_guest_agent_active
+    check_guest_agent_active, get_dom_object
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -131,6 +131,7 @@ def vm_list(request):
         action = request.POST.get('action').upper()
         vm_uuid = request.POST.get('data_id')
         vm = get_domain_by_uuid(vm_uuid)
+        dom = get_dom_object(vm_uuid)
 
         if vm is None:
             return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
@@ -143,12 +144,12 @@ def vm_list(request):
                 if action == 'START':
                     return JsonResponse({'status': 'error', 'message': 'VM already running'})
                 else:
-                    if action == 'STOP' and not check_guest_agent_active(vm):
+                    if action == 'STOP' and not check_guest_agent_active(dom):
                         return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
                     return interact_with_domain(vm_uuid, action)
             else:
                 if action == 'START':
-                    if not check_guest_agent_active(vm):
+                    if not check_guest_agent_active(dom):
                         return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
                     return interact_with_domain(vm_uuid, action)
                 return JsonResponse({'status': 'error', 'message': f'VM not running, cannot {action.lower()}'})

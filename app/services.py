@@ -4,7 +4,7 @@ import time
 import requests
 from django.http import JsonResponse
 
-from Virtuose.settings import API_URL
+from Virtuose.settings import API_URL, QEMU_URI
 
 
 def get_free_port():
@@ -59,3 +59,9 @@ def check_guest_agent_active(vm):
             return True
         time.sleep(1)
     return False
+
+
+def get_dom_object(dom_uuid):
+    conn = libvirt.open(QEMU_URI)
+    dom = conn.lookupByUUIDString(dom_uuid)
+    return dom
