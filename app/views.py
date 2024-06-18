@@ -1,10 +1,11 @@
+import requests
 from django.http import HttpResponse, JsonResponse
 import os
 import signal
 import json
 from django.views.decorators.csrf import csrf_exempt
 from Virtuose.settings import VNC_URL
-from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port
+from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port, interact_with_domain
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -129,12 +130,37 @@ def vm_list(request):
     if request.method == 'POST':
         action = request.POST.get('action').upper()
         vm_uuid = request.POST.get('data_id')
+        vm = get_domain_by_uuid(vm_uuid)
 
         if action == 'CONSOLE VIEW':
             if vm_uuid:
                 return redirect('vm_view', vm_uuid=vm_uuid)
             else:
                 return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
+
+        elif action == 'START':
+            if vm.get('state') == 'running':
+                return JsonResponse({'status': 'error', 'message': 'VM already running'})
+            else:
+                return interact_with_domain(vm_uuid, action.lower())
+
+        elif action == 'RESTART':
+            if vm.get('state') == 'running':
+                return interact_with_domain(vm_uuid, action.lower())
+            else:
+                return JsonResponse({'status': 'error', 'message': 'VM not running'})
+
+        elif action == 'FORCESTOP':
+            if vm.get('state') == 'running':
+                return interact_with_domain(vm_uuid, action.lower())
+            else:
+                return JsonResponse({'status': 'error', 'message': 'VM not running'})
+
+        elif action == 'DELETE':
+            if vm.get('state') == 'running':
+                return JsonResponse({'status': 'error', 'message': 'VM must be stopped before deletion'})
+            else:
+                return interact_with_domain(vm_uuid, action.lower())
 
         return JsonResponse({'status': 'success'})
 

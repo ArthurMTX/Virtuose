@@ -1,5 +1,7 @@
 import socket
 import requests
+from django.http import JsonResponse
+
 from Virtuose.settings import API_URL
 
 
@@ -36,3 +38,13 @@ def get_domain_by_name(name):
         return response.json()
     else:
         return None
+
+
+def interact_with_domain(dom_uuid, action):
+    url = f"{API_URL}/domains/actions/{dom_uuid}/{action}"
+    response = requests.post(url)
+
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'error', 'message': response.text})
