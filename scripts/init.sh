@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Couleurs pour les messages
 GREEN='\033[0;32m'
 RED='\033[0;31m'
