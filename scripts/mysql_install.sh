@@ -128,8 +128,4 @@ echo "DB_PORT=5432" >> $ENV_FILE
 echo -e "${GREEN}Fichier .env créé avec succès :${NC}"
 cat $ENV_FILE
 
-# Connexion automatique à PostgreSQL
-echo -e "${GREEN}Connexion automatique à PostgreSQL :${NC}"
-sudo -i -u postgres PGPASSWORD="$PASSWORD" psql -h localhost -U postgres -d postgres
-
 echo -e "${GREEN}Installation et configuration de PostgreSQL terminées.${NC}"
