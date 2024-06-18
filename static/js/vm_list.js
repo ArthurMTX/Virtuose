@@ -37,7 +37,7 @@ $(document).ready(function() {
     }
 
     setInterval(function() {
-        print('Refreshing VM states...');
+        console.log('Refreshing VM states...');
         let vmUuids = Array.from(document.querySelectorAll('.vm')).map(function(vm) {
             return vm.dataset.id;
         });
