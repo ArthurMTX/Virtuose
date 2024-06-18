@@ -284,3 +284,10 @@
     cursor: not-allowed;
     opacity: 0.6;
 }
+
+.modalIconsButton {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+}
