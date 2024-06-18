@@ -131,7 +131,6 @@ def vm_list(request):
         action = request.POST.get('action').upper()
         vm_uuid = request.POST.get('data_id')
         vm = get_domain_by_uuid(vm_uuid)
-        dom = get_dom_object(vm_uuid)
 
         if vm is None:
             return JsonResponse({'status': 'error', 'message': 'Invalid VM UUID'})
@@ -144,12 +143,12 @@ def vm_list(request):
                 if action == 'START':
                     return JsonResponse({'status': 'error', 'message': 'VM already running'})
                 else:
-                    if action == 'STOP' and not check_guest_agent_active(dom):
+                    if action == 'STOP' and not check_guest_agent_active(vm_uuid):
                         return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
                     return interact_with_domain(vm_uuid, action)
             else:
                 if action == 'START':
-                    if not check_guest_agent_active(dom):
+                    if not check_guest_agent_active(vm_uuid):
                         return JsonResponse({'status': 'error', 'message': 'Guest agent not responding'})
                     return interact_with_domain(vm_uuid, action)
                 return JsonResponse({'status': 'error', 'message': f'VM not running, cannot {action.lower()}'})
