@@ -144,13 +144,19 @@ def vm_list(request):
             else:
                 return interact_with_domain(vm_uuid, action.lower())
 
+        elif action == 'STOP':
+            if vm.get('state') == 'running':
+                return interact_with_domain(vm_uuid, action.lower())
+            else:
+                return JsonResponse({'status': 'error', 'message': 'VM not running'})
+
         elif action == 'RESTART':
             if vm.get('state') == 'running':
                 return interact_with_domain(vm_uuid, action.lower())
             else:
                 return JsonResponse({'status': 'error', 'message': 'VM not running'})
 
-        elif action == 'FORCESTOP':
+        elif action == 'KILL':
             if vm.get('state') == 'running':
                 return interact_with_domain(vm_uuid, action.lower())
             else:
