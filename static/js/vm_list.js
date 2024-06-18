@@ -21,48 +21,46 @@ $(document).ready(function() {
         $(this).text(trimmedContent);
     });
 
-    function refreshVmState(vm_uuid) {
-        $.ajax({
-            url: '/api/domains/UUID/' + vm_uuid,
-            type: 'GET',
-            success: function(response) {
-                let vmStateElement = document.querySelector(`tr[data-id='${vm_uuid}'] .vm-state`);
-                switch (response.state) {
-                    case 'running':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-check" style="color: #74c93b;"></i>';
-                        break;
-                    case 'shutoff':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>'
-                        break;
-                    case 'paused':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-pause" style="color: #ffbb00;"></i>';
-                        break;
-                    case 'crashed':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>';
-                        break;
-                    case 'suspended':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>';
-                        break;
-                    case 'starting':
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>';
-                        break;
-                    default:
-                        vmStateElement.innerHTML = '<i class="fa-solid fa-question" style="color: #185ed8;"></i>';
-                }
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
+    function refreshData() {
+        fetch('/api/domains/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(vm_name => {
+                    fetch('/api/domains/' + vm_name)
+                        .then(response => response.json())
+                        .then(vm_data => {
+                            let vmElement = document.querySelector(`tr[data-id='${vm_data.UUID}']`);
+                            vmElement.querySelector('.vm-state').innerHTML = getVmStateIcon(vm_data.state);
+                            vmElement.querySelector('.os-info img').src = vm_data.os_logo;
+                            vmElement.querySelector('.os-info p').textContent = vm_data.os;
+                            vmElement.querySelector('td:nth-child(4)').textContent = vm_data.memory_gb;
+                            vmElement.querySelector('td:nth-child(5)').textContent = vm_data.VCPU;
+                        })
+                        .catch(error => console.error('Error:', error));
+                });
+            })
+            .catch(error => console.error('Error:', error));
     }
 
-    setInterval(function() {
-        console.log('Refreshing VM states...');
-        let vmUuids = Array.from(document.querySelectorAll('.vm')).map(function(vm) {
-            return vm.dataset.id;
-        });
-        vmUuids.forEach(function(vm_uuid) {
-            refreshVmState(vm_uuid);
-        });
-    }, 2000);
+    setInterval(refreshData, 2000);
+
+    function getVmStateIcon(state) {
+        switch (state) {
+            case 'running':
+                return '<i class="fa-solid fa-check" style="color: #74c93b;"></i>';
+            case 'shutoff':
+            case 'shutdown':
+            case 'pmsuspended':
+                return '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>';
+            case 'paused':
+                return '<i class="fa-solid fa-pause" style="color: #ffbb00;"></i>';
+            case 'crashed':
+            case 'blocked':
+                return '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>';
+            case 'starting':
+                return '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>';
+            default:
+                return '<i class="fa-solid fa-question" style="color: #185ed8;"></i>';
+        }
+    }
 });

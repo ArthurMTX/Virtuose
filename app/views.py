@@ -172,8 +172,6 @@ def vm_list(request):
             vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
             vms.append(vm_info)
 
-    print(vms)
-
     return render(request, 'app/vm_list.html', {'vms': vms})
 
 

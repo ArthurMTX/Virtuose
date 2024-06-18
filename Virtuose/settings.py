@@ -49,6 +49,7 @@ LOGIN_URL = '/login/'
 INSTALLED_APPS = [
     'app',
     'tailwind',
+    'channels',
     'django_werkzeug',
     'django_browser_reload',
     'django.contrib.admin',
@@ -61,6 +62,12 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_spectacular'
 ]
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
