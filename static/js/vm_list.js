@@ -6,10 +6,10 @@ $('.dropdown-item').click(function() {
         url: '/api/domains/actions/' + vm_uuid + '/' + action,
         method: 'POST',
         success: function(response) {
-            showToast(action + ' OK');
+            showToast(response);
         },
         error: function(response) {
-            showToast('Erreur lors de l\'action ' + action);
+            showToast(response.responseText);
         }
     });
 });
