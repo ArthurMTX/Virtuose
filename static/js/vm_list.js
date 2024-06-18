@@ -6,13 +6,13 @@ $('.dropdown-item').click(function() {
         url: '/api/domains/actions/' + vm_uuid + '/' + action,
         method: 'POST',
         success: function(response) {
+            console.log(response);
             let message = JSON.parse(response.responseText).status;
             showToast(message);
-            console.log(response);
         },
         error: function(response) {
-            showToast(response.responseText);
             console.log(response);
+            showToast(response.responseText);
         }
     });
 });
