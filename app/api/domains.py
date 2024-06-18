@@ -81,10 +81,10 @@ def list_dom_info_name(dom_name: str):
             7: context_processors.VM_STATE_PMSUSPENDED
         }.get(state, context_processors.UNKNOWN)
         dom_info["state"] = state_str
-        dom_info["memory_gb"] = mem / (1024 ** 2)  # Convertir de KBytes à GBytes
-        dom_info["VCPU"] = num_cpu  # Nombre de vCPUs utilisés
+        dom_info["memory_gb"] = mem / (1024 ** 2)
+        dom_info["VCPU"] = num_cpu
 
-        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['uuid']):
+        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['UUID']):
             dom_info['state'] = 'Starting'
 
         # Informations sur l'OS
@@ -171,7 +171,7 @@ def list_dom_info_uuid(dom_uuid: str):
         dom_info["memory_gb"] = mem / (1024 ** 2)
         dom_info["VCPU"] = num_cpu
 
-        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['uuid']):
+        if dom_info['state'] == 'running' and not check_guest_agent_active(dom_info['UUID']):
             dom_info['state'] = 'Starting'
 
         xml_desc = dom.XMLDesc()
