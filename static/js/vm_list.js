@@ -5,9 +5,15 @@ $('.dropdown-item').click(function() {
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/domains/actions/' + vm_uuid + '/' + action, true);
+
+    let responseBuffer = '';
+
     xhr.onprogress = function() {
         if (xhr.readyState === 3) {
-            let lines = xhr.responseText.split('\n');
+            responseBuffer += xhr.responseText;
+            let lines = responseBuffer.split('\n');
+            responseBuffer = lines.pop();
+
             for (let line of lines) {
                 if (line) {
                     let response = JSON.parse(line);
@@ -16,6 +22,7 @@ $('.dropdown-item').click(function() {
             }
         }
     };
+
     xhr.onerror = function() {
         console.error('Request failed.');
     };
