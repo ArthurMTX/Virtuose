@@ -112,15 +112,18 @@ def list_dom_info_name(dom_name: str):
 
 
         if state == 1:
-            # Récupérer les adresses IPs du domaine
-            ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
-            ips = []
-            for iface in ifaces.values():
-                if iface['addrs']:
-                    for addr in iface['addrs']:
-                        if addr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
-                            ips.append(addr['addr'])
-            dom_info["IPs"] = ips
+            try:
+                ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+                ips = []
+                for iface in ifaces.values():
+                    if iface['addrs']:
+                        for addr in iface['addrs']:
+                            if addr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
+                                ips.append(addr['addr'])
+                dom_info["IPs"] = ips
+            except libvirt.libvirtError:
+                print(f"Failed to get IPs for {dom_name}")
+                dom_info["IPs"] = []
 
         # Récupérer les volumes associés
         volumes = []
@@ -193,14 +196,18 @@ def list_dom_info_uuid(dom_uuid: str):
             dom_info["libosinfo_os_id"] = libosinfo_os.attrib.get('id', context_processors.UNKNOWN)
 
         if state == 1:
-            ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
-            ips = []
-            for iface in ifaces.values():
-                if iface['addrs']:
-                    for addr in iface['addrs']:
-                        if addr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
-                            ips.append(addr['addr'])
-            dom_info["IPs"] = ips
+            try:
+                ifaces = dom.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+                ips = []
+                for iface in ifaces.values():
+                    if iface['addrs']:
+                        for addr in iface['addrs']:
+                            if addr['type'] == libvirt.VIR_IP_ADDR_TYPE_IPV4:
+                                ips.append(addr['addr'])
+                dom_info["IPs"] = ips
+            except libvirt.libvirtError:
+                print(f"Failed to get IPs for {dom_uuid}")
+                dom_info["IPs"] = []
 
         volumes = []
         disks = root.findall('devices/disk')
