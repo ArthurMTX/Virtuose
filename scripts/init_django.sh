@@ -31,15 +31,14 @@ install_if_missing() {
   fi
 }
 
-# Vérification et installation de apt, python3, pip et python3.11-venv
+# Vérification et installation de apt, python3
 install_if_missing "apt" "apt"
 install_if_missing "python3" "python3"
-install_if_missing "pip" "python3-pip"
-install_if_missing "python3-venv" "python3-venv"
 
 # Mise à jour des paquets et installation des dépendances
 echo -e "${GREEN}Mise à jour des paquets et installation des dépendances...${NC}"
-apt update && apt install -y python3-pip python3.11-venv libvirt-dev
+apt update
+apt install -y python3-pip python3-venv libvirt-dev
 
 # Vérification de l'installation des dépendances
 if [ $? -ne 0 ]; then
