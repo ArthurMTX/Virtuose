@@ -19,7 +19,6 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from app.api.domains import list_dom_info_uuid
 from .vm_list import get_os_logo
 
 

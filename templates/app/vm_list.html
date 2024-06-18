@@ -10,7 +10,27 @@
             {% include 'app/profile_sidebar.html' %}
         </div>
         <div class="profile-page-content">
-            <h1>{{ LIST_VM_PAGE_TITLE }}</h1>
+            <h1>{{ LIST_VM_PAGE_TITLE }} <a data-bs-toggle="modal" data-bs-target="#vmInfoIcons">> <i class="fa-solid fa-circle-info"></i> </a></h1>
+            <div class="modal fade" id="vmInfoIcons" tabindex="-1" aria-labelledby="vmInfoModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="vmInfoModalLabel"> Icons Info </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p> <i class="fa-solid fa-check" style="color: #74c93b;"></i> Running </p>
+                            <p> <i class="fa-solid fa-pause" style="color: #ffbb00;"></i> Paused </p>
+                            <p> <i class="fa-solid fa-stop" style="color: #d30d0d;"></i> Stopped </p>
+                            <p> <i class="fa-solid fa-burst" style="color: #cd13b4;"></i> Crashed </p>
+                            <p> <i class="fa-solid fa-question" style="color: #185ed8;"></i> Unknown </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Fermer </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="table-responsive">
                 <table class="table table-hover table-bordered align-middle sortable">
                     <thead>
