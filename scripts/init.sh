@@ -22,7 +22,7 @@ execute_script() {
     echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
     echo -e "${GREEN}Exécution de $script...${NC}" | tee -a "$LOG_FILE"
     echo -e "${NC}#############################################${NC}" | tee -a "$LOG_FILE"
-    if bash "$script" >> "$LOG_FILE" 2>&1; then
+    if bash "$script" 2>&1 | tee -a "$LOG_FILE"; then
       echo -e "${GREEN}$script terminé avec succès.${NC}" | tee -a "$LOG_FILE"
     else
       echo -e "${RED}Erreur lors de l'exécution de $script. Consultez $LOG_FILE pour plus de détails.${NC}" | tee -a "$LOG_FILE"
