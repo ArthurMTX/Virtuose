@@ -5,7 +5,7 @@ import json
 from django.views.decorators.csrf import csrf_exempt
 from Virtuose.settings import VNC_URL
 from .services import get_all_domains, get_domain_by_name, get_domain_by_uuid, get_free_port, interact_with_domain, \
-    check_guest_agent_active, get_dom_object
+    check_guest_agent_active, get_dom_object, wait_for_vm_to_be_ready
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
@@ -130,36 +130,38 @@ def vm_list(request):
     if request.method == 'POST':
         action = request.POST.get('action').upper()
         vm_uuid = request.POST.get('data_id')
-        vm = get_domain_by_uuid(vm_uuid)
+        vm_info = get_domain_by_uuid(vm_uuid)
 
-        if vm is None:
+        if vm_info is None:
             print(f"VM with UUID {vm_uuid} not found")
 
         if action == 'CONSOLE VIEW':
             return redirect('vm_view', vm_uuid=vm_uuid)
 
         elif action in ['START', 'STOP', 'RESTART', 'KILL']:
-            if vm.get('state') == 'running':
+            if vm_info.get('state') == 'running':
                 if action == 'START':
-                    print(f"VM {vm.get('name')} already running")
+                    print(f"VM with UUID {vm_uuid} already running")
                 else:
                     if action == 'STOP' and not check_guest_agent_active(vm_uuid):
-                        print(f"Guest agent not responding for VM {vm.get('name')}")
+                        print(f"VM with UUID {vm_uuid} not ready, cannot stop")
                     return interact_with_domain(vm_uuid, action)
             else:
                 if action == 'START':
-                    if not check_guest_agent_active(vm_uuid):
-                        print(f"Guest agent not responding for VM {vm.get('name')}")
-                    return interact_with_domain(vm_uuid, action)
-                print(f"VM {vm.get('name')} already stopped")
+                    interact_with_domain(vm_uuid, action)
+                    if wait_for_vm_to_be_ready(vm_uuid):
+                        print(f"VM with UUID {vm_uuid} started and ready")
+                    else:
+                        print(f"VM with UUID {vm_uuid} started but not ready, timeout reached")
+                print(f"VM with UUID {vm_uuid} not running, cannot {action}")
 
         elif action == 'DELETE':
-            if vm.get('state') == 'running':
-                print(f"VM {vm.get('name')} is running, stop it first")
+            if vm_info.get('state') == 'running':
+                print(f"VM with UUID {vm_uuid} running, cannot delete")
             else:
                 return interact_with_domain(vm_uuid, action)
 
-        print(f"Action {action} on VM {vm.get('name')} successful")
+        print(f"Action {action} on VM with UUID {vm_uuid} completed")
 
     vms_list = get_all_domains()
     vms = []
@@ -171,6 +173,7 @@ def vm_list(request):
             vms.append(vm_info)
 
     return render(request, 'app/vm_list.html', {'vms': vms})
+
 
 
 @login_required

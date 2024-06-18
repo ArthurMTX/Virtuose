@@ -58,9 +58,22 @@ def get_dom_object(dom_uuid):
     return dom
 
 
-def check_guest_agent_active(dom_uuid):
+def wait_for_vm_to_be_ready(vm_uuid, timeout=60):
+    vm = get_domain_by_uuid(vm_uuid)
+    if vm is None:
+        return False
+
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        if vm.isActive() and check_guest_agent_active(vm_uuid):
+            return True
+        time.sleep(5)
+    return False
+
+
+def check_guest_agent_active(vm_uuid):
     try:
-        vm = get_dom_object(dom_uuid)
+        vm = get_domain_by_uuid(vm_uuid)
         if vm.isActive() == 0:
             return False
 
