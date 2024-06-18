@@ -1,20 +1,15 @@
 $('.dropdown-item').click(function() {
     let action = $(this).text().trim();
-    let dataId = $(this).closest('.vm').data('id');
+    let vm_uuid = $(this).closest('.vm').data('id');
 
     $.ajax({
-        url: '/action-vms/',
-        type: 'POST',
-        data: {
-            'action': action,
-            'data_id': dataId,
-            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-            success: function(response) {
-                showToast(action + ' OK');
-            },
-            error: function(response) {
-                showToast('Erreur lors de l\'action ' + action);
-            }
+        url: 'api/domains/actions/' + vm_uuid + '/' + action,
+        method: 'POST',
+        success: function(response) {
+            showToast(action + ' OK');
+        },
+        error: function(response) {
+            showToast('Erreur lors de l\'action ' + action);
         }
     });
 });
