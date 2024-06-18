@@ -8,9 +8,11 @@ $('.dropdown-item').click(function() {
         success: function(response) {
             let message = JSON.parse(response.responseText).status;
             showToast(message);
+            console.log(response);
         },
         error: function(response) {
             showToast(response.responseText);
+            console.log(response);
         }
     });
 });
