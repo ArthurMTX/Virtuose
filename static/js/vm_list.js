@@ -7,12 +7,11 @@ $('.dropdown-item').click(function() {
         method: 'POST',
         success: function(response) {
             console.log(response);
-            let message = JSON.parse(response.responseText).status;
-            showToast(message);
+            showToast(response.status);
         },
         error: function(response) {
             console.log(response);
-            showToast(response.responseText);
+            showToast(response.status);
         }
     });
 });
