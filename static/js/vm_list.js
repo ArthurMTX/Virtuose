@@ -26,7 +26,6 @@ $(document).ready(function() {
             url: '/api/domains/UUID/' + vm_uuid,
             type: 'GET',
             success: function(response) {
-                console.log(response);
                 let vmStateElement = document.querySelector(`tr[data-id='${vm_uuid}'] .vm-state`);
                 switch (response.state) {
                     case 'running':
@@ -65,5 +64,5 @@ $(document).ready(function() {
         vmUuids.forEach(function(vm_uuid) {
             refreshVmState(vm_uuid);
         });
-    }, 5000);
+    }, 2000);
 });
