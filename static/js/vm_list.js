@@ -3,7 +3,7 @@ $('.dropdown-item').click(function() {
     let vm_uuid = $(this).closest('.vm').data('id');
 
     $.ajax({
-        url: 'api/domains/actions/' + vm_uuid + '/' + action,
+        url: '/api/domains/actions/' + vm_uuid + '/' + action,
         method: 'POST',
         success: function(response) {
             showToast(action + ' OK');
