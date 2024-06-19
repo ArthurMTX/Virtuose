@@ -44,12 +44,19 @@ $('.dropdown-item').click(function() {
 
 function showToast(message, vmName) {
     let toastContainer = document.querySelector('.toast-container');
+    let existingToasts = toastContainer.querySelectorAll('.toast');
+
+    for (let toast of existingToasts) {
+        if (toast.querySelector('.toast-body').textContent === message) {
+            return;
+        }
+    }
+
     let toastTemplate = document.querySelector('.toast');
     let newToast = toastTemplate.cloneNode(true);
 
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
-
     newToast.classList.add('hide');
     toastContainer.appendChild(newToast);
 
