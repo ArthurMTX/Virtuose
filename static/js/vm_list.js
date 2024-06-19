@@ -50,6 +50,10 @@ function showToast(message, vmName) {
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
 
+    while (toastContainer.firstChild) {
+        toastContainer.firstChild.remove();
+    }
+
     newToast.classList.add('hide');
     toastContainer.appendChild(newToast);
 
