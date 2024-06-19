@@ -42,16 +42,45 @@ $('.dropdown-item').click(function() {
     xhr.send();
 });
 
-function showToast(message, vmName) {
-    let toastContainer = document.querySelector('.toast-container');
-    let toastTemplate = document.querySelector('.toast');
-    let newToast = toastTemplate.cloneNode(true);
-    newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
-    newToast.querySelector('.toast-body').textContent = message;
+function createToast(message) {
+    let toast = document.createElement("div");
+    toast.classList.add("toast");
+    toast.setAttribute("role", "alert");
+    toast.setAttribute("aria-live", "assertive");
+    toast.setAttribute("aria-atomic", "true");
 
-    toastContainer.appendChild(newToast);
-    let toastInstance = new bootstrap.Toast(newToast);
-    toastInstance.show();
+    let toastHeader = document.createElement("div");
+    toastHeader.classList.add("toast-header");
+
+    let strong = document.createElement("strong");
+    strong.classList.add("me-auto");
+    strong.textContent = "Notification";
+
+    let button = document.createElement("button");
+    button.type = "button";
+    button.classList.add("btn-close");
+    button.setAttribute("data-bs-dismiss", "toast");
+    button.setAttribute("aria-label", "Close");
+
+    toastHeader.appendChild(strong);
+    toastHeader.appendChild(button);
+
+    let toastBody = document.createElement("div");
+    toastBody.classList.add("toast-body");
+    toastBody.textContent = message;
+
+    toast.appendChild(toastHeader);
+    toast.appendChild(toastBody);
+
+    return toast;
+}
+
+function showToast(message) {
+    let toastContainer = document.querySelector(".toast-container");
+    let toast = createToast(message);
+    toastContainer.appendChild(toast);
+    let bootstrapToast = new bootstrap.Toast(toast);
+    bootstrapToast.show();
 }
 
 $(document).ready(function() {
