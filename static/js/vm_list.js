@@ -25,14 +25,12 @@ $('.dropdown-item').click(function() {
                 }
             }
 
-            if (xhr.readyState === 4) {
-                if (responseBuffer) {
-                    try {
-                        let response = JSON.parse(responseBuffer);
-                        showToast(response.status, vm_name);
-                    } catch (e) {
-                        console.error('Error parsing final JSON response: ', e);
-                    }
+            if (xhr.readyState === 4 && responseBuffer) {
+                try {
+                    let response = JSON.parse(responseBuffer);
+                    showToast(response.status, vm_name);
+                } catch (e) {
+                    console.error('Error parsing final JSON response: ', e);
                 }
             }
         }
@@ -108,7 +106,7 @@ $(document).ready(function() {
             case 'starting':
                 return '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>';
             default:
-                return '<i class="fa-solid fa-question" style="color: #185ed8;"></i>';
+                return '<i class="fa-solid fa-question" style="color: #185ed8;"></oi>';
         }
     }
 });

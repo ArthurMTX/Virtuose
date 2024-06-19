@@ -1,4 +1,6 @@
 import json
+import time
+
 from django.http import JsonResponse
 from .api.pools import *
 from .api.domains import *
@@ -69,6 +71,8 @@ def dom_actions(request, dom_uuid, action):
                     else:
                         dom.create()
                         yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                        yield "\n"
+                        time.sleep(1)
                 elif action == "RESTART":
                     if dom.isActive() == 1:
                         dom.reboot()
@@ -76,22 +80,30 @@ def dom_actions(request, dom_uuid, action):
                     else:
                         dom.create()
                         yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                        yield "\n"
+                        time.sleep(1)
                 elif action == "STOP":
                     if dom.isActive() == 1:
                         dom.shutdown()
                         yield json.dumps({"status": "The virtual machine has been successfully stopped."}) + "\n"
+                        yield "\n"
+                        time.sleep(1)
                     else:
                         yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
                 elif action == "KILL":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                        yield "\n"
+                        time.sleep(1)
                     else:
                         yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
                 elif action == "DELETE":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                        yield "\n"
+                        time.sleep(1)
                     dom.undefine()
                     yield json.dumps({"status": "The virtual machine has been successfully deleted."}) + "\n"
                 else:
@@ -104,4 +116,6 @@ def dom_actions(request, dom_uuid, action):
         else:
             yield json.dumps({"error": "Invalid method. Please use the POST method."}) + "\n"
 
-    return StreamingHttpResponse(stream_logs(), content_type='application/json')
+    response = StreamingHttpResponse(stream_logs(), content_type='application/json')
+    response['X-Accel-Buffering'] = 'no'
+    return response
