@@ -46,9 +46,9 @@ function showToast(message, vmName) {
     let toastContainer = document.querySelector('.toast-container');
     let toastTemplate = document.querySelector('#liveToast');
     let newToast = toastTemplate.cloneNode(true);
-    let toastId = 'toast-' + Date.now();
+    newToast.id = '';
 
-    newToast.id = toastId;
+    newToast.id = 'toast-' + Date.now();
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
 
@@ -56,7 +56,6 @@ function showToast(message, vmName) {
     let toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
 
-    // Remove the toast after it hides
     newToast.addEventListener('hidden.bs.toast', function () {
         newToast.remove();
     });
