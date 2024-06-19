@@ -61,58 +61,58 @@ def dom_actions(request, dom_uuid, action):
             dom = conn.lookupByUUIDString(dom_uuid)
             vm_name = dom.name()
         except libvirt.libvirtError as e:
-            yield json.dumps({"error": "Unable to find the virtual machine. Please check the VM UUID."}) + "\n"
+            yield json.dumps({"error": context_processors.FAILED_TO_GET_DOMAIN_UUID}) + "\n"
             return
 
         if request.method == "POST":
             try:
                 if action == "START":
                     if dom.isActive() == 1:
-                        yield json.dumps({"status": "The virtual machine is already running."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
                     else:
                         dom.create()
-                        yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
                 elif action == "RESTART":
                     if dom.isActive() == 1:
                         dom.reboot()
-                        yield json.dumps({"status": "The virtual machine has been successfully restarted."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_RESTARTED}) + "\n"
                     else:
                         dom.create()
-                        yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
                 elif action == "STOP":
                     if dom.isActive() == 1:
                         dom.shutdown()
-                        yield json.dumps({"status": "The virtual machine has been successfully stopped."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_STOPPED}) + "\n"
                         time.sleep(1)
                     else:
-                        yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
                 elif action == "KILL":
                     if dom.isActive() == 1:
                         dom.destroy()
-                        yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     else:
-                        yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
                 elif action == "DELETE":
                     if dom.isActive() == 1:
                         dom.destroy()
-                        yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
+                        yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     dom.undefine()
-                    yield json.dumps({"status": "The virtual machine has been successfully deleted."}) + "\n"
+                    yield json.dumps({"status": context_processors.VM_DELETED}) + "\n"
                 elif action == "INFO":
-                    yield json.dumps({"status": "Fetching virtual machine information."}) + "\n"
+                    yield json.dumps({"status": context_processors.VM_INFO}) + "\n"
                 else:
-                    yield json.dumps({"error": "Invalid action. Please use one of the following actions: START, RESTART, STOP, KILL, DELETE."}) + "\n"
+                    yield json.dumps({"error": context_processors.VM_INVALID_ACTION}) + "\n"
             except libvirt.libvirtError as e:
-                yield json.dumps({"error": f"An error occurred while trying to perform the action: {e}"}) + "\n"
+                yield json.dumps({"error": context_processors.VM_ERROR}) + "\n"
             finally:
                 conn.close()
                 yield json.dumps({"status": f"Action {action} on VM {vm_name} completed."}) + "\n"
         else:
-            yield json.dumps({"error": "Invalid method. Please use the POST method."}) + "\n"
+            yield json.dumps({"error": context_processors.VM_INVALID_METHOD}) + "\n"
 
     response = StreamingHttpResponse(stream_logs(), content_type='application/json')
     response['X-Accel-Buffering'] = 'no'
