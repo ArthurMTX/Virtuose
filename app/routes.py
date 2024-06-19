@@ -59,6 +59,7 @@ def dom_actions(request, dom_uuid, action):
         try:
             conn = libvirt.open(QEMU_URI)
             dom = conn.lookupByUUIDString(dom_uuid)
+            vm_name = dom.name()
         except libvirt.libvirtError as e:
             yield json.dumps({"error": "Unable to find the virtual machine. Please check the VM UUID."}) + "\n"
             return
@@ -112,7 +113,7 @@ def dom_actions(request, dom_uuid, action):
                 yield json.dumps({"error": f"An error occurred while trying to perform the action: {e}"}) + "\n"
             finally:
                 conn.close()
-                yield json.dumps({"status": f"Action {action} has been completed."}) + "\n"
+                yield json.dumps({"status": f"Action {action} on VM {vm_name} completed."}) + "\n"
         else:
             yield json.dumps({"error": "Invalid method. Please use the POST method."}) + "\n"
 
