@@ -43,20 +43,15 @@ $('.dropdown-item').click(function() {
 });
 
 function showToast(message, vmName) {
-    let toastContainer = document.querySelector('.toasts');
-    let toastTemplate = document.querySelector('.toast-container');
+    let toastContainer = document.querySelector('.toast-container');
+    let toastTemplate = document.querySelector('.toast');
     let newToast = toastTemplate.cloneNode(true);
-    newToast.id = 'toast-' + Date.now();
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
 
     toastContainer.appendChild(newToast);
     let toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
-
-    newToast.addEventListener('hidden.bs.toast', function () {
-        newToast.remove();
-    });
 }
 
 $(document).ready(function() {
