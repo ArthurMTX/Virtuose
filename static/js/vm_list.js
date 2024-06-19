@@ -50,7 +50,9 @@ function showToast(message, vmName) {
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
 
+    newToast.classList.add('hide');
     toastContainer.appendChild(newToast);
+
     let toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
 
@@ -60,6 +62,8 @@ function showToast(message, vmName) {
 }
 
 $(document).ready(function() {
+    document.querySelector('.toast').classList.add('hide');
+
     $('.modal-body pre').each(function() {
         let rawContent = $(this).text();
         let beautifiedContent = js_beautify(rawContent);
