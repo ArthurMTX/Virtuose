@@ -43,11 +43,20 @@ $('.dropdown-item').click(function() {
 });
 
 function showToast(message, vmName) {
-    let toastElement = document.querySelector('.toast');
-    let toastInstance = new bootstrap.Toast(toastElement);
-    toastElement.querySelector('.toast-header strong').textContent = vmName || 'Notification';
-    toastElement.querySelector('.toast-body').textContent = message;
+    let toastContainer = document.querySelector('.toast-container');
+    let toastTemplate = document.querySelector('#liveToast');
+    let newToast = toastTemplate.cloneNode(true);
+    newToast.id = 'toast-' + Date.now();
+    newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
+    newToast.querySelector('.toast-body').textContent = message;
+
+    toastContainer.appendChild(newToast);
+    let toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
+
+    newToast.addEventListener('hidden.bs.toast', function () {
+        newToast.remove();
+    });
 }
 
 $(document).ready(function() {
@@ -106,7 +115,7 @@ $(document).ready(function() {
             case 'starting':
                 return '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>';
             default:
-                return '<i class="fa-solid fa-question" style="color: #185ed8;"></oi>';
+                return '<i class="fa-solid fa-question" style="color: #185ed8;"></i>';
         }
     }
 });
