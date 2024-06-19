@@ -46,13 +46,9 @@ function showToast(message, vmName) {
     let toastContainer = document.querySelector('.toast-container');
     let toastTemplate = document.querySelector('.toast');
     let newToast = toastTemplate.cloneNode(true);
-    newToast.id = 'toast-' + Date.now();
+
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
-
-    while (toastContainer.firstChild) {
-        toastContainer.firstChild.remove();
-    }
 
     newToast.classList.add('hide');
     toastContainer.appendChild(newToast);
@@ -66,8 +62,6 @@ function showToast(message, vmName) {
 }
 
 $(document).ready(function() {
-    document.querySelector('.toast').classList.add('hide');
-
     $('.modal-body pre').each(function() {
         let rawContent = $(this).text();
         let beautifiedContent = js_beautify(rawContent);
