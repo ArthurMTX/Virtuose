@@ -13,7 +13,7 @@ $('.dropdown-item').click(function() {
             responseBuffer += xhr.responseText;
             let lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
-            console.log('Response buffer: ', responseBuffer);
+
             for (let line of lines) {
                 if (line) {
                     try {
@@ -43,8 +43,8 @@ $('.dropdown-item').click(function() {
 });
 
 function showToast(message, vmName) {
-    let toastContainer = document.querySelector('.toast-container');
-    let toastTemplate = document.querySelector('#liveToast');
+    let toastContainer = document.querySelector('.toasts');
+    let toastTemplate = document.querySelector('.toast-container');
     let newToast = toastTemplate.cloneNode(true);
     newToast.id = 'toast-' + Date.now();
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
