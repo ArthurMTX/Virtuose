@@ -72,7 +72,6 @@ def dom_actions(request, dom_uuid, action):
                     else:
                         dom.create()
                         yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
-                        yield "\n"
                         time.sleep(1)
                 elif action == "RESTART":
                     if dom.isActive() == 1:
@@ -81,13 +80,11 @@ def dom_actions(request, dom_uuid, action):
                     else:
                         dom.create()
                         yield json.dumps({"status": "The virtual machine has been successfully started."}) + "\n"
-                        yield "\n"
                         time.sleep(1)
                 elif action == "STOP":
                     if dom.isActive() == 1:
                         dom.shutdown()
                         yield json.dumps({"status": "The virtual machine has been successfully stopped."}) + "\n"
-                        yield "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
@@ -95,7 +92,6 @@ def dom_actions(request, dom_uuid, action):
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
-                        yield "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": "The virtual machine is not running."}) + "\n"
@@ -103,10 +99,11 @@ def dom_actions(request, dom_uuid, action):
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": "The virtual machine has been forcefully stopped."}) + "\n"
-                        yield "\n"
                         time.sleep(1)
                     dom.undefine()
                     yield json.dumps({"status": "The virtual machine has been successfully deleted."}) + "\n"
+                elif action == "INFO":
+                    yield json.dumps({"status": "Fetching virtual machine information."}) + "\n"
                 else:
                     yield json.dumps({"error": "Invalid action. Please use one of the following actions: START, RESTART, STOP, KILL, DELETE."}) + "\n"
             except libvirt.libvirtError as e:
