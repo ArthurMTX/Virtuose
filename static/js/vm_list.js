@@ -13,7 +13,7 @@ $('.dropdown-item').click(function() {
             responseBuffer += xhr.responseText;
             let lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
-
+            console.log('Response buffer: ', responseBuffer);
             for (let line of lines) {
                 if (line) {
                     try {
@@ -42,45 +42,24 @@ $('.dropdown-item').click(function() {
     xhr.send();
 });
 
-function createToast(message) {
-    let toast = document.createElement("div");
-    toast.classList.add("toast");
-    toast.setAttribute("role", "alert");
-    toast.setAttribute("aria-live", "assertive");
-    toast.setAttribute("aria-atomic", "true");
+function showToast(message, vmName) {
+    let toastContainer = document.querySelector('.toast-container');
+    let toastTemplate = document.querySelector('#liveToast');
+    let newToast = toastTemplate.cloneNode(true);
+    let toastId = 'toast-' + Date.now();
 
-    let toastHeader = document.createElement("div");
-    toastHeader.classList.add("toast-header");
+    newToast.id = toastId;
+    newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
+    newToast.querySelector('.toast-body').textContent = message;
 
-    let strong = document.createElement("strong");
-    strong.classList.add("me-auto");
-    strong.textContent = "Notification";
+    toastContainer.appendChild(newToast);
+    let toastInstance = new bootstrap.Toast(newToast);
+    toastInstance.show();
 
-    let button = document.createElement("button");
-    button.type = "button";
-    button.classList.add("btn-close");
-    button.setAttribute("data-bs-dismiss", "toast");
-    button.setAttribute("aria-label", "Close");
-
-    toastHeader.appendChild(strong);
-    toastHeader.appendChild(button);
-
-    let toastBody = document.createElement("div");
-    toastBody.classList.add("toast-body");
-    toastBody.textContent = message;
-
-    toast.appendChild(toastHeader);
-    toast.appendChild(toastBody);
-
-    return toast;
-}
-
-function showToast(message) {
-    let toastContainer = document.querySelector(".toast-container");
-    let toast = createToast(message);
-    toastContainer.appendChild(toast);
-    let bootstrapToast = new bootstrap.Toast(toast);
-    bootstrapToast.show();
+    // Remove the toast after it hides
+    newToast.addEventListener('hidden.bs.toast', function () {
+        newToast.remove();
+    });
 }
 
 $(document).ready(function() {
