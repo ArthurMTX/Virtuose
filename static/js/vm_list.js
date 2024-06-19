@@ -13,7 +13,7 @@ $('.dropdown-item').click(function() {
             responseBuffer += xhr.responseText;
             let lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
-            console.log('Response buffer: ', responseBuffer);
+
             for (let line of lines) {
                 if (line) {
                     try {
