@@ -44,10 +44,8 @@ $('.dropdown-item').click(function() {
 
 function showToast(message, vmName) {
     let toastContainer = document.querySelector('.toast-container');
-    let toastTemplate = document.querySelector('#liveToast');
+    let toastTemplate = document.querySelector('.toast');
     let newToast = toastTemplate.cloneNode(true);
-    newToast.id = '';
-
     newToast.id = 'toast-' + Date.now();
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
