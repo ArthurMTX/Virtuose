@@ -1,3 +1,5 @@
+// static/js/index.js
+
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -5,11 +7,15 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('scene-container').appendChild(renderer.domElement);
 
-// Add a simple cube to the scene
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+// Load the texture
+const textureLoader = new THREE.TextureLoader();
+const texture = textureLoader.load('/static/images/moret-cpp.png');
+
+// Add a sphere with the loaded texture to the scene
+const geometry = new THREE.SphereGeometry(1, 32, 32);
+const material = new THREE.MeshBasicMaterial({ map: texture });
+const sphere = new THREE.Mesh(geometry, material);
+scene.add(sphere);
 
 camera.position.z = 5;
 
@@ -23,8 +29,8 @@ animate();
 // GSAP and ScrollTrigger setup
 gsap.registerPlugin(ScrollTrigger);
 
-// Animation for cube rotation based on scroll
-gsap.to(cube.rotation, {
+// Animation for sphere rotation based on scroll
+gsap.to(sphere.rotation, {
     scrollTrigger: {
         trigger: ".content",
         start: "top top",
