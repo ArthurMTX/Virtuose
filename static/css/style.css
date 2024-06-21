@@ -293,7 +293,6 @@
 }
 
 #scene-container {
-    width: 100vw;
     height: 200vh;
     overflow: hidden;
     position: relative;
