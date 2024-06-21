@@ -9,7 +9,7 @@ document.getElementById('scene-container').appendChild(renderer.domElement);
 
 // Load the texture
 const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('https://file.mtx.dev/moret-cpp.png');
+const texture = textureLoader.load('/static/assets/moret.png');
 
 // Add a sphere with the loaded texture to the scene
 const geometry = new THREE.SphereGeometry(1, 32, 32);
