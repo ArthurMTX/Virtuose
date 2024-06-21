@@ -12,7 +12,7 @@ const textureLoader = new THREE.TextureLoader();
 const texture = textureLoader.load('/static/assets/moret.png');
 
 // Add a sphere with the loaded texture to the scene
-const geometry = new THREE.SphereGeometry(1, 32, 32);
+const geometry = new THREE.SphereGeometry(1, 50, 50);
 const material = new THREE.MeshBasicMaterial({ map: texture });
 const sphere = new THREE.Mesh(geometry, material);
 scene.add(sphere);
