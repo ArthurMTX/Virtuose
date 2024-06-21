@@ -294,7 +294,7 @@
 
 #scene-container {
     width: 100vw;
-    height: 100vh;
+    height: 200vh;
     overflow: hidden;
     position: relative;
 }
