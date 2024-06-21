@@ -11,11 +11,11 @@ document.getElementById('scene-container').appendChild(renderer.domElement);
 const textureLoader = new THREE.TextureLoader();
 const texture = textureLoader.load('/static/assets/moret.png');
 
-// Add a sphere with the loaded texture to the scene
-const geometry = new THREE.SphereGeometry(1, 50, 50);
+// Add a larger square (cube) with the loaded texture to the scene
+const geometry = new THREE.BoxGeometry(3, 3, 3);  // Larger cube
 const material = new THREE.MeshBasicMaterial({ map: texture });
-const sphere = new THREE.Mesh(geometry, material);
-scene.add(sphere);
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
 
 camera.position.z = 5;
 
@@ -29,8 +29,8 @@ animate();
 // GSAP and ScrollTrigger setup
 gsap.registerPlugin(ScrollTrigger);
 
-// Animation for sphere rotation based on scroll
-gsap.to(sphere.rotation, {
+// Animation for cube rotation based on scroll
+gsap.to(cube.rotation, {
     scrollTrigger: {
         trigger: ".content",
         start: "top top",
