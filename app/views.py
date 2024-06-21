@@ -184,6 +184,7 @@ def vm_view(request, vm_uuid):
     host = request.get_host()
 
     websockify_command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port}'
+    print(f"Websockify command: {websockify_command}")
     websockify_process = subprocess.Popen(websockify_command, shell=True, preexec_fn=os.setsid)
     request.session['websockify_pid'] = websockify_process.pid
 
