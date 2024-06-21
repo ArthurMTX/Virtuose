@@ -179,9 +179,13 @@ def vm_list(request):
 @login_required
 def vm_view(request, vm_uuid):
     vm = get_domain_by_uuid(str(vm_uuid))
-    vm_port = vm.get('graphics_port')
+    vm_port = vm.get('vnc', {}).get('port')
     view_port = get_free_port()
     host = request.get_host()
+
+    if vm_port is None:
+        print(f"VM with UUID {vm_uuid} not found")
+        return render(request, 'app/view.html', {'error': 'VM not found'})
 
     websockify_command = f'websockify --web {VNC_URL} {view_port} 0.0.0.0:{vm_port}'
     print(f"Websockify command: {websockify_command}")
