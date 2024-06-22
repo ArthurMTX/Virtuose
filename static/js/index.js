@@ -1,6 +1,6 @@
 // static/js/index.js
-import * as THREE from './three.module.min.js';
-import { OBJLoader } from './OBJLoader.js';
+import * as THREE from './libs/three.module.min.js';
+import { OBJLoader } from './libs/OBJLoader.js';
 import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
 import { ScrollTrigger } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js';
 
