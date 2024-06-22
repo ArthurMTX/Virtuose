@@ -1,3 +1,6 @@
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
+import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/OBJLoader.js';
+
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -6,7 +9,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('scene-container').appendChild(renderer.domElement);
 
 // Load the OBJ model
-const objLoader = new THREE.OBJLoader();
+const objLoader = new OBJLoader();
 objLoader.load('/static/assets/macbook.obj', (object) => {
     object.scale.set(2, 2, 2); // Scale the model if necessary
     scene.add(object);
