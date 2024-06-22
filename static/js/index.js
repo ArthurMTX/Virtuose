@@ -1,5 +1,3 @@
-// static/js/index.js
-
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -7,15 +5,25 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.getElementById('scene-container').appendChild(renderer.domElement);
 
-// Load the texture
-const textureLoader = new THREE.TextureLoader();
-const texture = textureLoader.load('/static/assets/moret.png');
+// Load the OBJ model
+const objLoader = new THREE.OBJLoader();
+objLoader.load('/static/assets/macbook.obj', (object) => {
+    object.scale.set(2, 2, 2); // Scale the model if necessary
+    scene.add(object);
 
-// Add a larger square (cube) with the loaded texture to the scene
-const geometry = new THREE.BoxGeometry(3, 3, 3);  // Larger cube
-const material = new THREE.MeshBasicMaterial({ map: texture });
-const cube = new THREE.Mesh(geometry, material);
-scene.add(cube);
+    // Animation for OBJ model rotation based on scroll
+    gsap.to(object.rotation, {
+        scrollTrigger: {
+            trigger: ".content",
+            start: "top top",
+            end: "bottom bottom",
+            scrub: true
+        },
+        x: Math.PI * 2,
+        y: Math.PI * 2,
+        duration: 1
+    });
+});
 
 camera.position.z = 5;
 
@@ -28,19 +36,6 @@ animate();
 
 // GSAP and ScrollTrigger setup
 gsap.registerPlugin(ScrollTrigger);
-
-// Animation for cube rotation based on scroll
-gsap.to(cube.rotation, {
-    scrollTrigger: {
-        trigger: ".content",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true
-    },
-    x: Math.PI * 2,
-    y: Math.PI * 2,
-    duration: 1
-});
 
 // Handle window resize
 window.addEventListener('resize', () => {
