@@ -1,5 +1,10 @@
+// static/js/index.js
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
 import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/OBJLoader.js';
+import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/gsap.min.js';
+import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.min.js';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Initialize the scene, camera, and renderer
 const scene = new THREE.Scene();
@@ -36,9 +41,6 @@ function animate() {
     renderer.render(scene, camera);
 }
 animate();
-
-// GSAP and ScrollTrigger setup
-gsap.registerPlugin(ScrollTrigger);
 
 // Handle window resize
 window.addEventListener('resize', () => {
