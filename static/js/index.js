@@ -1,8 +1,8 @@
 // static/js/index.js
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.module.js';
-import { OBJLoader } from 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/jsm/loaders/OBJLoader.js';
-import { gsap } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js';
-import { ScrollTrigger } from 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js';
+import * as THREE from './three.module.min.js';
+import { OBJLoader } from './OBJLoader.js';
+import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/gsap.min.js';
+import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.min.js';
 
 gsap.registerPlugin(ScrollTrigger);
 
