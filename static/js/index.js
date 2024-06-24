@@ -1,3 +1,8 @@
+import * as THREE from 'three';
+import { OBJLoader } from 'OBJLoader';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'ScrollTrigger';
+
 gsap.registerPlugin(ScrollTrigger);
 
 const video = document.querySelector("video");
