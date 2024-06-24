@@ -11,8 +11,10 @@ from . import context_processors
 from django.http import StreamingHttpResponse
 from Virtuose.settings import QEMU_URI
 
+
 def get_host_info(request):
     host, error = list_host_info()
+
 
 def domain_info_by_name(request, dom_name):
     domain_info, error = list_dom_info_name(dom_name)
@@ -67,20 +69,22 @@ def dom_actions(request, dom_uuid, action):
             yield json.dumps({"error": context_processors.FAILED_TO_GET_DOMAIN_UUID}) + "\n"
             return
 
+        action_lower = action.lower()
+
         if request.method == "POST":
             try:
-                if action == "start":
-                    if dom.info()[0] == 1: #Si le domaine est "running"
+                if action_lower == "start":
+                    if dom.info()[0] == 1:  # Si le domaine est "running"
                         yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
-                    elif dom.info()[0] == 3: #Si le domaine est "paused"
+                    elif dom.info()[0] == 3:  # Si le domaine est "paused"
                         dom.resume()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                    elif dom.info()[0] != 1: #Si le domaine est différent de "running"
+                    elif dom.info()[0] != 1:  # Si le domaine est différent de "running"
                         dom.create()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                elif action == "restart":
+                elif action_lower == "restart":
                     if dom.isActive() == 1:
                         dom.reboot()
                         yield json.dumps({"status": context_processors.VM_RESTARTED}) + "\n"
@@ -88,28 +92,28 @@ def dom_actions(request, dom_uuid, action):
                         dom.create()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                elif action == "stop":
+                elif action_lower == "stop":
                     if dom.isActive() == 1:
                         dom.shutdown()
                         yield json.dumps({"status": context_processors.VM_STOPPED}) + "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action == "kill":
+                elif action_lower == "kill":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action == "delete":
+                elif action_lower == "delete":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     dom.undefine()
                     yield json.dumps({"status": context_processors.VM_DELETED}) + "\n"
-                elif action == "info":
+                elif action_lower == "info":
                     yield json.dumps({"status": context_processors.VM_INFO}) + "\n"
                 else:
                     yield json.dumps({"error": context_processors.VM_INVALID_ACTION}) + "\n"
@@ -117,7 +121,7 @@ def dom_actions(request, dom_uuid, action):
                 yield json.dumps({"error": context_processors.VM_ERROR}) + "\n"
             finally:
                 conn.close()
-                
+
         else:
             yield json.dumps({"error": context_processors.VM_INVALID_METHOD}) + "\n"
 
