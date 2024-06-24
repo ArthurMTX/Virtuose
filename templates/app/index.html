@@ -5,7 +5,7 @@
 {% block title %}{{ PROJECT_NAME }}{% endblock %}
 
 {% block content %}
-      <script type="importmap">
+    <script type="importmap">
         {
             "imports": {
                 "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
@@ -16,8 +16,9 @@
         }
     </script>
     <script type="module" src="{% static 'js/index.js' %}"></script>
-   <body class="profile-page">
-        <div id="scene-container"></div>
-        <div class="content"></div>
+    <body class="profile-page">
+    <video class="video" playsinline="true" webkit-playsinline="true" preload="auto" muted="muted">
+        <source src="https://www.dropbox.com/scl/fi/qejf5dgqiv6m77d71r2ec/abstract-background-ink-water-20072.mp4?rlkey=zwgwzw4bfhx7oy034t7un6mod&raw=1" type="video/mp4" />
+    </video>
     </body>
 {% endblock %}

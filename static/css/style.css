@@ -292,15 +292,9 @@
     font-size: 12px;
 }
 
-#scene-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-}
-
-.content {
-    height: 200vh;
+.video {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
 }
