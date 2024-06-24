@@ -26,5 +26,6 @@ urlpatterns = [
     path('api/domains/UUID/<str:dom_uuid>/', routes.dom_info_by_uuid),
     path('api/domains/actions/<str:dom_uuid>/<str:action>', routes.dom_actions),
     path('api/volumes/', routes.volumes_info_all),
-    path('api/volumes/<str:pool_name>/', routes.volumes_info)
+    path('api/volumes/<str:pool_name>/', routes.volumes_info),
+    path('api/hosts/', routes.get_host_info)
 ]

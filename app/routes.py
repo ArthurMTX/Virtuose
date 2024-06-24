@@ -5,11 +5,14 @@ from django.http import JsonResponse
 from .api.pools import *
 from .api.domains import *
 from .api.volumes import *
+from .api.host import *
 from django.views.decorators.csrf import csrf_exempt
 from . import context_processors
 from django.http import StreamingHttpResponse
 from Virtuose.settings import QEMU_URI
 
+def get_host_info(request):
+    host, error = list_host_info()
 
 def domain_info_by_name(request, dom_name):
     domain_info, error = list_dom_info_name(dom_name)
