@@ -69,14 +69,14 @@ def dom_actions(request, dom_uuid, action):
 
         if request.method == "POST":
             try:
-                if action == "START":
+                if action == "start":
                     if dom.isActive() == 1:
                         yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
                     else:
                         dom.create()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                elif action == "RESTART":
+                elif action == "restart":
                     if dom.isActive() == 1:
                         dom.reboot()
                         yield json.dumps({"status": context_processors.VM_RESTARTED}) + "\n"
@@ -84,28 +84,28 @@ def dom_actions(request, dom_uuid, action):
                         dom.create()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                elif action == "STOP":
+                elif action == "stop":
                     if dom.isActive() == 1:
                         dom.shutdown()
                         yield json.dumps({"status": context_processors.VM_STOPPED}) + "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action == "KILL":
+                elif action == "kill":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     else:
                         yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action == "DELETE":
+                elif action == "delete":
                     if dom.isActive() == 1:
                         dom.destroy()
                         yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
                         time.sleep(1)
                     dom.undefine()
                     yield json.dumps({"status": context_processors.VM_DELETED}) + "\n"
-                elif action == "INFO":
+                elif action == "info":
                     yield json.dumps({"status": context_processors.VM_INFO}) + "\n"
                 else:
                     yield json.dumps({"error": context_processors.VM_INVALID_ACTION}) + "\n"
