@@ -70,14 +70,13 @@ def dom_actions(request, dom_uuid, action):
         if request.method == "POST":
             try:
                 if action == "start":
-                    print(dom.info()[0])
-                    if dom.info()[0] == 1:
+                    if dom.info()[0] == 1: #Si le domaine est "running"
                         yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
-                    elif dom.info()[0] == 3:
+                    elif dom.info()[0] == 3: #Si le domaine est "paused"
                         dom.resume()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
-                    elif dom.info()[0] != 1:
+                    elif dom.info()[0] != 1: #Si le domaine est différent de "running"
                         dom.create()
                         yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
                         time.sleep(1)
