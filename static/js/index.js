@@ -11,7 +11,7 @@ let tl = gsap.timeline({
   scrollTrigger: {
     trigger: "video",
     start: "top top",
-    end: "bottom+=200% bottom",
+    end: "bottom bottom",
     scrub: true,
     markers: true
   }
