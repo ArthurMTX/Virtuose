@@ -61,67 +61,80 @@ def volumes_info_all(request):
 @csrf_exempt
 def dom_actions(request, dom_uuid, action):
     def stream_logs():
-        try:
-            conn = libvirt.open(QEMU_URI)
-            dom = conn.lookupByUUIDString(dom_uuid)
-            vm_name = dom.name()
-        except libvirt.libvirtError as e:
-            yield json.dumps({"error": context_processors.FAILED_TO_GET_DOMAIN_UUID}) + "\n"
-            return
+        def get_domain():
+            try:
+                conn = libvirt.open(QEMU_URI)
+                dom = conn.lookupByUUIDString(dom_uuid)
+                return conn, dom
+            except libvirt.libvirtError:
+                yield json.dumps({"error": context_processors.FAILED_TO_GET_DOMAIN_UUID}) + "\n"
+                return None, None
 
-        action_lower = action.lower()
+        def start_dom(dom):
+            if dom.info()[0] == 1:  # Running
+                yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
+            elif dom.info()[0] == 3:  # Paused
+                dom.resume()
+                yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
+            else:
+                dom.create()
+                yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
+
+        def restart_dom(dom):
+            if dom.isActive():
+                dom.reboot()
+                yield json.dumps({"status": context_processors.VM_RESTARTED}) + "\n"
+            else:
+                dom.create()
+                yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
+
+        def stop_dom(dom):
+            if dom.isActive():
+                dom.shutdown()
+                yield json.dumps({"status": context_processors.VM_STOPPED}) + "\n"
+            else:
+                yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
+
+        def kill_dom(dom):
+            if dom.isActive():
+                dom.destroy()
+                yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
+            else:
+                yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
+
+        def delete_dom(dom):
+            if dom.isActive():
+                dom.destroy()
+                yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
+            dom.undefine()
+            yield json.dumps({"status": context_processors.VM_DELETED}) + "\n"
+
+        def info_dom(dom):
+            yield json.dumps({"status": context_processors.VM_INFO}) + "\n"
+
+        action_map = {
+            "start": start_dom,
+            "restart": restart_dom,
+            "stop": stop_dom,
+            "kill": kill_dom,
+            "delete": delete_dom,
+            "info": info_dom
+        }
 
         if request.method == "POST":
-            try:
-                if action_lower == "start":
-                    if dom.info()[0] == 1:  # Si le domaine est "running"
-                        yield json.dumps({"status": context_processors.VM_ALREADY_RUNNING}) + "\n"
-                    elif dom.info()[0] == 3:  # Si le domaine est "paused"
-                        dom.resume()
-                        yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
-                        time.sleep(1)
-                    elif dom.info()[0] != 1:  # Si le domaine est différent de "running"
-                        dom.create()
-                        yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
-                        time.sleep(1)
-                elif action_lower == "restart":
-                    if dom.isActive() == 1:
-                        dom.reboot()
-                        yield json.dumps({"status": context_processors.VM_RESTARTED}) + "\n"
-                    else:
-                        dom.create()
-                        yield json.dumps({"status": context_processors.VM_STARTED}) + "\n"
-                        time.sleep(1)
-                elif action_lower == "stop":
-                    if dom.isActive() == 1:
-                        dom.shutdown()
-                        yield json.dumps({"status": context_processors.VM_STOPPED}) + "\n"
-                        time.sleep(1)
-                    else:
-                        yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action_lower == "kill":
-                    if dom.isActive() == 1:
-                        dom.destroy()
-                        yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
-                        time.sleep(1)
-                    else:
-                        yield json.dumps({"status": context_processors.VM_NOT_RUNNING}) + "\n"
-                elif action_lower == "delete":
-                    if dom.isActive() == 1:
-                        dom.destroy()
-                        yield json.dumps({"status": context_processors.VM_KILLED}) + "\n"
-                        time.sleep(1)
-                    dom.undefine()
-                    yield json.dumps({"status": context_processors.VM_DELETED}) + "\n"
-                elif action_lower == "info":
-                    yield json.dumps({"status": context_processors.VM_INFO}) + "\n"
-                else:
-                    yield json.dumps({"error": context_processors.VM_INVALID_ACTION}) + "\n"
-            except libvirt.libvirtError as e:
-                yield json.dumps({"error": context_processors.VM_ERROR}) + "\n"
-            finally:
-                conn.close()
-
+            action_func = action_map.get(action.lower())
+            if action_func:
+                conn, dom = get_domain()
+                if dom:
+                    try:
+                        yield from action_func(dom)
+                    except libvirt.libvirtError:
+                        yield json.dumps({"error": context_processors.VM_ERROR}) + "\n"
+                    finally:
+                        conn.close()
+                time.sleep(1)
+            else:
+                yield json.dumps({"error": context_processors.VM_INVALID_ACTION}) + "\n"
         else:
             yield json.dumps({"error": context_processors.VM_INVALID_METHOD}) + "\n"
 
