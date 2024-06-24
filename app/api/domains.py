@@ -1,6 +1,7 @@
 import libvirt
 import sys
 import xml.etree.ElementTree as ET
+import subprocess
 from .. import context_processors
 from Virtuose.settings import QEMU_URI
 from ..services import check_guest_agent_active
@@ -223,3 +224,27 @@ def list_dom_info_uuid(dom_uuid: str):
         return dom_info, None
     finally:
         conn.close()
+
+        
+def clone_volume_from_template(template_name: str,volume_name: str):
+    command = ["quemu-img", "create", "-f", "qcow2", "-F", "qcow2", "-b", f"{template_name}.qcow2", f"{volume_name}.qcow2"]
+    try:
+        result = subprocess.run(command,check=True)
+        return 0, None
+    except subprocess.CalledProcessError as e:
+        # Affichage de la sortie d'erreur en cas d'échec
+        return None, e.stderr
+
+def create_domain(domain_name: str,template_name: str):
+    try:
+        clone_volume_from_template(template_name,domain_name)
+    except:
+        return None, f"error cloning template : {template_name}"
+    path_to_pool = "/var/lib/libvirt/images/"
+    command = ["virt-install", "--virt-type=kvm", f"--name=domain_name", "--ram", "2048", "--vcpus=2", "--virt-type=kvm", "--hvm", "--network network=default" "--graphics", "spice", "--disk", f"{path_to_pool}{domain_name}.qcow2", "--boot=hd", "--noautoconsole"]
+    try:
+        result = subprocess.run(command,check=True)
+        return 0, None
+    except subprocess.CalledProcessError as e:
+        return None, e.stderr
+    
