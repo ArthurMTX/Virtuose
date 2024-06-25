@@ -1,18 +1,15 @@
 import json
 import time
 
-from django.http import JsonResponse
+from django.http import JsonResponse, StreamingHttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.decorators import api_view
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from .api.pools import *
 from .api.domains import *
 from .api.volumes import *
 from .api.host import *
-from django.views.decorators.csrf import csrf_exempt
 from . import context_processors
-from django.http import StreamingHttpResponse
-from Virtuose.settings import QEMU_URI
-from drf_spectacular.utils import extend_schema
-from drf_spectacular import openapi
-from rest_framework.decorators import api_view
 
 
 @extend_schema(
@@ -27,11 +24,14 @@ def get_host_info(request):
     Récupère les informations de l'hôte.
     """
     host, error = list_host_info()
+    if error:
+        return JsonResponse({'error': error}, status=400)
+    return JsonResponse(host, safe=False)
 
 
 @extend_schema(
     parameters=[
-        openapi.Parameter('dom_name', openapi.IN_PATH, description="Nom du domaine", type=openapi.TYPE_STRING)
+        OpenApiParameter('dom_name', OpenApiParameter.PATH, description="Nom du domaine", type=str)
     ],
     responses={
         200: 'OK',
@@ -85,7 +85,7 @@ def get_pools(request):
 
 @extend_schema(
     parameters=[
-        openapi.Parameter('pool_name', openapi.IN_PATH, description="Nom du pool", type=openapi.TYPE_STRING)
+        OpenApiParameter('pool_name', OpenApiParameter.PATH, description="Nom du pool", type=str)
     ],
     responses={
         200: 'OK',
@@ -105,7 +105,7 @@ def volumes_info(request, pool_name):
 
 @extend_schema(
     parameters=[
-        openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING)
+        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine", type=str)
     ],
     responses={
         200: 'OK',
@@ -143,9 +143,8 @@ def volumes_info_all(request):
 @csrf_exempt
 @extend_schema(
     parameters=[
-        openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING),
-        openapi.Parameter('action', openapi.IN_PATH, description="Action à effectuer sur le domaine",
-                          type=openapi.TYPE_STRING)
+        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine", type=str),
+        OpenApiParameter('action', OpenApiParameter.PATH, description="Action à effectuer sur le domaine", type=str)
     ],
     responses={
         200: 'OK',
