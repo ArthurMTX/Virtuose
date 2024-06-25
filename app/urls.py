@@ -9,15 +9,16 @@ from . import routes
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Your API",
+      title="Virtoose API",
       default_version='v1',
-      description="API description",
-      terms_of_service="https://www.yourcompany.com/terms/",
-      contact=openapi.Contact(email="contact@yourcompany.com"),
-      license=openapi.License(name="Your License"),
+      description="API de Virtuose",
+      terms_of_service="https://mtx.dev",
+      contact=openapi.Contact(email="arthur@mtx.dev"),
+      license=openapi.License(name="BSD License"),
    ),
    public=True,
    permission_classes=(permissions.AllowAny,),
+   url='http://virtuose/'
 )
 
 urlpatterns = [
