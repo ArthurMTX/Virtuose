@@ -13,6 +13,8 @@ from . import context_processors
 
 
 @extend_schema(
+    operationId="get_host_info",
+    description="Récupère les informations de l'hôte.",
     responses={
         200: 'OK',
         400: 'Bad Request',
@@ -20,9 +22,6 @@ from . import context_processors
 )
 @api_view(['GET'])
 def get_host_info(request):
-    """
-    Récupère les informations de l'hôte.
-    """
     host, error = list_host_info()
     if error:
         return JsonResponse({'error': error}, status=400)
