@@ -14,7 +14,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.decorators import api_view
 
-
 @swagger_auto_schema(
     method='get',
     responses={
@@ -29,7 +28,16 @@ def get_host_info(request):
     """
     host, error = list_host_info()
 
-
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter('dom_name', openapi.IN_PATH, description="Nom du domaine", type=openapi.TYPE_STRING)
+    ],
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def domain_info_by_name(request, dom_name):
     """
     Récupère les informations du domaine par son nom.
@@ -39,7 +47,13 @@ def domain_info_by_name(request, dom_name):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(domain_info, safe=False)
 
-
+@swagger_auto_schema(
+    method='get',
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def get_all_domain(request):
     """
     Récupère toutes les informations de domaine.
@@ -49,7 +63,13 @@ def get_all_domain(request):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(domains, safe=False)
 
-
+@swagger_auto_schema(
+    method='get',
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def get_pools(request):
     """
     Récupère toutes les informations de pool.
@@ -59,7 +79,16 @@ def get_pools(request):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(pools, safe=False)
 
-
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter('pool_name', openapi.IN_PATH, description="Nom du pool", type=openapi.TYPE_STRING)
+    ],
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def volumes_info(request, pool_name):
     """
     Récupère les informations de volume pour un pool spécifique.
@@ -69,7 +98,16 @@ def volumes_info(request, pool_name):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(volumes, safe=False)
 
-
+@swagger_auto_schema(
+    method='get',
+    manual_parameters=[
+        openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING)
+    ],
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def dom_info_by_uuid(request, dom_uuid):
     """
     Récupère les informations du domaine par son UUID.
@@ -79,7 +117,13 @@ def dom_info_by_uuid(request, dom_uuid):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(domain_info, safe=False)
 
-
+@swagger_auto_schema(
+    method='get',
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def volumes_info_all(request):
     """
     Récupère toutes les informations de volume.
@@ -89,8 +133,18 @@ def volumes_info_all(request):
         return JsonResponse({'error': error}, status=500)
     return JsonResponse(vol_info, safe=False)
 
-
 @csrf_exempt
+@swagger_auto_schema(
+    method='post',
+    manual_parameters=[
+        openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING),
+        openapi.Parameter('action', openapi.IN_PATH, description="Action à effectuer sur le domaine", type=openapi.TYPE_STRING)
+    ],
+    responses={
+        200: 'OK',
+        500: 'Internal Server Error'
+    }
+)
 def dom_actions(request, dom_uuid, action):
     """
     Effectue une action spécifique sur un domaine spécifique.
