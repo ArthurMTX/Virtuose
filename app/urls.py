@@ -10,7 +10,7 @@ from . import routes
 schema_view = get_schema_view(
     openapi.Info(
         title="Virtuose API",
-        validatorUrl='',
+        validatorUrl='localhost',
         default_version='v1',
         description="API de Virtuose",
         terms_of_service="https://mtx.dev",
