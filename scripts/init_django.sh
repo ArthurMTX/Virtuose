@@ -67,7 +67,7 @@ source venv/bin/activate
 
 # Installation des paquets Python nécessaires
 echo -e "${GREEN}Installation des paquets Python nécessaires...${NC}"
-pip install django django-environ tailwind django_browser_reload psycopg django-werkzeug pyopenssl libvirt-python django-rest-swagger drf-yasg channels
+pip install django django-environ tailwind django_browser_reload psycopg django-werkzeug pyopenssl libvirt-python django-rest-swagger drf-spectacular channels
 
 if [ $? -ne 0 ]; then
   echo -e "${RED}Échec de l'installation des paquets Python.${NC}"
