@@ -1,6 +1,6 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView, SpectacularJSONAPIView, SpectacularYAMLAPIView
 from . import views
 from . import routes
 
@@ -18,7 +18,8 @@ urlpatterns = [
     path('release_port/', views.release_port, name='release_port'),
 
     # API Documentation
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/json', SpectacularJSONAPIView.as_view(), name='schema'),
+    path('api/schema/yaml', SpectacularYAMLAPIView.as_view(), name='schema'),
     path('api/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
