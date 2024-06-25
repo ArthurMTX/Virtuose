@@ -17,7 +17,7 @@ schema_view = get_schema_view(
         contact=openapi.Contact(email="arthur@mtx.dev"),
         license=openapi.License(name="BSD License"),
     ),
-    public=True,
+    public=False,
     permission_classes=(permissions.AllowAny,)
 )
 
