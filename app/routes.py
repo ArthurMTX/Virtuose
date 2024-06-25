@@ -10,13 +10,12 @@ from django.views.decorators.csrf import csrf_exempt
 from . import context_processors
 from django.http import StreamingHttpResponse
 from Virtuose.settings import QEMU_URI
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+from drf_spectacular.utils import extend_schema
+from drf_spectacular import openapi
 from rest_framework.decorators import api_view
 
 
-@swagger_auto_schema(
-    method='get',
+@extend_schema(
     responses={
         200: 'OK',
         400: 'Bad Request',
@@ -30,9 +29,8 @@ def get_host_info(request):
     host, error = list_host_info()
 
 
-@swagger_auto_schema(
-    method='get',
-    manual_parameters=[
+@extend_schema(
+    parameters=[
         openapi.Parameter('dom_name', openapi.IN_PATH, description="Nom du domaine", type=openapi.TYPE_STRING)
     ],
     responses={
@@ -51,8 +49,7 @@ def domain_info_by_name(request, dom_name):
     return JsonResponse(domain_info, safe=False)
 
 
-@swagger_auto_schema(
-    method='get',
+@extend_schema(
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -69,8 +66,7 @@ def get_all_domain(request):
     return JsonResponse(domains, safe=False)
 
 
-@swagger_auto_schema(
-    method='get',
+@extend_schema(
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -87,9 +83,8 @@ def get_pools(request):
     return JsonResponse(pools, safe=False)
 
 
-@swagger_auto_schema(
-    method='get',
-    manual_parameters=[
+@extend_schema(
+    parameters=[
         openapi.Parameter('pool_name', openapi.IN_PATH, description="Nom du pool", type=openapi.TYPE_STRING)
     ],
     responses={
@@ -108,9 +103,8 @@ def volumes_info(request, pool_name):
     return JsonResponse(volumes, safe=False)
 
 
-@swagger_auto_schema(
-    method='get',
-    manual_parameters=[
+@extend_schema(
+    parameters=[
         openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING)
     ],
     responses={
@@ -129,8 +123,7 @@ def dom_info_by_uuid(request, dom_uuid):
     return JsonResponse(domain_info, safe=False)
 
 
-@swagger_auto_schema(
-    method='get',
+@extend_schema(
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -148,9 +141,8 @@ def volumes_info_all(request):
 
 
 @csrf_exempt
-@swagger_auto_schema(
-    method='post',
-    manual_parameters=[
+@extend_schema(
+    parameters=[
         openapi.Parameter('dom_uuid', openapi.IN_PATH, description="UUID du domaine", type=openapi.TYPE_STRING),
         openapi.Parameter('action', openapi.IN_PATH, description="Action à effectuer sur le domaine",
                           type=openapi.TYPE_STRING)
