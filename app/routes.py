@@ -13,10 +13,16 @@ from Virtuose.settings import QEMU_URI
 
 
 def get_host_info(request):
+    """
+    Récupère les informations de l'hôte.
+    """
     host, error = list_host_info()
 
 
 def domain_info_by_name(request, dom_name):
+    """
+    Récupère les informations du domaine par son nom.
+    """
     domain_info, error = list_dom_info_name(dom_name)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -24,6 +30,9 @@ def domain_info_by_name(request, dom_name):
 
 
 def get_all_domain(request):
+    """
+    Récupère toutes les informations de domaine.
+    """
     domains, error = list_all_domain()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -31,6 +40,9 @@ def get_all_domain(request):
 
 
 def get_pools(request):
+    """
+    Récupère toutes les informations de pool.
+    """
     pools, error = listAllPool()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -38,6 +50,9 @@ def get_pools(request):
 
 
 def volumes_info(request, pool_name):
+    """
+    Récupère les informations de volume pour un pool spécifique.
+    """
     volumes, error = listVolumeInfo(pool_name)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -45,6 +60,9 @@ def volumes_info(request, pool_name):
 
 
 def dom_info_by_uuid(request, dom_uuid):
+    """
+    Récupère les informations du domaine par son UUID.
+    """
     domain_info, error = list_dom_info_uuid(dom_uuid)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -52,6 +70,9 @@ def dom_info_by_uuid(request, dom_uuid):
 
 
 def volumes_info_all(request):
+    """
+    Récupère toutes les informations de volume.
+    """
     vol_info, error = list_all_vol_info()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -60,6 +81,9 @@ def volumes_info_all(request):
 
 @csrf_exempt
 def dom_actions(request, dom_uuid, action):
+    """
+    Effectue une action spécifique sur un domaine spécifique.
+    """
     def stream_logs():
         try:
             conn = libvirt.open(QEMU_URI)
