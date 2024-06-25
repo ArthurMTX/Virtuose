@@ -10,8 +10,27 @@ from django.views.decorators.csrf import csrf_exempt
 from . import context_processors
 from django.http import StreamingHttpResponse
 from Virtuose.settings import QEMU_URI
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.decorators import api_view
 
 
+@swagger_auto_schema(
+    method='get',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING),
+            'email': openapi.Schema(type=openapi.TYPE_STRING),
+        },
+        required=['name', 'email']
+    ),
+    responses={
+        200: 'OK',
+        400: 'Bad Request',
+    }
+)
+@api_view(['GET'])
 def get_host_info(request):
     """
     Récupère les informations de l'hôte.
@@ -84,6 +103,7 @@ def dom_actions(request, dom_uuid, action):
     """
     Effectue une action spécifique sur un domaine spécifique.
     """
+
     def stream_logs():
         try:
             conn = libvirt.open(QEMU_URI)
