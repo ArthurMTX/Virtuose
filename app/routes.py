@@ -31,7 +31,7 @@ def get_host_info(request):
 
 @extend_schema(
     parameters=[
-        OpenApiParameter('dom_name', OpenApiParameter.PATH, description="Nom du domaine", type=str)
+        OpenApiParameter('dom_name', OpenApiParameter.PATH, description="Nom du domaine")
     ],
     responses={
         200: 'OK',
@@ -85,7 +85,7 @@ def get_pools(request):
 
 @extend_schema(
     parameters=[
-        OpenApiParameter('pool_name', OpenApiParameter.PATH, description="Nom du pool", type=str)
+        OpenApiParameter('pool_name', OpenApiParameter.PATH, description="Nom du pool")
     ],
     responses={
         200: 'OK',
@@ -105,7 +105,7 @@ def volumes_info(request, pool_name):
 
 @extend_schema(
     parameters=[
-        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine", type=str)
+        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine")
     ],
     responses={
         200: 'OK',
@@ -143,8 +143,8 @@ def volumes_info_all(request):
 @csrf_exempt
 @extend_schema(
     parameters=[
-        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine", type=str),
-        OpenApiParameter('action', OpenApiParameter.PATH, description="Action à effectuer sur le domaine", type=str)
+        OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine"),
+        OpenApiParameter('action', OpenApiParameter.PATH, description="Action à effectuer sur le domaine")
     ],
     responses={
         200: 'OK',
