@@ -21,7 +21,6 @@ video.onloadedmetadata = function () {
   tl.to(video, { currentTime: video.duration });
 };
 
-// Dealing with devices
 function isTouchDevice() {
   return (
     "ontouchstart" in window ||

@@ -37,7 +37,7 @@ urlpatterns = [
     # API
     re_path(r'^api(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('api/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/pools/', routes.get_pools),
     path('api/domains/', routes.get_all_domain),
     path('api/domains/<str:dom_name>/', routes.domain_info_by_name),
