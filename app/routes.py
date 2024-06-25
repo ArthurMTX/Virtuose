@@ -17,14 +17,6 @@ from rest_framework.decorators import api_view
 
 @swagger_auto_schema(
     method='get',
-    request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'name': openapi.Schema(type=openapi.TYPE_STRING),
-            'email': openapi.Schema(type=openapi.TYPE_STRING),
-        },
-        required=['name', 'email']
-    ),
     responses={
         200: 'OK',
         400: 'Bad Request',
