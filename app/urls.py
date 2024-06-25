@@ -9,7 +9,7 @@ from . import routes
 
 schema_view = get_schema_view(
    openapi.Info(
-      title="Virtoose API",
+      title="Virtuose API",
       default_version='v1',
       description="API de Virtuose",
       terms_of_service="https://mtx.dev",
@@ -35,8 +35,8 @@ urlpatterns = [
     path('release_port/', views.release_port, name='release_port'),
 
     # API
-    re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    re_path(r'^api(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('api/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('api/pools/', routes.get_pools),
     path('api/domains/', routes.get_all_domain),
