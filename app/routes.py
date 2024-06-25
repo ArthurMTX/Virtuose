@@ -13,7 +13,7 @@ from . import context_processors
 
 
 @extend_schema(
-    operationId="get_host_info",
+    operation_id="get_host_info",
     description="Récupère les informations de l'hôte.",
     responses={
         200: 'OK',
@@ -29,6 +29,8 @@ def get_host_info(request):
 
 
 @extend_schema(
+    operation_id="domain_info_by_name",
+    description="Récupère les informations du domaine par son nom.",
     parameters=[
         OpenApiParameter('dom_name', OpenApiParameter.PATH, description="Nom du domaine")
     ],
@@ -39,9 +41,6 @@ def get_host_info(request):
 )
 @api_view(['GET'])
 def domain_info_by_name(request, dom_name):
-    """
-    Récupère les informations du domaine par son nom.
-    """
     domain_info, error = list_dom_info_name(dom_name)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -49,6 +48,8 @@ def domain_info_by_name(request, dom_name):
 
 
 @extend_schema(
+    operation_id="get_all_domain",
+    description="Récupère tout les domaines.",
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -56,9 +57,6 @@ def domain_info_by_name(request, dom_name):
 )
 @api_view(['GET'])
 def get_all_domain(request):
-    """
-    Récupère toutes les informations de domaine.
-    """
     domains, error = list_all_domain()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -66,6 +64,8 @@ def get_all_domain(request):
 
 
 @extend_schema(
+    operation_id="get_pools",
+    description="Récupère tout les pools.",
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -73,9 +73,6 @@ def get_all_domain(request):
 )
 @api_view(['GET'])
 def get_pools(request):
-    """
-    Récupère toutes les informations de pool.
-    """
     pools, error = listAllPool()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -83,6 +80,8 @@ def get_pools(request):
 
 
 @extend_schema(
+    operation_id="volumes_info",
+    description="Récupère les informations de volume pour un pool spécifique.",
     parameters=[
         OpenApiParameter('pool_name', OpenApiParameter.PATH, description="Nom du pool")
     ],
@@ -93,9 +92,6 @@ def get_pools(request):
 )
 @api_view(['GET'])
 def volumes_info(request, pool_name):
-    """
-    Récupère les informations de volume pour un pool spécifique.
-    """
     volumes, error = listVolumeInfo(pool_name)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -103,6 +99,8 @@ def volumes_info(request, pool_name):
 
 
 @extend_schema(
+    operation_id="dom_info_by_uuid",
+    description="Récupère les informations du domaine par son UUID.",
     parameters=[
         OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine")
     ],
@@ -113,9 +111,6 @@ def volumes_info(request, pool_name):
 )
 @api_view(['GET'])
 def dom_info_by_uuid(request, dom_uuid):
-    """
-    Récupère les informations du domaine par son UUID.
-    """
     domain_info, error = list_dom_info_uuid(dom_uuid)
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -123,6 +118,8 @@ def dom_info_by_uuid(request, dom_uuid):
 
 
 @extend_schema(
+    operation_id="volumes_info_all",
+    description="Récupère toutes les informations de volume.",
     responses={
         200: 'OK',
         500: 'Internal Server Error'
@@ -130,9 +127,6 @@ def dom_info_by_uuid(request, dom_uuid):
 )
 @api_view(['GET'])
 def volumes_info_all(request):
-    """
-    Récupère toutes les informations de volume.
-    """
     vol_info, error = list_all_vol_info()
     if error:
         return JsonResponse({'error': error}, status=500)
@@ -141,6 +135,8 @@ def volumes_info_all(request):
 
 @csrf_exempt
 @extend_schema(
+    operation_id="dom_actions",
+    description="Effectue une action spécifique sur un domaine spécifique.",
     parameters=[
         OpenApiParameter('dom_uuid', OpenApiParameter.PATH, description="UUID du domaine"),
         OpenApiParameter('action', OpenApiParameter.PATH, description="Action à effectuer sur le domaine")
@@ -152,10 +148,6 @@ def volumes_info_all(request):
 )
 @api_view(['POST'])
 def dom_actions(request, dom_uuid, action):
-    """
-    Effectue une action spécifique sur un domaine spécifique.
-    """
-
     def stream_logs():
         try:
             conn = libvirt.open(QEMU_URI)
