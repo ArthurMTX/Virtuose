@@ -4,8 +4,6 @@ $('.dropdown-item').click(function() {
     let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
     let csrftoken = document.querySelector('#csrf-token-form [name=csrfmiddlewaretoken]').value;
 
-    console.log('Performing action: ' + action + ' on VM: ' + vm_name);
-
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/domains/actions/' + vm_uuid + '/' + action, true);
     xhr.setRequestHeader('X-CSRFToken', csrftoken);
