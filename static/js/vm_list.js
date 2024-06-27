@@ -1,5 +1,5 @@
 $('.dropdown-item').click(function() {
-    let action = $(this).text().trim();
+    let action = $(this).text().trim().toLowerCase();
     let vm_uuid = $(this).closest('.vm').data('id');
     let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
     let csrftoken = document.querySelector('#csrf-token-form [name=csrfmiddlewaretoken]').value;
@@ -29,7 +29,6 @@ $('.dropdown-item').click(function() {
 
             if (xhr.readyState === 4 && responseBuffer) {
                 try {
-                    console.log('Final response: ', responseBuffer);
                     let response = JSON.parse(responseBuffer);
                     showToast(response.status, vm_name);
                 } catch (e) {
