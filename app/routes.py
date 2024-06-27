@@ -158,7 +158,6 @@ def dom_actions(request, dom_uuid, action):
             return
 
         action_lower = action.lower()
-        print(f"Action method: {request.method}, action: {action_lower}, VM name: {vm_name}")
 
         if request.method == "POST":
             try:
@@ -212,6 +211,8 @@ def dom_actions(request, dom_uuid, action):
                 conn.close()
         else:
             yield json.dumps({"error": context_processors.VM_INVALID_METHOD}) + "\n"
+
+    print(f"Action method: {request.method}, action: {action}")
 
     response = StreamingHttpResponse(stream_logs(), content_type='application/json')
     response['X-Accel-Buffering'] = 'no'
