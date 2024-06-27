@@ -146,7 +146,6 @@ def volumes_info_all(request):
     }
 )
 @api_view(['POST'])
-@csrf_exempt
 def dom_actions(request, dom_uuid, action):
     def stream_logs():
         try:
