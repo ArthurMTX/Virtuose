@@ -158,6 +158,7 @@ def dom_actions(request, dom_uuid, action):
             return
 
         action_lower = action.lower()
+        print(f"Action method: {request.method}, action: {action_lower}, VM name: {vm_name}")
 
         if request.method == "POST":
             try:
