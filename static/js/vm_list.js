@@ -3,8 +3,6 @@ $('.dropdown-item').click(function() {
     let vm_uuid = $(this).closest('.vm').data('id');
     let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
 
-    console.log('Action:', action);
-
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/domains/actions/' + vm_uuid + '/' + action, true);
 
@@ -29,6 +27,7 @@ $('.dropdown-item').click(function() {
 
             if (xhr.readyState === 4 && responseBuffer) {
                 try {
+                    console.log('Final response: ', responseBuffer);
                     let response = JSON.parse(responseBuffer);
                     showToast(response.status, vm_name);
                 } catch (e) {
