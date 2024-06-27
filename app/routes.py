@@ -133,7 +133,6 @@ def volumes_info_all(request):
     return JsonResponse(vol_info, safe=False)
 
 
-@csrf_exempt
 @extend_schema(
     operation_id="dom_actions",
     description="Effectue une action spécifique sur un domaine spécifique.",
@@ -147,6 +146,7 @@ def volumes_info_all(request):
     }
 )
 @api_view(['POST'])
+@csrf_exempt
 def dom_actions(request, dom_uuid, action):
     def stream_logs():
         try:
