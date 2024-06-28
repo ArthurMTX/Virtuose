@@ -236,15 +236,31 @@ def clone_volume_from_template(template_name: str,volume_name: str):
         return None, e.stderr
 
 def create_domain(domain_name: str,template_name: str):
+    if context_processors.DOMAIN_TEMPLATE.get(template_name,None) is not None:
+        template_volume_name = context_processors.DOMAIN_TEMPLATE[template_name]    
+    else:
+        return None, f"no template existing with name : {template_name}"
     try:
-        clone_volume_from_template(template_name,domain_name)
+        clone_volume_from_template(template_volume_name,domain_name)
     except:
-        return None, f"error cloning template : {template_name}"
-    path_to_pool = "/var/lib/libvirt/images/"
-    command = ["virt-install", "--virt-type=kvm", f"--name=domain_name", "--ram", "2048", "--vcpus=2", "--virt-type=kvm", "--hvm", "--network network=default" "--graphics", "spice", "--disk", f"{path_to_pool}{domain_name}.qcow2", "--boot=hd", "--noautoconsole"]
+        return None, f"error cloning template : {template_volume_name}"
+    command = [
+        "virt-install", \
+        "--virt-type=kvm", \
+        f"--name={domain_name}", \
+        "--ram", "2048", \
+        "--vcpus=2", \
+        "--virt-type=kvm", \
+        "--hvm", \
+        "--network network=default", \
+        "--graphics", "vnc", \
+        "--disk", f"{context_processors.TEMPLATE_PATH_POOL}{domain_name}.qcow2", \
+        "--boot=hd", \
+        "--noautoconsole"
+    ]
     try:
         result = subprocess.run(command,check=True)
-        return 0, None
+        return result, None
     except subprocess.CalledProcessError as e:
         return None, e.stderr
     

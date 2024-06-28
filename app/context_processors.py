@@ -123,6 +123,14 @@ VOLUME_NETWORK = "VOLUME_NETWORK"
 VOLUME_NETDIR = "VOLUME_NETDIR"
 
 
+#TEMPLATE NAME AND VOLUME NAME
+#IL FAUT METTRE CES INFOS DANS LA BDD VM
+DOMAIN_TEMPLATE = {
+    "centos9" : "centos-stream9"
+}
+
+TEMPLATE_PATH_POOL = "/var/lib/libvirt/images/"
+
 def constants_processor(request):
     all_globals = globals()
     constants = {k: v for k, v in all_globals.items() if k.isupper()}
