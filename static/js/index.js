@@ -1,4 +1,4 @@
-import * as THREE from 'Three';
+import * as THREE from 'three';
 import { OrbitControls  } from 'OrbitControls';
 import SplineLoader from '@splinetool/loader';
 
