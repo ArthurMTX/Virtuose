@@ -1,10 +1,12 @@
 $('.dropdown-item').click(function() {
-    let action = $(this).text().trim().toUpperCase();
+    let action = $(this).text().trim().toLowerCase();
     let vm_uuid = $(this).closest('.vm').data('id');
     let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
+    let csrftoken = document.querySelector('#csrf-token-form [name=csrfmiddlewaretoken]').value;
 
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/domains/actions/' + vm_uuid + '/' + action, true);
+    xhr.setRequestHeader('X-CSRFToken', csrftoken);
 
     let responseBuffer = '';
 

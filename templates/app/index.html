@@ -9,18 +9,12 @@
         {
             "imports": {
                 "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
-                "OBJLoader": "https://unpkg.com/three@0.138.0/examples/jsm/loaders/OBJLoader.js",
-                "gsap": "https://cdn.skypack.dev/gsap",
-                "ScrollTrigger": "https://cdn.skypack.dev/gsap/ScrollTrigger"
+                "OrbitControls": "https://cdn.jsdelivr.net/npm/three-orbitcontrols@2.110.3/OrbitControls.min.js",
+                "SplineLoader": "https://cdn.jsdelivr.net/npm/@splinetool/loader@1.8.0/build/SplineLoader.min.js"
             }
         }
     </script>
     <script type="module" src="{% static 'js/index.js' %}"></script>
     <body class="profile-page">
-    <div class="content">
-        <video class="video" playsinline="true" webkit-playsinline="true" preload="auto" muted="muted">
-            <source src="https://cdn.pixabay.com/video/2024/06/14/216761_large.mp4" type="video/mp4" />
-        </video>
-    </div>
     </body>
 {% endblock %}

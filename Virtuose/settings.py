@@ -60,8 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework_swagger',
     'rest_framework',
-    'drf_spectacular',
-    'drf_yasg'
+    'drf_spectacular'
 ]
 
 CHANNEL_LAYERS = {
@@ -72,6 +71,15 @@ CHANNEL_LAYERS = {
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Virtuose API',
+    'DESCRIPTION': 'API de Virtuose',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'email': 'arthur@mtx.dev'},
+    'LICENSE': {'name': 'BSD License'},
 }
 
 INTERNAL_IPS = [

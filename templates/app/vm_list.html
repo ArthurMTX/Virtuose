@@ -88,7 +88,7 @@
                                         <p> {{ vm.os }} </p>
                                     </div>
                                 </td>
-                                <td>{{ vm.name }}</td>
+                                <td class="vm-name">{{ vm.name }}</td>
                                 <td>{{ vm.memory_gb }}</td>
                                 <td>{{ vm.VCPU }}</td>
                             </tr>
@@ -117,6 +117,9 @@
                     </tbody>
                 </table>
             </div>
+            <form id="csrf-token-form" style="display: none;">
+                {% csrf_token %}
+            </form>
         </div>
     </div>
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
