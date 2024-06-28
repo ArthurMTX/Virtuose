@@ -212,3 +212,12 @@ def dom_actions(request, dom_uuid, action):
     response = StreamingHttpResponse(stream_logs(), content_type='application/json')
     response['X-Accel-Buffering'] = 'no'
     return response
+
+def dom_create(request,domain_name,template_name):
+    if request.method == "POST":
+        result, error = create_domain(domain_name,template_name)
+        if error:
+            return JsonResponse({'error': error}, status=500)
+        return JsonResponse(result, safe=False)
+    else:
+        return JsonResponse({"error": context_processors.VM_INVALID_METHOD}, status=405)
