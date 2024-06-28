@@ -7,9 +7,9 @@
     <script type="importmap">
         {
             "imports": {
-                "Three": "{{ STATIC_URL }}js/libs/Three.js",
-                "OrbitControls": "{{ STATIC_URL }}js/libs/OrbitControls.js",
-                "SplineLoader": "{{ STATIC_URL }}js/libs/SplineLoader.js"
+                "Three": "{% static 'js/libs/Three.js' %}",
+                "OrbitControls": "{% static 'js/libs/OrbitControls.js' %}",
+                "SplineLoader": "{% static 'js/libs/SplineLoader.js' %}"
             }
         }
     </script>
