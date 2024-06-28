@@ -1,9 +1,9 @@
-import * as THREE from 'Three';
-import { OrbitControls  } from 'OrbitControls';
+import * as THREE from 'three';
+import { OrbitControls } from 'OrbitControls';
 import SplineLoader from 'SplineLoader';
 
 // camera
-const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2,  -100000, 100000);
+const camera = new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / -2, -100000, 100000);
 camera.position.set(-758.06, 741.16, 1492.46);
 camera.quaternion.setFromEuler(new THREE.Euler(-0.07, -0.51, -0.03));
 
@@ -39,10 +39,10 @@ controls.dampingFactor = 0.125;
 
 window.addEventListener('resize', onWindowResize);
 function onWindowResize() {
-  camera.left = window.innerWidth / - 2;
+  camera.left = window.innerWidth / -2;
   camera.right = window.innerWidth / 2;
   camera.top = window.innerHeight / 2;
-  camera.bottom = window.innerHeight / - 2;
+  camera.bottom = window.innerHeight / -2;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
