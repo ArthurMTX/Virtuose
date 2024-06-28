@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls  } from 'OrbitControls';
-import SplineLoader from '@splinetool/loader';
+import SplineLoader from 'SplineLoader';
 
 // camera
 const camera = new THREE.OrthographicCamera(window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2,  -100000, 100000);
