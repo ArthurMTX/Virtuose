@@ -2,6 +2,11 @@ from django import forms
 from . import context_processors
 import re
 
+"""
+Récupère les informations des champs du formulaire de création de VM
+"""
+
+
 def get_form_fields_info():
     form = VMForm()
     fields_info = []
@@ -23,6 +28,11 @@ def get_form_fields_info():
 
         fields_info.append(field_info)
     return fields_info
+
+
+"""
+Création dynamique du formulaire de création de VM
+"""
 
 
 class VMForm(forms.Form):
@@ -78,6 +88,9 @@ class VMForm(forms.Form):
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+    """
+    Vérification des données du formulaire de création de VM
+    """
     def clean(self):
         cleaned_data = super().clean()
         ram = int(cleaned_data.get('ram'))
@@ -93,24 +106,34 @@ class VMForm(forms.Form):
             'os': {'value': os, 'choices': self.OS_CHOICES, 'error': context_processors.CREATE_VM_ERROR_OS_GENERIC},
         }
 
+        # Pour chaque champ, vérifie si la valeur est dans les choix possibles
         for field, data in fields.items():
+            # Si le champ est 'os', vérifie si la valeur est dans les choix possibles
             if field == 'os':
                 if data['value'] not in [choice[0] for choice in data['choices']]:
                     self.add_error(field, data['error'])
+            # Si le champ est 'ram', 'cpu' ou 'disk', vérifie si la valeur est un entier ET si la valeur est dans les choix possibles
             else:
                 if data['value'] not in [int(choice[0]) for choice in data['choices'] if choice[0].isdigit()]:
                     self.add_error(field, data['error'])
 
+        # Vérifie si le champ 'name' est alphanumérique et ne contient pas d'espace
         if name:
             if not re.match(r'^[\w]+$', name):
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_NOT_ALPHANUMERIC)
             if ' ' in name:
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_SPACE)
 
+        # Vérifie si les champs 'ram', 'cpu', 'disk', 'os' et 'name' sont renseignés
         if ram and cpu and disk and os and name:
+            # Vérifie si la RAM est suffisante pour l'OS (Windows: 2GB, Linux: 1GB)
             os_ram_requirements = {'Windows': 2, 'Linux': 1}
+
             if ram < os_ram_requirements.get(os, 0):
-                self.add_error('ram', context_processors.CREATE_VM_ERROR_WINDOWS_RAM if os == 'Windows' else context_processors.CREATE_VM_ERROR_LINUX_RAM)
+                self.add_error('ram',
+                               context_processors.CREATE_VM_ERROR_WINDOWS_RAM if os == 'Windows' else context_processors.CREATE_VM_ERROR_LINUX_RAM)
+
+            # Vérifie si le disque est suffisant
             if disk < 10:
                 self.add_error('disk', context_processors.CREATE_VM_ERROR_DISK)
 

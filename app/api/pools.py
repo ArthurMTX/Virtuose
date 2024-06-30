@@ -4,7 +4,7 @@ from .. import context_processors
 from Virtuose.settings import QEMU_URI
 
 
-def listAllPool():
+def list_all_pools():
     pools_list = []
     try:
         conn = libvirt.open(QEMU_URI)

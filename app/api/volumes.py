@@ -4,7 +4,7 @@ from .. import context_processors
 from Virtuose.settings import QEMU_URI
 
 
-def listVolumeInfo(pool_name: str):
+def list_volume_info(pool_name: str):
     try:
         conn = libvirt.open(QEMU_URI)
     except libvirt.libvirtError as e:
@@ -53,5 +53,5 @@ def list_all_vol_info():
         return None, context_processors.NO_POOLS_STORAGE
     volume_pool_info = {}
     for pool in pools:
-        volume_pool_info[pool.name()] = listVolumeInfo(pool.name())
+        volume_pool_info[pool.name()] = list_volume_info(pool.name())
     return volume_pool_info, None

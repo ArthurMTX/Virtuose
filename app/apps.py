@@ -4,17 +4,9 @@ from django.core.exceptions import ImproperlyConfigured
 from . import context_processors
 
 
-def check_requirements():
-    with open('requirements.txt') as f:
-        requirements = f.read().splitlines()
-        print(requirements)
-
-    for requirement in requirements:
-        print(requirement)
-        try:
-            __import__(requirement)
-        except ImportError:
-            raise ImproperlyConfigured(f"{context_processors.MISSING_REQUIREMENT}: {requirement}")
+"""
+Initialisation de l'application, vérification des variables d'environnement et des fichiers statiques
+"""
 
 
 class MyAppConfig(AppConfig):
@@ -22,9 +14,7 @@ class MyAppConfig(AppConfig):
     name = 'app'
 
     def ready(self):
-        #check_requirements()
-
-        required_env_vars = [
+        REQUIRED_ENV_VARS = [
             'SECRET_KEY',
             'DB_NAME',
             'DB_USER',
@@ -32,15 +22,16 @@ class MyAppConfig(AppConfig):
             'DB_HOST',
             'DB_PORT'
         ]
-
-        for var in required_env_vars:
-            if not os.getenv(var):
-                raise ImproperlyConfigured(f"{context_processors.MISSING_ENV_VAR}: {var}")
-
-        static_files = [
+        STATIC_FILES = [
             'static/noVNC/vnc.html',
         ]
 
-        for file in static_files:
+        # Vérification des variables d'environnement dans le fichier .env
+        for var in REQUIRED_ENV_VARS:
+            if not os.getenv(var):
+                raise ImproperlyConfigured(f"{context_processors.MISSING_ENV_VAR}: {var}")
+
+        # Vérification des fichiers statiques dans le dossier static
+        for file in STATIC_FILES:
             if not os.path.exists(file):
                 raise ImproperlyConfigured(f"{context_processors.MISSING_FILE}: {file}")

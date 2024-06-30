@@ -1,6 +1,7 @@
 from django.urls import path
 from django.contrib.auth import views as auth_views
-from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView, SpectacularJSONAPIView, SpectacularYAMLAPIView
+from drf_spectacular.views import SpectacularRedocView, SpectacularSwaggerView, SpectacularJSONAPIView, \
+    SpectacularYAMLAPIView
 from . import views
 from . import routes
 
@@ -32,5 +33,5 @@ urlpatterns = [
     path('api/domains/create/<str:dom_name>/<str:template_name>', routes.dom_create),
     path('api/volumes/', routes.volumes_info_all),
     path('api/volumes/<str:pool_name>/', routes.volumes_info),
-    path('api/hosts/', routes.get_host_info)# pas encore implémenté
+    path('api/hosts/', routes.get_host_info)  # todo: pas encore implémenté
 ]
