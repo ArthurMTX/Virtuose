@@ -1,21 +1,32 @@
+/**
+ * Sert à afficher les informations des VMs dans la page web
+ * et à permettre de les démarrer, arrêter, suspendre, etc.
+ */
+
+
+// Gestion des actions sur les VMs
 $('.dropdown-item').click(function() {
     let action = $(this).text().trim().toLowerCase();
     let vm_uuid = $(this).closest('.vm').data('id');
     let vm_name = $(this).closest('.vm').find('.vm-name').text().trim();
     let csrftoken = document.querySelector('#csrf-token-form [name=csrfmiddlewaretoken]').value;
 
+    // Envoi de la requête POST pour effectuer l'action
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '/api/domains/actions/' + vm_uuid + '/' + action, true);
     xhr.setRequestHeader('X-CSRFToken', csrftoken);
 
     let responseBuffer = '';
 
+    // Gestion des réponses de la requête, pour afficher des notifications
     xhr.onreadystatechange = function() {
+        // Si la requête est terminée
         if (xhr.readyState === 3 || xhr.readyState === 4) {
             responseBuffer += xhr.responseText;
             let lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
 
+            // Pour chaque ligne de la réponse, on affiche une notification
             for (let line of lines) {
                 if (line) {
                     try {
@@ -27,6 +38,7 @@ $('.dropdown-item').click(function() {
                 }
             }
 
+            // Si la requête est terminée et qu'il reste des données à traiter
             if (xhr.readyState === 4 && responseBuffer) {
                 try {
                     let response = JSON.parse(responseBuffer);
@@ -38,16 +50,19 @@ $('.dropdown-item').click(function() {
         }
     };
 
+    // Gestion des erreurs de la requête
     xhr.onerror = function() {
         console.error('Request failed.');
     };
     xhr.send();
 });
 
+// Affiche une notification en bas de l'écran
 function showToast(message, vmName) {
     let toastContainer = document.querySelector('.toast-container');
     let existingToasts = toastContainer.querySelectorAll('.toast');
 
+    // On vérifie si une notification identique n'est pas déjà affichée
     for (let toast of existingToasts) {
         if (toast.querySelector('.toast-body').textContent === message) {
             return;
@@ -57,20 +72,24 @@ function showToast(message, vmName) {
     let toastTemplate = document.querySelector('.toast');
     let newToast = toastTemplate.cloneNode(true);
 
+    // On remplit la notification avec le message et le nom de la VM
     newToast.querySelector('.toast-header strong').textContent = vmName || 'Notification';
     newToast.querySelector('.toast-body').textContent = message;
     newToast.classList.add('hide');
     toastContainer.appendChild(newToast);
 
+    // On affiche la notification
     let toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
 
+    // On supprime la notification une fois qu'elle est cachée
     newToast.addEventListener('hidden.bs.toast', function () {
         newToast.remove();
     });
 }
 
 $(document).ready(function() {
+    // Reformatage du contenu des balises <pre> dans les modales pour les rendre plus lisibles
     $('.modal-body pre').each(function() {
         let rawContent = $(this).text();
         let beautifiedContent = js_beautify(rawContent);
@@ -78,11 +97,14 @@ $(document).ready(function() {
         $(this).text(trimmedContent);
     });
 
+    // Rafraîchissement des données des VMs toutes les 2 secondes pour afficher les changements en temps réel
     function refreshData() {
+        // Récupère tous les noms de VMs
         fetch('/api/domains/')
             .then(response => response.json())
             .then(data => {
                 data.forEach(vm_name => {
+                    // Pour chaque VM, on récupère ses informations et on les affiche
                     fetch('/api/domains/' + vm_name)
                         .then(response => response.json())
                         .then(vm_data => {
@@ -92,6 +114,7 @@ $(document).ready(function() {
                             vmElement.querySelector('td:nth-child(4)').textContent = vm_data.memory_gb;
                             vmElement.querySelector('td:nth-child(5)').textContent = vm_data.VCPU;
 
+                            // Activation ou désactivation des actions en fonction de l'état de la VM
                             let dropdownItems = vmElement.querySelectorAll('.dropdown-item');
                             dropdownItems.forEach(item => {
                                 let action = item.textContent.trim();
@@ -108,8 +131,10 @@ $(document).ready(function() {
             .catch(error => console.error('Error:', error));
     }
 
+    // Rafraîchissement des données toutes les 2 secondes
     setInterval(refreshData, 2000);
 
+    // Fonction pour obtenir l'icône correspondant à l'état de la VM
     function getVmStateIcon(state) {
         switch (state) {
             case 'running':
