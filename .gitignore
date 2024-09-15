@@ -1,0 +1,10 @@
+*.env
+.venv
+venv
+tmp
+*.pyc
+__pycache__
+db.sqlite3
+.idea
+scripts/installation.log
+scripts/postgres_password.txt

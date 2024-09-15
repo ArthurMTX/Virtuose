@@ -1,0 +1,22 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr" data-bs-theme="dark" data-bs-core="modern">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ PROJECT_NAME }}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{{ PROJECT_NAME }}{% endblock %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{% static 'assets/favicon.ico' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{% static 'css/halfmoon.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/halfmoon.modern.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+{% include 'app/navbar.html' %}
+{% block content %}
+{% endblock %}
+<script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+</body>
+</html>
