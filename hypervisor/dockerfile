@@ -1,0 +1,35 @@
+FROM debian:latest
+
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    qemu-utils \
+    qemu-system \
+    libvirt-daemon-system\
+    cpu-checker\
+    openssh-server\
+    ca-certificates \
+    net-tools\
+    iproute2\
+    libvirt-daemon-system\
+    dnsmasq
+
+
+# Activer libvirt pour écouter sur TCP (ajout de l'argument --listen)
+#RUN sed -i 's/#LIBVIRTD_ARGS=""/LIBVIRTD_ARGS="--listen"/' /etc/default/libvirtd
+
+# Copier les fichiers de configuration libvirt et qemu dans le conteneur
+#COPY ./docker-qemu/config/libvirtd.conf /etc/libvirt/libvirtd.conf
+COPY ./docker-qemu/config/qemu.conf /etc/libvirt/qemu.conf
+
+WORKDIR /opt/hypervisor
+
+COPY ./docker-qemu/scripts /opt/hypervisor/scripts
+RUN chmod +x /opt/hypervisor/scripts/start.sh
+
+RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
+RUN echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
+
+RUN mkdir -p /root/.ssh && \
+    chmod 700 /root/.ssh
+
+RUN ssh-keygen -A
+CMD ["sh","/opt/hypervisor/scripts/start.sh"]

@@ -1,0 +1,28 @@
+services:
+
+  hypervisor:
+    image: virtuose-hypervisor:latest
+    container_name: virtuose-hypervisor
+    privileged: true
+    #ports:
+    #  - "16509:16509"
+    devices:
+      - /dev/kvm:/dev/kvm
+    volumes:
+      - ./shared:/shared
+    networks:
+      - backend
+
+  backend:
+    image: virtuose-backend:latest
+    container_name: virtuose-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - hypervisor
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
