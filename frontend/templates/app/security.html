@@ -1,0 +1,17 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{ SECURITY_PAGE_TITLE }}{% endblock %}
+
+{% block content %}
+    <body class="profile-page">
+    <div class="container">
+        <div class="profile-sidebar">
+            {% include 'app/profile_sidebar.html' %}
+        </div>
+        <div class="profile-page-content">
+            <h1>{{ SECURITY_PAGE_TITLE }}</h1>
+        </div>
+    </div>
+    </body>
+{% endblock %}

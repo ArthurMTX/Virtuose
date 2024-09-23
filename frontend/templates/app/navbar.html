@@ -1,0 +1,38 @@
+{% load static %}
+{% load custom_filters %}
+
+<nav class="navbar navbar-expand-md docs-navbar sticky-top" style="background-color: hsla(var(--bs-body-bg-hsl), 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: var(--bs-border-width) solid var(--bs-content-border-color);">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'index' %}">
+            <img src="{% static 'assets/logo-white.png' %}" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
+        </a>
+        <button class="navbar-toggler text-bg-dark" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-collapse-2" aria-controls="navbar-collapse-2" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-collapse-2">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">{{ NAVBAR_HOME }}</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name|startswith:'profile' %}active{% endif %}" href="{% url 'profile/informations' %}">{{ NAVBAR_PROFILE }}</a>
+                    </li>
+                    <li>
+                        <form action="{% url 'logout' %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link" style="background: none; border: none; cursor: pointer;">{{ NAVBAR_LOGOUT }}</button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">{{ NAVBAR_LOGIN }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">{{ NAVBAR_REGISTER }}</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
