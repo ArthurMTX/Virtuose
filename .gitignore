@@ -6,5 +6,3 @@ tmp
 __pycache__
 db.sqlite3
 .idea
-scripts/installation.log
-scripts/postgres_password.txt

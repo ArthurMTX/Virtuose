@@ -1,6 +1,6 @@
 services:
   virtuose-frontend:
-    build: .
+    build: ./frontend
     container_name: virtuose-frontend
     command: >
       sh -c "python manage.py migrate &&
@@ -29,7 +29,7 @@ services:
       - POSTGRES_DB=
     volumes:
       - virtuose_database_data:/var/lib/postgresql/data
-      - ./initdb:/docker-entrypoint-initdb.d
+      - ./database:/docker-entrypoint-initdb.d
 
 volumes:
   virtuose_database_data:
