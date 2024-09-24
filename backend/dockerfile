@@ -5,8 +5,8 @@ FROM python:3.12
 RUN apt update && apt install --no-install-recommends -y python3-libvirt gcc pkg-config libvirt-dev openssh-client
 
 # Add application code
-COPY ./docker-backend/app /app
-COPY ./docker-backend/scripts /app/scripts
+COPY ./app /app
+COPY ./scripts /app/scripts
 
 # Define the working directory
 WORKDIR /app

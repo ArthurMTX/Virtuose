@@ -1,7 +1,8 @@
 services:
 
-  hypervisor:
-    image: virtuose-hypervisor:latest
+  virtuose-hypervisor:
+    #image: virtuose-hypervisor:latest
+    build: ./hypervisor
     container_name: virtuose-hypervisor
     privileged: true
     #ports:
@@ -13,16 +14,54 @@ services:
     networks:
       - backend
 
-  backend:
-    image: virtuose-backend:latest
+  virtuose-backend:
+    #image: virtuose-backend:latest
+    build: ./backend
     container_name: virtuose-backend
+    ports:
+      - "8080:8000"
+    depends_on:
+      - virtuose-hypervisor
+    networks:
+      - backend  
+
+  virtuose-database:
+    #image: virtuose-database:latest
+    build: ./database
+    container_name: virtuose-database
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - virtuose_database_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
+
+  virtuose-frontend:
+    #image: virtuose-frontend:latest
+    build: ./frontend
+    container_name: virtuose-frontend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    restart: always
+    environment:
+      - DB_HOST=virtuose-database
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+    volumes:
+      - ./frontend:/frontend
     ports:
       - "8000:8000"
     depends_on:
-      - hypervisor
-    networks:
-      - backend
+      - virtuose-database
 
 networks:
   backend:
     driver: bridge
+
+volumes:
+  virtuose_database_data:
