@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 
 # Copier les fichiers de configuration libvirt et qemu dans le conteneur
 #COPY ./docker-qemu/config/libvirtd.conf /etc/libvirt/libvirtd.conf
-COPY ./docker-qemu/config/qemu.conf /etc/libvirt/qemu.conf
+COPY ./config/qemu.conf /etc/libvirt/qemu.conf
 
 WORKDIR /opt/hypervisor
 
-COPY ./docker-qemu/scripts /opt/hypervisor/scripts
+COPY ./scripts /opt/hypervisor/scripts
 RUN chmod +x /opt/hypervisor/scripts/start.sh
 
 RUN echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config
