@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     net-tools\
     iproute2\
     libvirt-daemon-system\
+    virtinst\
     dnsmasq
 
 

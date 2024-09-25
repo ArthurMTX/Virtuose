@@ -17,16 +17,9 @@ class LibvirtHandler:
         except libvirt.libvirtError as e:
             self.conn = None
             print('Failed to open connection to ' + uri, e) 
-
-    def host_information(self):
-        """
-        Returns information about the host.
-
-        Returns:
-            dict: A dictionary containing the hostname of the host.
-        """
-        host_information = {}
-        host_information["Hypervisor information"] = self.conn.getInfo()
-        self.conn.close()
-        return host_information
     
+    def close(self):
+        """
+        Closes the connection to the libvirt daemon.
+        """
+        self.conn.close()
