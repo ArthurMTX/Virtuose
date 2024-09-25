@@ -10,6 +10,13 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+#Suppression des images existantes
+echo "Removing existing images..."
+docker rmi virtuose-backend\
+            virtuose-hypervisor\
+            virtuose-frontend\
+            virtuose-database
+
 # Lancer les services avec Docker Compose
 echo "Starting services with Docker Compose..."
 

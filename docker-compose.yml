@@ -1,7 +1,7 @@
 services:
 
   virtuose-hypervisor:
-    #image: virtuose-hypervisor:latest
+    image: virtuose-hypervisor:latest
     build: ./hypervisor
     container_name: virtuose-hypervisor
     privileged: true
@@ -15,7 +15,7 @@ services:
       - backend
 
   virtuose-backend:
-    #image: virtuose-backend:latest
+    image: virtuose-backend:latest
     build: ./backend
     container_name: virtuose-backend
     ports:
@@ -26,7 +26,7 @@ services:
       - backend  
 
   virtuose-database:
-    #image: virtuose-database:latest
+    image: virtuose-database:latest
     build: ./database
     container_name: virtuose-database
     environment:
@@ -38,7 +38,7 @@ services:
       - ./database:/docker-entrypoint-initdb.d
 
   virtuose-frontend:
-    #image: virtuose-frontend:latest
+    image: virtuose-frontend:latest
     build: ./frontend
     container_name: virtuose-frontend
     command: >
