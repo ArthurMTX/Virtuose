@@ -3,6 +3,7 @@ services:
   virtuose-hypervisor:
     image: virtuose-hypervisor:latest
     build: ./hypervisor
+    hostname: virtuose-hypervisor
     container_name: virtuose-hypervisor
     privileged: true
     #ports:
@@ -12,22 +13,24 @@ services:
     volumes:
       - ./shared:/shared
     networks:
-      - backend
+      - virtuose
 
   virtuose-backend:
     image: virtuose-backend:latest
     build: ./backend
+    hostname: virtuose-backend
     container_name: virtuose-backend
     ports:
       - "8080:8000"
     depends_on:
       - virtuose-hypervisor
     networks:
-      - backend  
+      - virtuose  
 
   virtuose-database:
     image: virtuose-database:latest
     build: ./database
+    hostname: virtuose-database
     container_name: virtuose-database
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -36,10 +39,13 @@ services:
     volumes:
       - virtuose_database_data:/var/lib/postgresql/data
       - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - virtuose
 
   virtuose-frontend:
     image: virtuose-frontend:latest
     build: ./frontend
+    hostname: virtuose-frontend
     container_name: virtuose-frontend
     command: >
       sh -c "python manage.py migrate &&
@@ -58,9 +64,11 @@ services:
       - "8000:8000"
     depends_on:
       - virtuose-database
+    networks:
+      - virtuose  
 
 networks:
-  backend:
+  virtuose:
     driver: bridge
 
 volumes:
