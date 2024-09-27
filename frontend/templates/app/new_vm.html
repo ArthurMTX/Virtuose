@@ -1,4 +1,5 @@
 {% extends 'app/base.html' %}
+{% load custom_filters %}
 
 {% block title %}{{ CREATE_VM_PAGE_TITLE }}{% endblock %}
 
@@ -12,12 +13,12 @@
             <h1>{{ CREATE_VM_PAGE_TITLE }}</h1>
             <div class="create-vm">
                 <div class="form-create-vm">
-                    <form method="post">
+                    <form method="post" {% if form_disabled %}class="disabled-form"{% endif %}>
                         {% csrf_token %}
                         {% for field in form %}
                             <div class="form-group">
                                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                {{ field }}
+                                {{ field|add_class_if_disabled:form_disabled }}
                                 {% if field.errors %}
                                     <div class="alert alert-danger">
                                         {{ field.errors }}
@@ -26,9 +27,14 @@
                             </div>
                         {% endfor %}
                         <div class="text-center mt-3">
-                            <button type="submit" class="btn btn-primary">{{ CREATE_VM_BUTTON }}</button>
+                            <button type="submit" class="btn btn-primary" {% if form_disabled %}disabled{% endif %}>{{ CREATE_VM_BUTTON }}</button>
                         </div>
                     </form>
+                    {% if form_disabled %}
+                        <div class="alert alert-warning mt-3">
+                            <p class="m-0"> Pas de templates de machines virtuelles disponibles.</p>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="templates-create-vm">
                     <h3>{{ TEMPLATE_LABEL }}</h3>

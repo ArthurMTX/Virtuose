@@ -1,6 +1,8 @@
 from django import forms
+from .models import Template
 from . import context_processors
 import re
+from django.core.cache import cache
 
 """
 Récupère les informations des champs du formulaire de création de VM
@@ -36,6 +38,9 @@ Création dynamique du formulaire de création de VM
 
 
 class VMForm(forms.Form):
+    cache.clear()
+    templates = Template.objects.all()
+
     RAM_CHOICES = [
         ('4', context_processors.CREATE_VM_RAM_LABEL_4GB),
         ('8', context_processors.CREATE_VM_RAM_LABEL_8GB),
@@ -48,18 +53,8 @@ class VMForm(forms.Form):
         ('4', context_processors.CREATE_VM_CPU_LABEL_4),
         ('8', context_processors.CREATE_VM_CPU_LABEL_8),
     ]
-    DISK_CHOICES = [
-        ('10', context_processors.CREATE_VM_DISK_LABEL_10GB),
-        ('20', context_processors.CREATE_VM_DISK_LABEL_20GB),
-        ('50', context_processors.CREATE_VM_DISK_LABEL_50GB),
-        ('100', context_processors.CREATE_VM_DISK_LABEL_100GB),
-        ('250', context_processors.CREATE_VM_DISK_LABEL_250GB),
-        ('500', context_processors.CREATE_VM_DISK_LABEL_500GB),
-    ]
-    OS_CHOICES = [
-        ('Windows', context_processors.CREATE_VM_OS_LABEL_WINDOWS),
-        ('Linux', context_processors.CREATE_VM_OS_LABEL_LINUX),
-    ]
+
+    OS_CHOICES = [(template.name, template.name) for template in templates]
 
     ram = forms.ChoiceField(
         label=context_processors.CREATE_VM_RAM_LABEL,
@@ -69,11 +64,6 @@ class VMForm(forms.Form):
     cpu = forms.ChoiceField(
         label=context_processors.CREATE_VM_CPU_LABEL,
         choices=CPU_CHOICES,
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'}))
-    disk = forms.ChoiceField(
-        label=context_processors.CREATE_VM_DISK_LABEL,
-        choices=DISK_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     os = forms.ChoiceField(
@@ -95,14 +85,12 @@ class VMForm(forms.Form):
         cleaned_data = super().clean()
         ram = int(cleaned_data.get('ram'))
         cpu = int(cleaned_data.get('cpu'))
-        disk = int(cleaned_data.get('disk'))
         os = cleaned_data.get('os')
         name = cleaned_data.get('name').strip()
 
         fields = {
             'ram': {'value': ram, 'choices': self.RAM_CHOICES, 'error': context_processors.CREATE_VM_ERROR_RAM_GENERIC},
             'cpu': {'value': cpu, 'choices': self.CPU_CHOICES, 'error': context_processors.CREATE_VM_ERROR_CPU_GENERIC},
-            'disk': {'value': disk, 'choices': self.DISK_CHOICES, 'error': context_processors.CREATE_VM_ERROR_DISK_GENERIC},
             'os': {'value': os, 'choices': self.OS_CHOICES, 'error': context_processors.CREATE_VM_ERROR_OS_GENERIC},
         }
 
@@ -124,17 +112,13 @@ class VMForm(forms.Form):
             if ' ' in name:
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_SPACE)
 
-        # Vérifie si les champs 'ram', 'cpu', 'disk', 'os' et 'name' sont renseignés
-        if ram and cpu and disk and os and name:
+        # Vérifie si les champs 'ram', 'cpu', 'os' et 'name' sont renseignés
+        if ram and cpu and os and name:
             # Vérifie si la RAM est suffisante pour l'OS (Windows: 2GB, Linux: 1GB)
             os_ram_requirements = {'Windows': 2, 'Linux': 1}
 
             if ram < os_ram_requirements.get(os, 0):
                 self.add_error('ram',
                                context_processors.CREATE_VM_ERROR_WINDOWS_RAM if os == 'Windows' else context_processors.CREATE_VM_ERROR_LINUX_RAM)
-
-            # Vérifie si le disque est suffisant
-            if disk < 10:
-                self.add_error('disk', context_processors.CREATE_VM_ERROR_DISK)
 
         return cleaned_data

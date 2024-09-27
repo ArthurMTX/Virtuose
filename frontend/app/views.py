@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 import os
 import signal
 import json
@@ -10,8 +10,6 @@ from . import context_processors
 from .register_form import CustomUserCreationForm
 from uuid import uuid4
 import subprocess
-from xml.etree import ElementTree
-from xml.dom import minidom
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as auth_login
@@ -20,6 +18,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .vm_list import get_os_logo
+from .models import Domain, Template
+from django.utils.functional import SimpleLazyObject
+
 
 """
 Render l'index (page d'accueil)
@@ -38,6 +39,9 @@ Récupère les informations du formulaire et les enregistre dans un fichier XML
 
 @login_required
 def new_vm(request):
+    templates = Template.objects.all()
+    form_disabled = not templates.exists()
+
     # Action POST, on récupère les données du formulaire
     if request.method == "POST":
         form = VMForm(request.POST)
@@ -48,27 +52,21 @@ def new_vm(request):
             vm_data = form.cleaned_data
             vm_name = vm_data['name']
             uuid = str(uuid4())  # selon le RFC4122
+            template = Template.objects.get(name=vm_data['os'])
 
-            root = ElementTree.Element("VM")
-            ElementTree.SubElement(root, "name").text = vm_name
-            ElementTree.SubElement(root, "uuid").text = uuid
+            # Insertion des données dans la base de données
+            Domain.objects.create(
+                id_template=template,
+                id_user=request.user,
+                name=vm_name,
+                uuid=uuid
+            )
 
-            system = ElementTree.SubElement(root, "system")
-            for key, value in vm_data.items():
-                if key != 'name':
-                    ElementTree.SubElement(system, key).text = str(value)
+            # qemu-img create -f qcow2 -F qcow2 -b disk-existant.qcow2 uuid.qcow2
+            subprocess.run(['qemu-img', 'create', '-f', 'qcow2', '-F', 'qcow2', '-b', 'disk-existant.qcow2', f'{uuid}.qcow2'])
 
-            try:
-                xml_str = ElementTree.tostring(root, encoding='unicode')
-                xml_pretty = minidom.parseString(xml_str).toprettyxml(indent="    ")
-
-                with open(f'tmp./{vm_name}_{uuid}.xml', 'w') as f:
-                    f.write(xml_pretty)
-
-                return HttpResponse(context_processors.CREATE_VM_SUCCESS)
-            except Exception as e:
-                print(e)
-                return HttpResponse(f"{context_processors.CREATE_VM_ERROR} : {e}")
+            # virt-install --virt-type kvm --name debian-test --memory 4096 --vcpus 4 --disk path=/var/lib/libvirt/images/myclone1.qcow2,format=qcow2 --import --network network=default --os-variant linux2022 --graphics vnc --noautoconsole --hvm
+            subprocess.run(['virt-install', '--virt-type', 'kvm', '--name', vm_name, '--memory', str(vm_data['ram']), '--vcpus', str(vm_data['cpu']), '--disk', f'path={uuid}.qcow2,format=qcow2', '--import', '--network', 'network=default', '--os-variant', vm_data['os'], '--graphics', 'vnc', '--noautoconsole', '--hvm'])
         else:
             # Données invalides, on renvoie le formulaire avec les erreurs
             fields_info = get_form_fields_info()
@@ -78,7 +76,7 @@ def new_vm(request):
         # Action GET, on affiche le formulaire vide avec les informations
         form = VMForm()
         fields_info = get_form_fields_info()
-        return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'form': form})
+        return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'form': form, 'form_disabled': form_disabled})
 
 
 """
@@ -115,7 +113,7 @@ Render la page de connexion
 Récupère les informations du formulaire et les vérifie
 """
 
-
+    
 def login_view(request):
     # Action POST, on récupère les données du formulaire
     if request.method == 'POST':
@@ -237,12 +235,15 @@ def vm_list(request):
     vms_list = get_all_domains()
     vms = []
 
-    # Récupère les informations des VMs et les affiche
-    for vm_name in vms_list:
-        vm_info = get_domain_by_name(vm_name)
-        if vm_info:
-            vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
-            vms.append(vm_info)
+    if vms_list:
+        # Récupère les informations des VMs et les affiche
+        for vm_name in vms_list:
+            vm_info = get_domain_by_name(vm_name)
+            if vm_info:
+                vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
+                vms.append(vm_info)
+    else:
+        print("No VMs found")
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 

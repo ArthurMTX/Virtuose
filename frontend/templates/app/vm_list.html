@@ -32,6 +32,7 @@
                     </div>
                 </div>
             </div>
+            {% if vms %}
             <div class="table-responsive">
                 <table class="table table-hover table-bordered align-middle sortable">
                     <thead>
@@ -44,7 +45,6 @@
                     </tr>
                     </thead>
                     <tbody class="table-group-divider table-secondary">
-                    {% if vms %}
                         {% for vm in vms %}
                             <tr class="vm" data-id="{{ vm.UUID }}">
                                 <td>
@@ -112,10 +112,10 @@
                             </div>
                         {% endfor %}
                     {% else %}
-                        <p>Aucune machine virtuelle trouvée.</p>
-                    {% endif %}
+                        <p>Aucune machine virtuelle trouvée :(</p>
                     </tbody>
                 </table>
+                {% endif %}
             </div>
             <form id="csrf-token-form" style="display: none;">
                 {% csrf_token %}
