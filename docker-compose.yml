@@ -1,20 +1,4 @@
 services:
-
-  virtuose-hypervisor:
-    image: virtuose-hypervisor:latest
-    build: ./hypervisor
-    hostname: virtuose-hypervisor
-    container_name: virtuose-hypervisor
-    privileged: true
-    #ports:
-    #  - "16509:16509"
-    devices:
-      - /dev/kvm:/dev/kvm
-    volumes:
-      - ./shared:/shared
-    networks:
-      - virtuose
-
   virtuose-backend:
     image: virtuose-backend:latest
     build: ./backend
@@ -22,8 +6,9 @@ services:
     container_name: virtuose-backend
     ports:
       - "8080:8000"
-    depends_on:
-      - virtuose-hypervisor
+    volumes:
+      - /var/run/libvirt:/var/run/libvirt
+      - /opt/virtuose:/opt/virtuose
     networks:
       - virtuose  
 
