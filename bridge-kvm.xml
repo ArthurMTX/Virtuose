@@ -1,0 +1,10 @@
+<network ipv6="no">
+  <name>virtuose-network</name>
+  <forward mode="nat"/>
+  <bridge name="virbr2" stp="on" delay="0"/>
+  <ip address="192.168.0.254" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.0.1" end="192.168.0.200"/>
+    </dhcp>
+  </ip>
+</network>

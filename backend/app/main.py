@@ -6,7 +6,7 @@ from controler.domainsHandler import domain_list
 app = FastAPI()
 
 # Example URI, adjust based on how you expose the socket
-QEMU_URI = 'qemu+ssh://virtuose-hypervisor/system'
+QEMU_URI = 'qemu:///system'
 
 @app.get("/api/hypervisor/resume")
 def api_hypervisor_resume():
