@@ -2,9 +2,27 @@
 
 source ./functions.sh
 
+# Detect OS type
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    OS=$ID
+else
+    printerr "Unable to detect OS, Exiting."
+    exit 1
+fi
+
 printinfo "Package installation..."
 
-apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager cpu-checker dnsmasq > /dev/null
+if [[ "$OS" == "arch" ]]; then
+    printinfo "Installing packages for Arch Linux..."
+    sudo pacman -S --noconfirm qemu-full qemu-img libvirt virt-install virt-manager virt-viewer edk2-ovmf swtpm guestfs-tools libosinfo
+elif [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
+    printinfo "Installing packages for Ubuntu/Debian..."
+    sudo apt install -y qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils virtinst virt-manager cpu-checker dnsmasq > /dev/null
+else
+    printerr "Unsupported OS, Exiting."
+    exit 1
+fi
 
 if [ $? -ne 0 ]; then
     printerr "Error during installation of packages, Exiting."
@@ -43,4 +61,4 @@ for dir in "${directory[@]}";do
             exit 1
         fi
     fi
-done 
+done
