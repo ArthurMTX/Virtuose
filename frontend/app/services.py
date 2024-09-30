@@ -134,12 +134,3 @@ def check_guest_agent_active(vm_uuid):
     except libvirt.libvirtError:
         return False
     return False
-
-
-"""
-Permet de créer une VM
-"""
-
-
-def create_vm(id_user, vm_name, vm_ram, vm_cpu):
-    
