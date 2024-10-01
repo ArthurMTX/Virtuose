@@ -10,16 +10,33 @@ if virsh pool-list --all | grep -q "\bdefault\b" &> /dev/null;then
     virsh pool-undefine default > /dev/null
 fi
 
+if virsh pool-list --all | grep -q "\btemplates\b" &> /dev/null;then
+    virsh pool-destroy templates > /dev/null
+    virsh pool-undefine templates > /dev/null
+fi
+
 printinfo "Pool storage creation..."
 
 virsh pool-define-as --name default --type dir --target /opt/virtuose/storage > /dev/null
 virsh pool-autostart default > /dev/null
+virsh pool-start default > /dev/null
 
 if [ $? -ne 0 ]; then
     printerr "Error creating storage pool, Exiting."
     exit 1
 else
     printsucces "Pool /opt/virtuose/storage created successfully."
+fi
+
+virsh pool-define-as --name templates --type dir --target /opt/virtuose/templates > /dev/null
+virsh pool-autostart templates > /dev/null
+virsh pool-start templates > /dev/null
+
+if [ $? -ne 0 ]; then
+    printerr "Error creating storage pool, Exiting."
+    exit 1
+else
+    printsucces "Pool /opt/virtuose/templates created successfully."
 fi
 
 #Configuration du réseau

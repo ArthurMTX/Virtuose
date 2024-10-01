@@ -45,6 +45,22 @@ if id $HYPERVISOR_USER &>/dev/null; then
             printsucces "User libvirt-qemu added to the $HYPERVISOR_USER group successfully."
         fi
     fi
+        # Set permissions for /opt/virtuose
+    printinfo "Setting permissions for /opt/virtuose..."
+
+    chmod 774 -R /opt/virtuose
+    chown $HYPERVISOR_USER:kvm -R /opt/virtuose
+
+    if [ $? -ne 0 ]; then
+        printerr "Error setting permissions for /opt/virtuose, Exiting."
+        printerr "Cleaning up..."
+        userdel $HYPERVISOR_USER
+        exit 1
+    else
+        printsucces "Permissions set successfully."
+        printsucces "$(ls -l /opt/virtuose)"
+    fi
+    
     exit 0
 fi
 
