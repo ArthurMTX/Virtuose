@@ -6,6 +6,6 @@ psycopg
 django-werkzeug
 pyopenssl
 libvirt-python
-django-rest-swagger
-drf-spectacular
 channels
+django-chartjs
+requests

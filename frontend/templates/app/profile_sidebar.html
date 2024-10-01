@@ -14,6 +14,13 @@
                 <a class="nav-link {% if request.resolver_match.url_name == 'profile/securite' %}active{% endif %}" href="{% url 'profile/securite' %}">{{ SECURITY_PAGE_TITLE }}</a>
             </li>
             <li class="mt-3">
+                <h6 class="sidebar-header">{{ SYSTEM_SECTION }}</h6>
+            </li>
+            <li><hr class="sidebar-divider"></li>
+            <li class="nav-item">
+                <a class="nav-link {% if request.resolver_match.url_name == 'profile/host' %}active{% endif %}" href="{% url 'profile/host' %}">{{ HOST_INFO_PAGE_TITLE }}</a>
+            </li>
+            <li class="mt-3">
                 <h6 class="sidebar-header">{{ VM_SECTION }}</h6>
             </li>
             <li><hr class="sidebar-divider"></li>

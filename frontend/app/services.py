@@ -134,3 +134,19 @@ def check_guest_agent_active(vm_uuid):
     except libvirt.libvirtError:
         return False
     return False
+
+
+"""
+Permet de récupérer les statistiques de l'hôte
+"""
+
+
+def get_host_informations(request):
+    response = requests.get(f"{API_URL}/hypervisor/resume")
+    if response.status_code == 200:
+        data = response.json()
+        return JsonResponse(data, safe=False)
+
+    else:
+        print(f"Failed to get host information, status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)

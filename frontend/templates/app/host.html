@@ -1,0 +1,131 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}{{ HOST_INFO_PAGE_TITLE }}{% endblock %}
+
+{% block content %}
+<body class="profile-page">
+    <div class="container">
+        <div class="profile-sidebar">
+            {% include 'app/profile_sidebar.html' %}
+        </div>
+        <div class="profile-page-content">
+            <div class="col-md-12">
+                <h1>{{ HOST_INFO_PAGE_TITLE }} <a data-bs-toggle="modal" data-bs-target="#hostInfoRaw"> <i class="modalIconsButton fa-solid fa-circle-info"></i> </a> </h1>
+                <div class="modal fade" id="hostInfoRaw" tabindex="-1" aria-labelledby="hostRawInfoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="hostRawInfoModalLabel"> Icons Info </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <pre>
+                                    {{ host_infos | safe }}
+                                </pre>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Fermer </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-server"></i> {{ GENERAL_SECTION }}
+                            </h2>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong> {{ HOSTNAME_LABEL }} : </strong><span id="hostname"></span></p>
+                                    <p><strong> {{ LIBVIRT_VERSION_LABEL }} : </strong><span id="libvirt_version"></span></p>
+                                    <p><strong> {{ URI_LABEL }} : </strong><span id="uri"></span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong> {{ CPU_MODEL_LABEL }} : </strong><span id="cpu_model"></span></p>
+                                    <p><strong> {{ TOTAL_MEMORY_LABEL }} : </strong><span id="total_memory_size"></span> MB</p>
+                                    <p><strong> {{ CPU_NUMBER_LABEL }} : </strong><span id="number_of_cpus"></span></p>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                
+                <div class="row mt-20">
+                    <div class="col-12 col-xl-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-microchip"></i> {{ CPU_USAGE_LABEL }}
+                            </h2>
+                            <canvas id="cpuMhzChart"></canvas>
+                            <p class="cpuaverage"> {{ CPU_AVERAGE_LABEL }} : <span id="cpuMhzAverage"></span></p>
+                        </div>
+                    </div>
+        
+                    <div class="col-12 col-xl-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-memory"></i> {{ RAM_USAGE_LABEL }}
+                            </h2>
+                            <canvas id="ramChart"></canvas>
+                            <p class="ramaverage"> {{ RAM_AVERAGE_LABEL }} : <span id="ramAverage"></span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-microchip"></i> {{ RAM_USAGE_LABEL }}
+                            </h2>
+                            <div class="progress">
+                                <div class="progress-bar cpu progress-bar-cpu" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-memory"></i> {{ RAM_AVERAGE_LABEL }}
+                            </h2>
+                            <div class="progress">
+                                <div class="progress-bar ram progress-bar-ram" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-20">
+                    <div class="col-md-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-sitemap"></i> {{ NODE_NUMBER_LABEL }}
+                            </h2>
+                            <p><strong> {{ NODES_LABEL }} : </strong><span id="number_of_nodes"></span></p>
+                            <p><strong> {{ SOCKETS_LABEL }} : </strong><span id="number_of_sockets"></span></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card card-stats-host">
+                            <h2 class="card-title">
+                                <i class="fa-solid fa-cogs"></i> {{ CORES_THREADS_LABEL }}
+                            </h2>
+                            <p><strong> {{ CORES_PER_SOCKET_LABEL }} : </strong><span id="number_of_cores_per_socket"></span></p>
+                            <p><strong> {{ THREADS_PER_CORE_LABEL }} : </strong><span id="number_of_threads_per_core"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.15.1/beautify.min.js" integrity="sha512-kElKX79OYM/vf2AU+lF4Zsi3AnKds70Mc6fRBImpwQzdZNbju6SyeTBBOUe1N9q1P456v1F01HAsjjWZkXIS4Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript" src="{% static 'js/libs/Chart.min.js' %}"></script>
+    <script src="https://kit.fontawesome.com/cac8e74413.js" crossorigin="anonymous"></script>
+    <script src="{% static 'js/host_informations.js' %}"></script>   
+</body>
+{% endblock %}

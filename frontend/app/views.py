@@ -19,7 +19,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .vm_list import get_os_logo
 from .models import Domain, Template
-from django.utils.functional import SimpleLazyObject
+from chartjs.views.lines import BaseLineChartView
 
 
 """
@@ -317,3 +317,25 @@ def release_port(request):
     # Méthode non autorisée (normalement impossible)
     print("Invalid request method")
     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+
+"""
+Render la page des informations de l'hôte
+"""
+
+
+@login_required
+def host_infos(request):
+    host_infos_response = get_host_informations(request)
+
+    if host_infos_response.status_code == 200:
+        host_infos = json.loads(host_infos_response.content)
+    else:
+        host_infos = None
+
+    if host_infos is None:
+        print("Failed to get host informations")
+        return render(request, 'app/host.html', {'error': 'Failed to get host informations'})
+
+    return render(request, 'app/host.html', {'host_infos': host_infos})

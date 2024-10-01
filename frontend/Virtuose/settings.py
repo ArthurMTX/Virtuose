@@ -35,7 +35,7 @@ SECURE_CROSS_ORIGIN_OPENER_POLICY = None
 DEBUG = True
 
 QEMU_URI = "qemu:///system"
-API_URL = "http://virtuose-backend:8000"
+API_URL = "http://virtuose-backend:8000/api"
 VNC_URL = "/opt/virtuose/static/noVNC/"
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'app',
     'tailwind',
     'channels',
+    'chartjs',
     'django_werkzeug',
     'django_browser_reload',
     'django.contrib.admin',
@@ -55,10 +56,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework_swagger',
-    'rest_framework',
-    'drf_spectacular'
+    'django.contrib.staticfiles'
 ]
 
 CHANNEL_LAYERS = {
@@ -109,7 +107,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'app.context_processors.constants_processor'
+                'app.context_processors.constants_processor',
+                'app.context_processors.api_url'
             ],
         },
     },
