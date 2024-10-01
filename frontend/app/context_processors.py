@@ -39,6 +39,29 @@ SECURITY_PAGE_TITLE = "Sécurité"
 # Virtual Machines pages
 VM_SECTION = "Machines Virtuelles"
 
+# System pages
+SYSTEM_SECTION = "Système"
+
+# Host pages
+HOST_INFO_PAGE_TITLE = "Informations de l'hôte"
+GENERAL_SECTION = "Informations générales"
+HOSTNAME_LABEL = "Nom d'hôte"
+LIBVIRT_VERSION_LABEL = "Version de libvirt"
+URI_LABEL = "URI"
+CPU_MODEL_LABEL = "Modèle de CPU"
+TOTAL_MEMORY_LABEL = "Mémoire totale"
+CPU_NUMBER_LABEL = "Nombre de CPU"
+CPU_USAGE_LABEL = "Utilisation du CPU"
+CPU_AVERAGE_LABEL = "Moyenne d'utilisation du CPU"
+RAM_USAGE_LABEL = "Utilisation de la RAM"
+RAM_AVERAGE_LABEL = "Moyenne d'utilisation de la RAM"
+NODE_NUMBER_LABEL = "Nombre de nœuds"
+NODES_LABEL = "Nœuds"
+SOCKETS_LABEL = "Sockets"
+CORES_THREADS_LABEL = "Cœurs & Threads"
+CORES_PER_SOCKET_LABEL = "Cœurs par socket"
+THREADS_PER_CORE_LABEL = "Threads par cœur"
+
 # List VM page
 LIST_VM_PAGE_TITLE = "Liste des machines virtuelles"
 LIST_VM_OS_LABEL = "Système d'exploitation"
@@ -126,3 +149,8 @@ def constants_processor(request):
     all_globals = globals()
     constants = {k: v for k, v in all_globals.items() if k.isupper()}
     return constants
+
+
+def api_url(request):
+    from Virtuose import settings
+    return {'API_URL': settings.API_URL}

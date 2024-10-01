@@ -18,7 +18,7 @@ def hypervisor_information(QEMU_URI: str) -> dict:
     returned_dict['libvirt_version'] = hypervisor.libvirt_version()
     returned_dict['uri'] = hypervisor.uri()
     returned_dict['cpu_model'] = general_informations[0]
-    returned_dict['total_memory_size(MB)'] = general_informations[1]
+    returned_dict['total_memory_size'] = general_informations[1]
     returned_dict['number_of_cpus'] = general_informations[2]
     returned_dict['cpu_mhz'] = general_informations[3]
     returned_dict['number_of_nodes'] = general_informations[4]
