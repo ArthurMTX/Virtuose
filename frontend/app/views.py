@@ -8,7 +8,6 @@ from .services import *
 from .vm_form import VMForm, get_form_fields_info
 from . import context_processors
 from .register_form import CustomUserCreationForm
-from uuid import uuid4
 import subprocess
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -18,8 +17,6 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .vm_list import get_os_logo
-from .models import Domain, Template
-from chartjs.views.lines import BaseLineChartView
 
 
 """
@@ -39,44 +36,40 @@ Récupère les informations du formulaire et les enregistre dans un fichier XML
 
 @login_required
 def new_vm(request):
-    templates = Template.objects.all()
-    form_disabled = not templates.exists()
+    # Récupère les templates disponibles
+    templates = get_templates()
+    form_disabled = not templates
 
-    # Action POST, on récupère les données du formulaire
-    if request.method == "POST":
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
         form = VMForm(request.POST)
 
-        # Si les données entrées dans le formulaire sont valides
-        # todo: ne plus en avoir besoin, à remplacer par une API
         if form.is_valid():
+            # Récupération des données du formulaire
             vm_data = form.cleaned_data
             vm_name = vm_data['name']
-            uuid = str(uuid4())  # selon le RFC4122
-            template = Template.objects.get(name=vm_data['os'])
+            template_name = vm_data['template']
 
-            # Insertion des données dans la base de données
-            Domain.objects.create(
-                id_template=template,
-                id_user=request.user,
-                name=vm_name,
-                uuid=uuid
-            )
+            # Crée la VM via l'API et récupère la réponse de l'API
+            api_response = create_vm(name=vm_name, template_name=template_name)
 
-            # qemu-img create -f qcow2 -F qcow2 -b disk-existant.qcow2 uuid.qcow2
-            subprocess.run(['qemu-img', 'create', '-f', 'qcow2', '-F', 'qcow2', '-b', 'disk-existant.qcow2', f'{uuid}.qcow2'])
-
-            # virt-install --virt-type kvm --name debian-test --memory 4096 --vcpus 4 --disk path=/var/lib/libvirt/images/myclone1.qcow2,format=qcow2 --import --network network=default --os-variant linux2022 --graphics vnc --noautoconsole --hvm
-            subprocess.run(['virt-install', '--virt-type', 'kvm', '--name', vm_name, '--memory', str(vm_data['ram']), '--vcpus', str(vm_data['cpu']), '--disk', f'path={uuid}.qcow2,format=qcow2', '--import', '--network', 'network=default', '--os-variant', vm_data['os'], '--graphics', 'vnc', '--noautoconsole', '--hvm'])
+            # Renvoyer la réponse de l'API directement, avec le même code et message
+            return JsonResponse(api_response, safe=False)
         else:
-            # Données invalides, on renvoie le formulaire avec les erreurs
-            fields_info = get_form_fields_info()
-            errors = form.errors
-            return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'errors': errors, 'form': form})
-    else:
-        # Action GET, on affiche le formulaire vide avec les informations
-        form = VMForm()
-        fields_info = get_form_fields_info()
-        return render(request, 'app/new_vm.html', {'fields_info': fields_info, 'form': form, 'form_disabled': form_disabled})
+            # Retourne les erreurs de validation du formulaire sous forme de JSON
+            return JsonResponse({
+                'success': False,
+                'message': 'Form validation failed. Please correct the errors and try again.',
+                'errors': form.errors.as_json()
+            }, status=400)  # Code 400 pour indiquer une erreur dans la requête
+
+    # Pour les requêtes GET ou non-AJAX POST
+    form = VMForm()
+    fields_info = get_form_fields_info()
+    return render(request, 'app/new_vm.html', {
+        'fields_info': fields_info,
+        'form': form,
+        'form_disabled': form_disabled
+    })
 
 
 """
@@ -232,13 +225,13 @@ def vm_list(request):
 
         print(f"Action {action} on VM with UUID {vm_uuid} completed")
 
-    vms_list = get_all_domains()
+    vms_list = json.loads(get_all_domains(request).content)
     vms = []
 
     if vms_list:
         # Récupère les informations des VMs et les affiche
         for vm_name in vms_list:
-            vm_info = get_domain_by_name(vm_name)
+            vm_info = get_domain_by_name(request, vm_name)
             if vm_info:
                 vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
                 vms.append(vm_info)

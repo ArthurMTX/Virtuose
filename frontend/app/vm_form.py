@@ -1,8 +1,7 @@
 from django import forms
-from .models import Template
+from .services import get_templates
 from . import context_processors
 import re
-from django.core.cache import cache
 
 """
 Récupère les informations des champs du formulaire de création de VM
@@ -38,9 +37,6 @@ Création dynamique du formulaire de création de VM
 
 
 class VMForm(forms.Form):
-    cache.clear()
-    templates = Template.objects.all()
-
     RAM_CHOICES = [
         ('4', context_processors.CREATE_VM_RAM_LABEL_4GB),
         ('8', context_processors.CREATE_VM_RAM_LABEL_8GB),
@@ -53,8 +49,7 @@ class VMForm(forms.Form):
         ('4', context_processors.CREATE_VM_CPU_LABEL_4),
         ('8', context_processors.CREATE_VM_CPU_LABEL_8),
     ]
-
-    OS_CHOICES = [(template.name, template.name) for template in templates]
+    TEMPLATE_CHOICES = get_templates()
 
     ram = forms.ChoiceField(
         label=context_processors.CREATE_VM_RAM_LABEL,
@@ -66,9 +61,9 @@ class VMForm(forms.Form):
         choices=CPU_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
-    os = forms.ChoiceField(
-        label=context_processors.CREATE_VM_OS_LABEL,
-        choices=OS_CHOICES,
+    template = forms.ChoiceField(
+        label=context_processors.CREATE_VM_TEMPLATE_LABEL,
+        choices=TEMPLATE_CHOICES,
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}))
     name = forms.CharField(
@@ -77,6 +72,10 @@ class VMForm(forms.Form):
         max_length=50,
         required=True,
         widget=forms.TextInput(attrs={'class': 'form-control'}))
+    
+    def __init__(self, *args, **kwargs):
+        super(VMForm, self).__init__(*args, **kwargs)
+        self.fields['template'].choices = get_templates()
 
     """
     Vérification des données du formulaire de création de VM
@@ -85,19 +84,19 @@ class VMForm(forms.Form):
         cleaned_data = super().clean()
         ram = int(cleaned_data.get('ram'))
         cpu = int(cleaned_data.get('cpu'))
-        os = cleaned_data.get('os')
+        template = cleaned_data.get('template')
         name = cleaned_data.get('name').strip()
 
         fields = {
             'ram': {'value': ram, 'choices': self.RAM_CHOICES, 'error': context_processors.CREATE_VM_ERROR_RAM_GENERIC},
             'cpu': {'value': cpu, 'choices': self.CPU_CHOICES, 'error': context_processors.CREATE_VM_ERROR_CPU_GENERIC},
-            'os': {'value': os, 'choices': self.OS_CHOICES, 'error': context_processors.CREATE_VM_ERROR_OS_GENERIC},
+            'template': {'value': template, 'choices': self.TEMPLATE_CHOICES, 'error': context_processors.CREATE_VM_ERROR_TEMPLATE_GENERIC},
         }
 
         # Pour chaque champ, vérifie si la valeur est dans les choix possibles
         for field, data in fields.items():
-            # Si le champ est 'os', vérifie si la valeur est dans les choix possibles
-            if field == 'os':
+            # Si le champ est 'template', vérifie si la valeur est dans les choix possibles
+            if field == 'template':
                 if data['value'] not in [choice[0] for choice in data['choices']]:
                     self.add_error(field, data['error'])
             # Si le champ est 'ram', 'cpu' ou 'disk', vérifie si la valeur est un entier ET si la valeur est dans les choix possibles
@@ -112,13 +111,6 @@ class VMForm(forms.Form):
             if ' ' in name:
                 self.add_error('name', context_processors.CREATE_VM_ERROR_NAME_SPACE)
 
-        # Vérifie si les champs 'ram', 'cpu', 'os' et 'name' sont renseignés
-        if ram and cpu and os and name:
-            # Vérifie si la RAM est suffisante pour l'OS (Windows: 2GB, Linux: 1GB)
-            os_ram_requirements = {'Windows': 2, 'Linux': 1}
-
-            if ram < os_ram_requirements.get(os, 0):
-                self.add_error('ram',
-                               context_processors.CREATE_VM_ERROR_WINDOWS_RAM if os == 'Windows' else context_processors.CREATE_VM_ERROR_LINUX_RAM)
-
-        return cleaned_data
+        # Vérifie si les champs 'ram', 'cpu', 'template' et 'name' sont renseignés
+        if ram and cpu and template and name:
+            return cleaned_data

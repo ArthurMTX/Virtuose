@@ -29,12 +29,14 @@ Permet de récupérer la liste des domaines
 """
 
 
-def get_all_domains():
-    response = requests.get(f"{API_URL}/domains/")
+def get_all_domains(request):
+    response = requests.get(f"{API_URL}/domains/list")
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        return JsonResponse(data, safe=False)
     else:
-        return None
+        print(f"Failed to get domains, status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
 
 
 """
@@ -55,12 +57,14 @@ Permet de récupérer un domaine par son nom
 """
 
 
-def get_domain_by_name(name):
+def get_domain_by_name(request, name):
     response = requests.get(f"{API_URL}/domains/{name}")
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        return JsonResponse(data, safe=False)
     else:
-        return None
+        print(f"Failed to get domain '{name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
 
 
 """
@@ -150,3 +154,42 @@ def get_host_informations(request):
     else:
         print(f"Failed to get host information, status code: {response.status_code}")
         return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    
+
+"""
+Permet de récupérer les templates disponibles sur l'hôte
+"""
+
+def get_templates():
+    response = requests.get(f"{API_URL}/pools/list/templates/")
+    if response.status_code == 200:
+        templates = response.json()
+
+        result = []
+        for template in templates:
+            extension = template.split('.')[-1]
+            value = template.split('.')[0]
+
+            label = f"{value} ({extension})"
+
+            result.append((value, label))
+        return result
+    else:
+        print(f"Failed to get templates, status code: {response.status_code}")
+        return []
+
+
+"""
+Permet de créer une VM sur l'hôte avec les paramètres passés en argument
+"""
+
+def create_vm(name, template_name):
+    response = requests.post(f"{API_URL}/domains/create/", 
+                             json={
+                                "name": name,
+                                "template": template_name
+                             })
+    
+    return response.json()
+
+

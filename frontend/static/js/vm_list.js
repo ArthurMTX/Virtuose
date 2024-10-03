@@ -100,12 +100,12 @@ $(document).ready(function() {
     // Rafraîchissement des données des VMs toutes les 2 secondes pour afficher les changements en temps réel
     function refreshData() {
         // Récupère tous les noms de VMs
-        fetch('/api/domains/')
+        fetch('/domains_list')
             .then(response => response.json())
             .then(data => {
                 data.forEach(vm_name => {
                     // Pour chaque VM, on récupère ses informations et on les affiche
-                    fetch('/api/domains/' + vm_name)
+                    fetch('/domain_by_name/' + vm_name)
                         .then(response => response.json())
                         .then(vm_data => {
                             let vmElement = document.querySelector(`tr[data-id='${vm_data.UUID}']`);

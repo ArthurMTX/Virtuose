@@ -7,6 +7,8 @@ services:
     ports:
       - "8080:8000"
     volumes:
+      - ./backend/app:/app
+      - ./backend/scripts:/app/scripts
       - /var/run/libvirt:/var/run/libvirt
       - /opt/virtuose:/opt/virtuose
     networks:

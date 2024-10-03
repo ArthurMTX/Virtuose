@@ -82,7 +82,7 @@ def domain_create(QEMU_URI: str, domain_name: str, template_name: str) -> dict:
     Returns:
         dict: A dictionary containing the result of the operation.
     """
-    if Domains.isDomainExist(QEMU_URI, domain_name):
+    if Domains(QEMU_URI).isDomainExist(domain_name):
         return {"status": "error", "message": "Domain already exists."}
     if Pool(QEMU_URI).create_linked_clone(template_name, domain_name)["status"] == "success":
         return Domains(QEMU_URI).create(domain_name)

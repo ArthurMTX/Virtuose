@@ -16,7 +16,7 @@ fi
 
 printinfo "Start setting up the hypervisor..."
 
-script_file=("virtualisation_checkup.sh" "setup_hypervisor.sh" "user_creation.sh" "qemu_conf.sh")
+script_file=("virtualisation_checkup.sh" "setup_hypervisor.sh" "qemu_conf.sh")
 # script execution
 for script in "${script_file[@]}";do
     chmod +x ./"$script"

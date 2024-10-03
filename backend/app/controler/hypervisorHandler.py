@@ -30,6 +30,19 @@ def hypervisor_information(QEMU_URI: str) -> dict:
     
     return returned_dict
 
+def hypervisor_libvirt_version(QEMU_URI: str) -> dict:
+    """
+    Returns the version of the libvirt daemon.
+
+    Returns:
+        dict: A dictionary containing the version of the libvirt daemon.
+    """
+    version = dict()
+    hypervisor = Hypervisor(QEMU_URI)
+    version["libvirt_version"] = hypervisor.libvirt_version()
+    hypervisor.close()
+    return version
+
 def hypervisor_hostname(QEMU_URI: str) -> dict:
     """
     Returns the hostname of the hypervisor.
@@ -42,3 +55,18 @@ def hypervisor_hostname(QEMU_URI: str) -> dict:
     hostname["hostname"] = hypervisor.hostname()
     hypervisor.close()
     return hostname
+
+def hypervisor_memory_stats(QEMU_URI: str) -> dict:
+    """
+    Returns the memory parameters of the hypervisor.
+    
+    Returns:
+        dict: A dictionary containing the memory parameters of the hypervisor.
+    """
+    hypervisor = Hypervisor(QEMU_URI)
+    mem_stats = hypervisor.memory_stats()
+    for k, v in mem_stats.items():
+        mem_stats[k] = int(v/1024)
+    mem_stats["available"] = mem_stats["free"] + mem_stats["cached"]
+    hypervisor.close()
+    return mem_stats

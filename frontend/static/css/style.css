@@ -341,3 +341,15 @@
 .cpuaverage, .ramaverage {
     margin: 10px 0 0 0;
 }
+
+.toast-container {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1050;
+}
+
+.toast-error {
+    background-color: #78110F;
+    color: #FFF;
+}

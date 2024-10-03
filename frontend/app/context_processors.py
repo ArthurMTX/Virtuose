@@ -84,9 +84,7 @@ CREATE_VM_CPU_LABEL_1 = "1"
 CREATE_VM_CPU_LABEL_2 = "2"
 CREATE_VM_CPU_LABEL_4 = "4"
 CREATE_VM_CPU_LABEL_8 = "8"
-CREATE_VM_OS_LABEL = "Image système"
-CREATE_VM_OS_LABEL_WINDOWS = "Windows"
-CREATE_VM_OS_LABEL_LINUX = "Linux"
+CREATE_VM_TEMPLATE_LABEL = "Template"
 CREATE_VM_NAME_LABEL = "Nom de la VM"
 LIST_VM_STATE_LABEL = "État"
 CREATE_VM_SUCCESS = "La machine virtuelle a été créée avec succès."
@@ -97,7 +95,7 @@ CREATE_VM_ERROR_WINDOWS_RAM = "Windows requiert au moins 2GB de RAM."
 CREATE_VM_ERROR_LINUX_RAM = "Linux requiert au moins 1GB de RAM."
 CREATE_VM_ERROR_RAM_GENERIC = "La RAM n'est pas valide."
 CREATE_VM_ERROR_CPU_GENERIC = "Le CPU n'est pas valide."
-CREATE_VM_ERROR_OS_GENERIC = "Le système d'exploitation n'est pas valide."
+CREATE_VM_ERROR_TEMPLATE_GENERIC = "Le template n'est pas valide."
 
 DOMAIN_NOT_FOUND = "Domaine introuvable"
 FAILED_TO_GET_DOMAIN_NAMES = "Échec de récupération des noms de domaine"
@@ -135,13 +133,6 @@ VOLUME_BLOCK = "VOLUME_BLOCK"
 VOLUME_DIR = "VOLUME_DIR"
 VOLUME_NETWORK = "VOLUME_NETWORK"
 VOLUME_NETDIR = "VOLUME_NETDIR"
-
-
-# TEMPLATE NAME AND VOLUME NAME
-# todo: IL FAUT METTRE CES INFOS DANS LA BDD VM
-DOMAIN_TEMPLATE = {
-    "centos9" : "centos-stream9"
-}
 
 TEMPLATE_PATH_POOL = "/var/lib/libvirt/images/"
 

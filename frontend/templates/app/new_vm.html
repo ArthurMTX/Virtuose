@@ -1,4 +1,5 @@
 {% extends 'app/base.html' %}
+{% load static %}
 {% load custom_filters %}
 
 {% block title %}{{ CREATE_VM_PAGE_TITLE }}{% endblock %}
@@ -50,5 +51,16 @@
             {% endif %}
         </div>
     </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer">
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+    <script src="{% static 'js/new_vm.js' %}"></script>
     </body>
 {% endblock %}
