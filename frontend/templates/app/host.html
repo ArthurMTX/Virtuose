@@ -20,8 +20,11 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <pre>
+                                <pre id="hostInfosRaw">
                                     {{ host_infos | safe }}
+                                </pre>
+                                <pre id="hostMemoryRaw">
+                                    {{ host_memory | safe }}
                                 </pre>
                             </div>
                             <div class="modal-footer">
@@ -78,7 +81,7 @@
                     <div class="col-md-6">
                         <div class="card card-stats-host">
                             <h2 class="card-title">
-                                <i class="fa-solid fa-microchip"></i> {{ RAM_USAGE_LABEL }}
+                                <i class="fa-solid fa-microchip"></i> {{ CPU_AVERAGE_LABEL }}
                             </h2>
                             <div class="progress">
                                 <div class="progress-bar cpu progress-bar-cpu" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>

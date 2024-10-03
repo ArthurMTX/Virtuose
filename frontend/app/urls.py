@@ -16,6 +16,7 @@ urlpatterns = [
     path('profile/newvm', views.new_vm, name='profile/newvm'),
     path('profile/host', views.host_infos, name='profile/host'),
     path('host_informations/', services.get_host_informations, name='host_informations'),
+    path('host_memory/', services.get_host_memory, name='host_memory'),
     path('domains_list/', services.get_all_domains, name='domains_list'),
     path('domain_by_name/<str:name>/', services.get_domain_by_name, name='domain_by_name'),
     path('release_port/', views.release_port, name='release_port'),

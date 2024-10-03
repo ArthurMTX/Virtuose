@@ -75,8 +75,9 @@ $(document).ready(function() {
                     }
                 },
                 y: {
-                    beginAtZero: false
-                }
+                    min: 10,
+                    max: 50,
+                  }
             }
         }
     });
@@ -88,16 +89,13 @@ $(document).ready(function() {
         return (sum / data.length).toFixed(2);
     }
 
-    // Générer des données aléatoires pour la RAM
-    function generateRandomRam() {
-        return Math.floor(Math.random() * 8000) + 2000;
-    }
-
-    function updateProgressBars(cpuPercentage, ramPercentage) {
+    function updateProgressBarCpu(cpuPercentage) {
         // Mise à jour de la barre de progression du CPU moyen
         $('.progress-bar.cpu').css('width', cpuPercentage + '%')
         .attr('aria-valuenow', cpuPercentage).text(cpuPercentage + '%');
-        
+    }
+
+    function updateProgressBarRam(ramPercentage) {
         // Mise à jour de la barre de progression de la RAM moyenne
         $('.progress-bar.ram').css('width', ramPercentage + '%')
         .attr('aria-valuenow', ramPercentage).text(ramPercentage + '%');
@@ -126,46 +124,75 @@ $(document).ready(function() {
                 timeLabels.push(currentTime);
                 cpuMhzData.push(data.cpu_mhz);
 
-                // Générer des valeurs aléatoires pour la RAM
-                var ramUsage = generateRandomRam();
-                ramData.push(ramUsage);
-
                 // Limiter le nombre de points de données visibles (histoire que ça soit visible)
                 if (cpuMhzData.length > 50) {
                     timeLabels.shift();
                     cpuMhzData.shift();
                 }
-                if (ramData.length > 50) {
-                    ramData.shift();
-                }
 
                 // Sauvegarder les données dans localStorage
                 localStorage.setItem('cpuMhzData', JSON.stringify(cpuMhzData));
-                localStorage.setItem('ramData', JSON.stringify(ramData));
                 localStorage.setItem('timeLabels', JSON.stringify(timeLabels));
 
                 // Calculer la moyenne et mettre à jour l'affichage
                 var averageCpuMhz = calculateAverage(cpuMhzData);
-                var averageRam = calculateAverage(ramData);
                 $('#cpuMhzAverage').text(averageCpuMhz + " MHz");
-                $('#ramAverage').text(averageRam + " MB");
 
                 // Calcul des pourcentages d'utilisation CPU et RAM
                 var cpuPercentage = Math.min(Math.round((averageCpuMhz / 5000) * 100), 100); // Utilisation réelle du CPU en pourcentage
-                var ramPercentage = Math.min(Math.round((averageRam / data.total_memory_size) * 100), 100);  // Pourcentage RAM
     
                 // Mettre à jour les barres de progression
-                updateProgressBars(cpuPercentage, ramPercentage);
+                updateProgressBarCpu(cpuPercentage);
 
                 // Mettre à jour les graphiques
                 cpuMhzChart.update();
-                ramChart.update();
 
                 // Beautification des données JSON et refresh de la modal
                 var rawContent = JSON.stringify(data, null, 4);  
-                $('#hostInfoRaw pre').text(rawContent);
+                $('#hostInfosRaw').text(rawContent);
             })
             .catch(error => console.error('Error:', error));
+
+        fetch('/host_memory')
+        .then(response => response.json())
+        .then(data => {
+            var totalMemory = data.total;
+            var freeMemory = data.free;
+    
+            // Ajouter les nouvelles données de RAM au tableau
+            ramData.push(freeMemory);
+    
+            // Limiter les données à 50 points (pour des raisons de performance)
+            if (ramData.length > 50) {
+                ramData.shift();
+            }
+    
+            // Sauvegarder les données dans localStorage
+            localStorage.setItem('ramData', JSON.stringify(ramData));
+            
+            // Mettre à jour la configuration de l'axe Y  (RAM)
+            ramChart.options.scales.yAxes[0].ticks.max = totalMemory;
+            ramChart.options.scales.yAxes[0].ticks.min = 0;
+    
+            // Calculer la moyenne et mettre à jour l'affichage
+            var averageRam = calculateAverage(ramData);
+            $('#ramAverage').text(averageRam + " MB");
+    
+            // Calcul du pourcentage d'utilisation de la RAM
+            var ramPercentage = Math.min(Math.round((averageRam / totalMemory) * 100), 100);
+    
+            // Mettre à jour les barres de progression
+            updateProgressBarRam(ramPercentage);
+    
+            // Mettre à jour le graphique
+            ramChart.update();
+
+            // Beautification des données JSON et refresh de la modal
+            var rawContent = JSON.stringify(data, null, 4);  
+            $('#hostMemoryRaw').text(rawContent);
+        })
+        .catch(error => console.error('Error:', error));
+
     }
 
     // Actualiser les données automatiquement
