@@ -321,14 +321,17 @@ Render la page des informations de l'hôte
 @login_required
 def host_infos(request):
     host_infos_response = get_host_informations(request)
+    host_memory_response = get_host_memory(request)
 
-    if host_infos_response.status_code == 200:
+    if host_infos_response.status_code == 200 and host_memory_response.status_code == 200:
         host_infos = json.loads(host_infos_response.content)
+        host_memory = json.loads(host_memory_response.content)
     else:
         host_infos = None
+        host_memory = None
 
-    if host_infos is None:
+    if host_infos is None or host_memory is None:
         print("Failed to get host informations")
         return render(request, 'app/host.html', {'error': 'Failed to get host informations'})
 
-    return render(request, 'app/host.html', {'host_infos': host_infos})
+    return render(request, 'app/host.html', {'host_infos': host_infos, 'host_memory': host_memory})
