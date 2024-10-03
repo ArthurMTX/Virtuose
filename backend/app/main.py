@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
-from controler.hypervisorHandler import hypervisor_information,hypervisor_hostname
+from controler.hypervisorHandler import hypervisor_information,hypervisor_hostname, hypervisor_memory_stats
 from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, domain_delete, domain_create
-from controler.poolsHandler import linked_clone, listing_volume_in_pool, valid_template
+from controler.poolsHandler import listing_volume_in_pool, valid_template
 
 app = FastAPI()
 
@@ -13,6 +13,8 @@ QEMU_URI = 'qemu:///system'
 class DomainCreationForm(BaseModel):
     name: str
     template: str
+
+##### HYPERVISOR ROUTES #####
 
 @app.get("/api/hypervisor/resume")
 def api_hypervisor_resume():
@@ -33,6 +35,18 @@ def api_hypervisor_hostname():
         dict: A dictionary containing the hostname of the hypervisor.
     """
     return hypervisor_hostname(QEMU_URI)
+
+@app.get("/api/hypervisor/memory_stats")
+def api_hypervisor_memory_stats():
+    """
+    Returns the memory parameters of the hypervisor.
+    
+    Returns:
+        dict: A dictionary containing the memory parameters of the hypervisor.
+    """
+    return hypervisor_memory_stats(QEMU_URI)
+
+##### DOMAINS ROUTES #####
 
 @app.get("/api/domains/list")
 def api_domain_list():
@@ -108,6 +122,8 @@ def api_domain_create(vm_form: DomainCreationForm):
         dict: A dictionary containing the result of the operation.
     """
     return domain_create(QEMU_URI, vm_form.name, vm_form.template)
+
+##### POOLS ROUTES #####
 
 @app.get("/api/pools/list/{pool_name}")
 def api_pools_list(pool_name: str):

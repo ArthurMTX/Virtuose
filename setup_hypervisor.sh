@@ -62,3 +62,16 @@ for dir in "${directory[@]}";do
         fi
     fi
 done
+
+# Set permissions for /opt/virtuose
+printinfo "Setting permissions for /opt/virtuose..."
+
+chmod 774 -R /opt/virtuose
+chown $(echo $USER):kvm -R /opt/virtuose
+
+if [ $? -ne 0 ]; then
+    printerr "Error setting permissions for /opt/virtuose, Exiting."
+    printerr "Cleaning up..."
+    userdel $HYPERVISOR_USER
+    exit 1
+fi

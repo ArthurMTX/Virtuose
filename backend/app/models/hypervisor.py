@@ -22,6 +22,21 @@ class Hypervisor(LibvirtHandler):
         """
         return self.conn.getInfo()
     
+    def __revert_version(self,version_number):
+        """
+        Reverts the version number to a human-readable format.
+
+        Args:
+            version_number (int): The version number.
+
+        Returns:
+            str: The version number in a human-readable format.
+        """
+        major = version_number // 1000000
+        minor = (version_number % 1000000) // 1000
+        release = version_number % 1000
+        return f"{major}.{minor}.{release}"
+
     def libvirt_version(self) -> str:
         """
         Returns the version of the libvirt daemon.
@@ -29,7 +44,7 @@ class Hypervisor(LibvirtHandler):
         Returns:
             str: The version of the libvirt daemon.
         """
-        return self.conn.getLibVersion()
+        return self.__revert_version(self.conn.getLibVersion())
     
     def hostname(self) -> str:
         """
@@ -57,3 +72,12 @@ class Hypervisor(LibvirtHandler):
             str: The URI of the libvirt daemon.
         """
         return self.conn.getURI()
+
+    def memory_stats(self):
+        """
+        Returns the memory parameters of the host.
+
+        Returns:
+            dict: A dictionary containing the memory parameters of the host.
+        """
+        return self.conn.getMemoryStats(-1, 0)

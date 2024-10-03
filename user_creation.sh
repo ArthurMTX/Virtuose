@@ -64,7 +64,7 @@ if id $HYPERVISOR_USER &>/dev/null; then
     exit 0
 fi
 
-useradd $HYPERVISOR_USER --groups kvm --no-create-home #-p $(openssl passwd -1 $HYPERVISOR_PASSWORD)
+useradd $HYPERVISOR_USER --groups kvm --no-create-home
 
 if [ $? -ne 0 ]; then
     printerr "Error during user creation, Exiting."

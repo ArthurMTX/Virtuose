@@ -17,17 +17,17 @@ class Domains(LibvirtHandler):
         super().__init__(uri)
         self.domain = None
     
-    def list_all(self) -> dict:
+    def list_all(self) -> list:
         """
         Returns a list of all domains.
 
         Returns:
-            dict: A dictionary containing all domains.
+            list: A list containing all domains name.
         """
         domains = self.conn.listAllDomains(0)
-        domain_list = dict()
+        domain_list = list()
         for domain in domains:
-            domain_list[domain.name()] = domain.info()
+            domain_list.append(domain.name())
         return domain_list
 
     def isDomainExist(self, domain_name: str) -> bool:

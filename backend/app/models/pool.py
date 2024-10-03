@@ -24,6 +24,7 @@ class Pool(LibvirtHandler):
         """
         super().initialize_pool_object(pool_name)
         if self.pool:
+            self.pool.refresh(0)
             volumes = self.pool.listVolumes()
             return volumes
         else:
@@ -39,6 +40,8 @@ class Pool(LibvirtHandler):
         Returns:
             bool: True if the template exists, False otherwise.
         """
+        print(f"{template_name}.qcow2")
+        print(self.listing_storage_volume("templates"))
         return f"{template_name}.qcow2" in self.listing_storage_volume("templates")
 
     def create_linked_clone(self, template_name, clone_name):
