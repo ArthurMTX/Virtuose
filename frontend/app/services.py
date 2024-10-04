@@ -231,14 +231,14 @@ def force_stop_domain(request, dom_name):
     else:
         print(f"Failed to force stop domain '{dom_name}', status code: {response.status_code}")
         return JsonResponse({'error': 'API backend inaccessible'}, status=500)
-    
+
 
 """
 Permet de supprimer un domaine par son nom
 """
 
 def delete_domain(request, dom_name):
-    response = requests.get(f"{API_URL}/domains/delete/{dom_name}")
+    response = requests.post(f"{API_URL}/domains/delete/{dom_name}")
     if response.status_code == 200:
         return JsonResponse({'status': 'success', 'message': 'Domain ' + dom_name + ' successfully deleted'})
     else:

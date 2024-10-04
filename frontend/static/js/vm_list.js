@@ -19,13 +19,13 @@ function getCookie(name) {
  * Map des actions pour un affichage lisible du texte
  */
 const actionTextMap = {
-    start: 'Démarrage de',
-    stop: 'Arrêt de',
-    force_stop: 'Arrêt forcé de',
-    kill: 'Arrêt forcé de',
-    restart: 'Redémarrage de',
-    delete: 'Suppression de',
-    default: 'Action sur'
+    start: 'Démarrage du',
+    stop: 'Arrêt du',
+    force_stop: 'Arrêt forcé du',
+    kill: 'Arrêt forcé du',
+    restart: 'Redémarrage du',
+    delete: 'Suppression du',
+    default: 'Action sur le'
 };
 
 /**
@@ -33,7 +33,7 @@ const actionTextMap = {
  */
 function updateLoaderText(action, vmName) {
     const actionText = actionTextMap[action] || actionTextMap.default;
-    $('#loader-text').text(`${actionText} le domaine ${vmName}...`);
+    $('#loader-text').text(`${actionText} domaine ${vmName}...`);
 }
 
 /**
@@ -98,7 +98,7 @@ $('.dropdown-item').click(function() {
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState >= 3) {
-            responseBuffer += xhr.responseText;
+            responseBuffer = xhr.responseText;
 
             const lines = responseBuffer.split('\n');
             responseBuffer = lines.pop();
@@ -161,7 +161,7 @@ $(document).ready(function() {
             .catch(error => console.error('Erreur:', error));
     }
     */
-    
+
     // Mise à jour des icônes des VMs selon leur état
     function getVmStateIcon(state) {
         const stateIcons = {
