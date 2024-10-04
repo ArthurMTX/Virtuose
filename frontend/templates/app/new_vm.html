@@ -12,6 +12,14 @@
         </div>
         <div class="profile-page-content">
             <h1>{{ CREATE_VM_PAGE_TITLE }}</h1>
+            
+            <div id="overlay" class="overlay blur-and-darken" style="display: none;"></div>
+
+            <div id="loader" class="text-center" style="display: none;">
+              <div class="spinner-border text-primary mt-3 mb-2" role="status" aria-hidden="true"></div>
+              <p id="loader-text"></p>
+            </div>
+
             <div class="create-vm">
                 <div class="form-create-vm">
                     <form method="post" {% if form_disabled %}class="disabled-form"{% endif %}>
@@ -62,5 +70,6 @@
         </div>
     </div>
     <script src="{% static 'js/new_vm.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     </body>
 {% endblock %}
