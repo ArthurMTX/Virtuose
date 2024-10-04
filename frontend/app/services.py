@@ -68,21 +68,6 @@ def get_domain_by_name(request, name):
 
 
 """
-Permet d'interagir avec un domaine (start, stop, reboot, force stop)
-"""
-
-
-def interact_with_domain(dom_uuid, action):
-    url = f"{API_URL}/domains/actions/{dom_uuid}/{action}"
-    response = requests.post(url)
-
-    if response.status_code == 200:
-        return JsonResponse({'status': 'success'})
-    else:
-        return JsonResponse({'status': 'error', 'message': response.text})
-
-
-"""
 Permet de récupérer un objet domaine par son UUID
 """
 
@@ -209,3 +194,54 @@ def create_vm(name, template_name):
     return response.json()
 
 
+"""
+Permet de démarrer un domaine par son nom
+"""
+
+def start_domain(request, dom_name):
+    response = requests.get(f"{API_URL}/domains/start/{dom_name}")
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success', 'message': 'Domain ' + dom_name + ' successfully started'})
+    else:
+        print(f"Failed to start domain '{dom_name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+
+
+"""
+Permet d'arrêter un domaine par son nom
+"""
+
+def stop_domain(request, dom_name):
+    response = requests.get(f"{API_URL}/domains/stop/{dom_name}")
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success', 'message': 'Domain ' + dom_name + ' successfully stopped'})
+    else:
+        print(f"Failed to stop domain '{dom_name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    
+
+"""
+Permet de forcer l'arrêt d'un domaine par son nom
+"""
+
+def force_stop_domain(request, dom_name):
+    response = requests.get(f"{API_URL}/domains/force_stop/{dom_name}")
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success', 'message': 'Domain ' + dom_name + ' successfully killed'})
+    else:
+        print(f"Failed to force stop domain '{dom_name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    
+
+"""
+Permet de supprimer un domaine par son nom
+"""
+
+def delete_domain(request, dom_name):
+    response = requests.get(f"{API_URL}/domains/delete/{dom_name}")
+    if response.status_code == 200:
+        return JsonResponse({'status': 'success', 'message': 'Domain ' + dom_name + ' successfully deleted'})
+    else:
+        print(f"Failed to delete domain '{dom_name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    

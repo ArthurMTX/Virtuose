@@ -177,54 +177,6 @@ Permet d'interagir avec les VMs (démarrer, arrêter, redémarrer, supprimer, vo
 
 @login_required
 def vm_list(request):
-    # Action POST, on récupère l'action à effectuer sur une VM
-    if request.method == 'POST':
-        action = request.POST.get('action').upper()
-        vm_uuid = request.POST.get('data_id')
-        vm_info = get_domain_by_uuid(vm_uuid)
-
-        # VM non trouvée (UUID invalide?)
-        if vm_info is None:
-            print(f"VM with UUID {vm_uuid} not found")
-
-        # Si l'action est 'CONSOLE VIEW', on redirige vers la page de la console
-        if action == 'CONSOLE VIEW':
-            return redirect('vm_view', vm_uuid=vm_uuid)
-
-        # Si l'action est 'START', 'STOP', 'RESTART' ou 'KILL', on vérifie l'état de la VM
-        elif action in ['START', 'STOP', 'RESTART', 'KILL']:
-            if vm_info.get('state') == 'running':
-                if action == 'START':
-                    # Si la VM est déjà en cours d'exécution, on ne fait rien
-                    print(f"VM with UUID {vm_uuid} already running")
-                else:
-                    # Si l'action est 'STOP' et que l'agent n'est pas actif, on ne peut pas arrêter la VM
-                    if action == 'STOP' and not check_guest_agent_active(vm_uuid):
-                        print(f"VM with UUID {vm_uuid} not ready, cannot stop")
-                    return interact_with_domain(vm_uuid, action)
-            else:
-                if action == 'START':
-                    interact_with_domain(vm_uuid, action)
-                    if wait_for_vm_to_be_ready(vm_uuid):
-                        # Si la VM est prête, on affiche un message
-                        print(f"VM with UUID {vm_uuid} started and ready")
-                    else:
-                        # Si la VM n'est pas prête, on affiche un message d'erreur
-                        print(f"VM with UUID {vm_uuid} started but not ready, timeout reached")
-                # Si la VM n'est pas en cours d'exécution, on ne peut pas l'arrêter, la redémarrer ou la supprimer
-                print(f"VM with UUID {vm_uuid} not running, cannot {action}")
-
-        # Si l'action est 'DELETE', on vérifie si la VM est en cours d'exécution
-        elif action == 'DELETE':
-            if vm_info.get('state') == 'running':
-                # Si la VM est en cours d'exécution, on ne peut pas la supprimer
-                print(f"VM with UUID {vm_uuid} running, cannot delete")
-            else:
-                # La VM n'est pas en cours d'exécution, on peut la supprimer
-                return interact_with_domain(vm_uuid, action)
-
-        print(f"Action {action} on VM with UUID {vm_uuid} completed")
-
     vms_list = json.loads(get_all_domains(request).content)
     vms = []
 
@@ -233,10 +185,65 @@ def vm_list(request):
         for vm_name in vms_list:
             vm_info = get_domain_by_name(request, vm_name)
             if vm_info:
-                vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
-                vms.append(vm_info)
+               vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
+               vms.append(vm_info)
+            
+            # TODO: Delete this block
+            vm_info['os'] = 'OS'
+            vm_info['name'] = vm_name
+            vm_info['state'] = 'unknown'
+            vm_info['memory_gb'] = 'RAM'
+            vm_info['vcpu'] = 'VCPU'
     else:
         print("No VMs found")
+
+    # Action POST, on récupère l'action à effectuer sur une VM
+    if request.method == 'POST':
+        action = request.POST.get('action').upper()
+        vm_name = request.POST.get('data_name')
+        vm_info = get_domain_by_name(vm_name)
+
+        # VM non trouvée (name invalide?)
+        if vm_info is None:
+            print(f"VM with name {vm_name} not found")
+
+        # Si l'action est 'CONSOLE VIEW', on redirige vers la page de la console
+        if action == 'CONSOLE VIEW':
+            return redirect('vm_view', vm_name=vm_name)
+
+        # Si l'action est 'START', 'STOP', 'RESTART' ou 'KILL', on vérifie l'état de la VM
+        elif action in ['START', 'STOP', 'RESTART', 'KILL']:
+            if vm_info.get('state') == 'running':
+                if action == 'START':
+                    # Si la VM est déjà en cours d'exécution, on ne fait rien
+                    print(f"VM with name {vm_name} already running")
+                else:
+                    # Si l'action est 'STOP' et que l'agent n'est pas actif, on ne peut pas arrêter la VM
+                    if action == 'STOP' and not check_guest_agent_active(vm_name):
+                        print(f"VM with name {vm_name} not ready, cannot stop")
+                    return interact_with_domain(vm_name, action)
+            else:
+                if action == 'START':
+                    interact_with_domain(vm_name, action)
+                    if wait_for_vm_to_be_ready(vm_name):
+                        # Si la VM est prête, on affiche un message
+                        print(f"VM with name {vm_name} started and ready")
+                    else:
+                        # Si la VM n'est pas prête, on affiche un message d'erreur
+                        print(f"VM with name {vm_name} started but not ready, timeout reached")
+                # Si la VM n'est pas en cours d'exécution, on ne peut pas l'arrêter, la redémarrer ou la supprimer
+                print(f"VM with name {vm_name} not running, cannot {action}")
+
+        # Si l'action est 'DELETE', on vérifie si la VM est en cours d'exécution
+        elif action == 'DELETE':
+            if vm_info.get('state') == 'running':
+                # Si la VM est en cours d'exécution, on ne peut pas la supprimer
+                print(f"VM with name {vm_name} running, cannot delete")
+            else:
+                # La VM n'est pas en cours d'exécution, on peut la supprimer
+                return interact_with_domain(vm_name, action)
+
+        print(f"Action {action} on VM with name {vm_name} completed") 
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
@@ -249,15 +256,15 @@ Lance le processus websockify pour rediriger le flux VNC vers le websocket
 
 
 @login_required
-def vm_view(request, vm_uuid):
-    vm = get_domain_by_uuid(str(vm_uuid))
+def vm_view(request, vm_name):
+    vm = get_domain_by_name(str(vm_name))
     vm_port = vm.get('vnc', {}).get('port')
     view_port = get_free_port()
     host = request.get_host()
 
-    # VM non trouvée (UUID invalide?)
+    # VM non trouvée (nom invalide?)
     if vm_port is None:
-        print(f"VM with UUID {vm_uuid} not found")
+        print(f"VM with name {vm_name} not found")
         return render(request, 'app/view.html', {'error': 'VM not found'})
 
     # Lancement du processus websockify pour rediriger le flux VNC vers le websocket
