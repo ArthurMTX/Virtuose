@@ -11,6 +11,14 @@
         </div>
         <div class="profile-page-content">
             <h1>{{ LIST_VM_PAGE_TITLE }} <a data-bs-toggle="modal" data-bs-target="#vmInfoIcons"> <i class="modalIconsButton fa-solid fa-circle-info"></i> </a> </h1>
+            
+            <div id="overlay" class="overlay blur-and-darken " style="display: none;"></div>
+
+            <div id="loader" class="text-center" style="display: none;">
+              <div class="spinner-border text-primary mt-3 mb-2" role="status" aria-hidden="true"></div>
+              <p id="loader-text"></p>
+            </div>
+
             <div class="modal fade" id="vmInfoIcons" tabindex="-1" aria-labelledby="vmInfoModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -46,7 +54,7 @@
                     </thead>
                     <tbody class="table-group-divider table-secondary">
                         {% for vm in vms %}
-                            <tr class="vm" data-id="{{ vm.UUID }}">
+                            <tr class="vm" data-id="{{ vm.name }}">
                                 <td>
                                     <div class="os-info">
                                         <div class="dropdown">
@@ -55,12 +63,11 @@
                                             </button>
                                             <ul class="dropdown-menu">
                                                 <li><h6 class="dropdown-header">{{ vm.name }}</h6></li>
-                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#vmInfoModal{{ vm.UUID }}"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#vmInfoModal{{ vm.name }}"> <i class="icon-action fa-solid fa-circle-info"></i> Info </a></li>
                                                 <li><hr class="dropdown-divider"></li>
                                                 <li><a class="dropdown-item {% if vm.state == 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-play"></i> Start </a></li>
                                                 <li><a class="dropdown-item {% if vm.state != 'running' %}dropdown-item-disabled{% endif %}"> <i class="icon-action fa-solid fa-stop"></i> Stop </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-skull"></i> Kill </a></li>
-                                                <!--<li><a class="dropdown-item" href="{% url 'vm_view' vm_uuid=vm.UUID %}"> <i class="icon-action fa-solid fa-display"></i> Console View </a></li>-->
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-rotate"></i> Restart </a></li>
                                                 <li><a class="dropdown-item"> <i class="icon-action fa-solid fa-trash"></i> Delete </a></li>
                                             </ul>
@@ -92,7 +99,7 @@
                                 <td>{{ vm.memory_gb }}</td>
                                 <td>{{ vm.VCPU }}</td>
                             </tr>
-                            <div class="modal fade" id="vmInfoModal{{ vm.UUID }}" tabindex="-1" aria-labelledby="vmInfoModalLabel" aria-hidden="true">
+                            <div class="modal fade" id="vmInfoModal{{ vm.name }}" tabindex="-1" aria-labelledby="vmInfoModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -117,9 +124,6 @@
                 </table>
                 {% endif %}
             </div>
-            <form id="csrf-token-form" style="display: none;">
-                {% csrf_token %}
-            </form>
         </div>
     </div>
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
