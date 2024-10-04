@@ -138,44 +138,89 @@ $('.dropdown-item').click(function() {
  * Reformatage du contenu des balises <pre> dans les modales pour les rendre plus lisibles
  */
 $(document).ready(function() {
-    $('.modal-body pre').each(function() {
-        const beautifiedContent = js_beautify($(this).text()).replace(/^\s+/gm, '');
-        $(this).text(beautifiedContent);
-    });
+    // Rafraîchissement de la liste des VMs toutes les 2 secondes
+    setInterval(refreshVmList, 2000);
 
-    // Fonctionnalité pour rafraîchir les données des VMs toutes les 2 secondes
-    /*
-    setInterval(refreshData, 2000);
+    // Variable pour stocker la dernière liste de VMs
+    let currentVmNames = [];
 
-    function refreshData() {
-        fetch('/domains_list')
+    function refreshVmList() {
+        fetch('/domains_list')  // Appel à l'API pour récupérer la liste des VMs
             .then(response => response.json())
             .then(data => {
-                data.forEach(vmName => {
-                    fetch(`/domain_by_name/${vmName}`)
-                        .then(response => response.json())
-                        .then(vmData => updateVMInfo(vmData))
-                        .catch(error => console.error('Erreur:', error));
+                const vmTableBody = $('tbody'); // Sélectionne le tbody de ton tableau des VMs
+                const newVmNames = data;  // La nouvelle liste de noms de VMs
+
+                // Mise à jour des lignes existantes
+                newVmNames.forEach(vmName => {
+                    const existingRow = vmTableBody.find(`tr[data-id="${vmName}"]`);
+                    if (existingRow.length) {
+                        // La ligne existe déjà, on peut mettre à jour son contenu texte si nécessaire
+                        existingRow.find('.vm-name').text(vmName);
+                        // Tu peux aussi mettre à jour d'autres colonnes ici si besoin
+                    } else {
+                        // Si la ligne n'existe pas, on la crée
+                        const vmRow = `
+                            <tr data-id="${vmName}">
+                                <td>
+                                    <div class="os-info">
+                                        <div class="dropdown">
+                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fa-solid fa-gears"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><h6 class="dropdown-header">${vmName}</h6></li>
+                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#vmInfoModal${vmName}">
+                                                    <i class="icon-action fa-solid fa-circle-info"></i> Info
+                                                </a></li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li><a class="dropdown-item">
+                                                    <i class="icon-action fa-solid fa-play"></i> Start
+                                                </a></li>
+                                                <li><a class="dropdown-item">
+                                                    <i class="icon-action fa-solid fa-stop"></i> Stop
+                                                </a></li>
+                                                <li><a class="dropdown-item">
+                                                    <i class="icon-action fa-solid fa-skull"></i> Kill
+                                                </a></li>
+                                                <li><a class="dropdown-item">
+                                                    <i class="icon-action fa-solid fa-rotate"></i> Restart
+                                                </a></li>
+                                                <li><a class="dropdown-item">
+                                                    <i class="icon-action fa-solid fa-trash"></i> Delete
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                        <div class="vm-state">
+                                            <i class="fa-solid fa-question" style="color: #185ed8;"></i> <!-- Placeholder pour l'icône d'état -->
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="os-info">
+                                        <img src="/static/assets/os/default.png" alt="OS logo" width="50" height="50">
+                                        <p>OS</p>
+                                    </div>
+                                </td>
+                                <td class="vm-name">${vmName}</td>
+                                <td>RAM</td>
+                                <td>VCPU</td>
+                            </tr>
+                        `;
+                        vmTableBody.append(vmRow);  // Ajout de la nouvelle ligne
+                    }
                 });
+
+                // Suppression des lignes qui ne sont plus dans la nouvelle liste de VMs
+                currentVmNames.forEach(vmName => {
+                    if (!newVmNames.includes(vmName)) {
+                        vmTableBody.find(`tr[data-id="${vmName}"]`).remove();  // Supprime la ligne si le VM a disparu
+                    }
+                });
+
+                // Mise à jour de la liste courante
+                currentVmNames = [...newVmNames];
             })
-            .catch(error => console.error('Erreur:', error));
-    }
-    */
-
-    // Mise à jour des icônes des VMs selon leur état
-    function getVmStateIcon(state) {
-        const stateIcons = {
-            running: '<i class="fa-solid fa-check" style="color: #74c93b;"></i>',
-            shutoff: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
-            shutdown: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
-            pmsuspended: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
-            paused: '<i class="fa-solid fa-pause" style="color: #ffbb00;"></i>',
-            crashed: '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>',
-            blocked: '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>',
-            starting: '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>',
-            default: '<i class="fa-solid fa-question" style="color: #185ed8;"></i>'
-        };
-
-        return stateIcons[state] || stateIcons.default;
+            .catch(error => console.error('Erreur lors du rafraîchissement des VMs:', error));
     }
 });
