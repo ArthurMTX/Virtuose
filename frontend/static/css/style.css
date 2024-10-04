@@ -207,10 +207,14 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 999;
     display: none;
+    pointer-events: none;
+    user-select: none;
 }
 
 .blur-and-darken {
     filter: blur(2px);
+    -webkit-filter: blur(2px);
+    backdrop-filter: blur(2px);
     pointer-events: none;
     user-select: none;
 }
