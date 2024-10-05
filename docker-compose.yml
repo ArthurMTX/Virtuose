@@ -28,6 +28,11 @@ services:
       - ./database:/docker-entrypoint-initdb.d
     networks:
       - virtuose
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   virtuose-frontend:
     image: virtuose-frontend:latest
@@ -35,8 +40,7 @@ services:
     hostname: virtuose-frontend
     container_name: virtuose-frontend
     command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+      sh -c "/frontend/wait-for-it.sh virtuose-database:5432 -- python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
     environment:
       - DB_HOST=virtuose-database
@@ -50,7 +54,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - virtuose-database
+      virtuose-database:
+        condition: service_healthy
     networks:
       - virtuose  
 
