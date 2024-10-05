@@ -2,7 +2,7 @@ from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
 from controler.hypervisorHandler import hypervisor_information,hypervisor_hostname, hypervisor_memory_stats
-from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, domain_delete, domain_create
+from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, domain_delete, domain_create, domain_restart, domain_state, domain_information
 from controler.poolsHandler import listing_volume_in_pool, valid_template
 
 app = FastAPI()
@@ -58,6 +58,32 @@ def api_domain_list():
     """
     return domain_list(QEMU_URI)
 
+@app.get("/api/domains/state/{domain_name}")
+def api_domain_state(domain_name: str):
+    """
+    Returns the state of a domain.
+    
+    Args:
+        domain_name (str): The name of the domain.
+    
+    Returns:
+        dict: A dictionary containing the state of the domain.
+    """
+    return domain_state(QEMU_URI, domain_name)
+
+@app.get("/api/domains/information/{domain_name}")
+def api_domain_information(domain_name: str):
+    """
+    Returns information about a domain.
+    
+    Args:
+        domain_name (str): The name of the domain.
+    
+    Returns:
+        dict: A dictionary containing information about the domain.
+    """
+    return domain_information(QEMU_URI, domain_name)
+
 @app.get("/api/domains/start/{domain_name}")
 def api_domain_start(domain_name: str):
     """
@@ -96,6 +122,19 @@ def api_domains_force_stop(domain_name: str):
         dict: A dictionary containing the result of the operation.
     """
     return domain_force_stop(QEMU_URI, domain_name)
+
+@app.get("/api/domains/restart/{domain_name}")
+def api_domain_restart(domain_name: str):
+    """
+    Restarts a domain.
+    
+    Args:
+        domain_name (str): The name of the domain to restart.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return domain_restart(QEMU_URI, domain_name)
 
 @app.post("/api/domains/delete/{domain_name}")
 def api_domain_delete(domain_name: str):

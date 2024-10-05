@@ -18,6 +18,32 @@ def domain_list(QEMU_URI: str) -> dict:
     domains = Domains(QEMU_URI)
     return domains.list_all()
 
+def domain_state(QEMU_URI: str, domain_name: str) -> dict:
+    """
+    Returns the state of a domain.
+
+    Args:
+        QEMU_URI (str): The URI of the QEMU service.
+        domain_name (str): The name of the domain.
+
+    Returns:
+        dict: A dictionary containing the state of the domain.
+    """
+    return Domains(QEMU_URI).state(domain_name)
+
+def domain_information(QEMU_URI: str, domain_name: str) -> dict:
+    """
+    Returns information about a domain.
+
+    Args:
+        QEMU_URI (str): The URI of the QEMU service.
+        domain_name (str): The name of the domain.
+
+    Returns:
+        dict: A dictionary containing information about the domain.
+    """
+    return Domains(QEMU_URI).information(domain_name)
+
 def domain_start(QEMU_URI: str, domain_name: str) -> dict:
     """
     Starts a domain.
@@ -69,6 +95,19 @@ def domain_delete(QEMU_URI: str, domain_name: str) -> dict:
         dict: A dictionary containing the result of the operation.
     """
     return Domains(QEMU_URI).delete(domain_name)
+
+def domain_restart(QEMU_URI: str, domain_name: str) -> dict:
+    """
+    Restarts a domain.
+
+    Args:
+        QEMU_URI (str): The URI of the QEMU service.
+        domain_name (str): The name of the domain to restart.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return Domains(QEMU_URI).restart(domain_name)
 
 def domain_create(QEMU_URI: str, domain_name: str, template_name: str) -> dict:
     """
