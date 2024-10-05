@@ -10,6 +10,7 @@ services:
       - ./backend/app:/app
       - ./backend/scripts:/app/scripts
       - /var/run/libvirt:/var/run/libvirt
+      - /var/lib/libvirt:/var/lib/libvirt
       - /opt/virtuose:/opt/virtuose
     networks:
       - virtuose  
