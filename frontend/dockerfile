@@ -22,3 +22,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copier le reste du code de l'application
 COPY . /frontend/
+
+# Copier le script wait-for-it.sh
+COPY ./wait-for-it.sh /frontend/wait-for-it.sh
+
+# Rendre le script wait-for-it.sh exécutable
+RUN chmod +x /frontend/wait-for-it.sh

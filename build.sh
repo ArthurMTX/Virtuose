@@ -1,24 +1,21 @@
 #!/bin/bash
 
 echo "Shutdown services with Docker Compose..."
-
 docker compose down
 
-# Vérification de la réussite des builds
+# Vérification de la réussite du Docker Compose down
 if [ $? -ne 0 ]; then
     echo "Error during docker compose down, Exiting."
     exit 1
 fi
 
-# Lancer les services avec Docker Compose
-echo "Starting services with Docker Compose..."
-
+echo "Building and starting services with Docker Compose..."
 docker compose up -d --build
 
-# Vérification de la réussite de Docker Compose
+# Vérification de la réussite du Docker Compose up
 if [ $? -ne 0 ]; then
     echo "Error during Docker Compose up. Exiting."
     exit 1
 fi
 
-echo "Docker images built and services started successfully."
+echo "Docker services built and started successfully."
