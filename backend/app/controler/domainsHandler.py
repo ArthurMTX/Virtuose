@@ -109,6 +109,20 @@ def domain_restart(QEMU_URI: str, domain_name: str) -> dict:
     """
     return Domains(QEMU_URI).restart(domain_name)
 
+
+def domain_pause(QEMU_URI: str, domain_name: str) -> dict:
+    """
+    Pauses a domain.
+
+    Args:
+        QEMU_URI (str): The URI of the QEMU service.
+        domain_name (str): The name of the domain to pause.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return Domains(QEMU_URI).pause(domain_name)
+
 def domain_create(QEMU_URI: str, domain_name: str, template_name: str) -> dict:
     """
     Creates a new domain.

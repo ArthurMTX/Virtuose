@@ -2,7 +2,9 @@ from fastapi import FastAPI, Response
 from pydantic import BaseModel
 
 from controler.hypervisorHandler import hypervisor_information,hypervisor_hostname, hypervisor_memory_stats
-from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, domain_delete, domain_create, domain_restart, domain_state, domain_information
+from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, \
+                                    domain_delete, domain_create, domain_restart, domain_state, \
+                                    domain_information, domain_pause
 from controler.poolsHandler import listing_volume_in_pool, valid_template
 
 app = FastAPI()
@@ -135,6 +137,20 @@ def api_domain_restart(domain_name: str):
         dict: A dictionary containing the result of the operation.
     """
     return domain_restart(QEMU_URI, domain_name)
+
+@app.get("/api/domains/pause/{domain_name}")
+def api_domain_pause(domain_name: str):
+    """
+    Pauses a domain.
+    
+    Args:
+        domain_name (str): The name of the domain to pause.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return domain_pause(QEMU_URI, domain_name)
+
 
 @app.post("/api/domains/delete/{domain_name}")
 def api_domain_delete(domain_name: str):
