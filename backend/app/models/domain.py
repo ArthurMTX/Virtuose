@@ -67,7 +67,10 @@ class Domains(LibvirtHandler):
         super().initialize_domain_object(domain_name)
         if self.domain and self.state(domain_name)["message"] == 'Running':
             ipv4_addresses = dict()
-            ifaces = self.domain.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+            try:
+                ifaces = self.domain.interfaceAddresses(libvirt.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0)
+            except libvirt.libvirtError:
+                return {'status': 'error', 'message': 'Failed to retrieve IP information.'}
             for iface_name, iface_info in ifaces.items():
                 for addr_info in iface_info['addrs']:
                     if addr_info['type'] == 0:  # IPv4
@@ -138,6 +141,29 @@ class Domains(LibvirtHandler):
             bool: True if the domain exists, False otherwise.
         """
         return domain_name in self.list_all()
+    
+    def unpause(self, domain_name: str) -> dict:
+        """
+        Unpauses a domain.
+
+        Returns:
+            dict: A dictionary containing the result of the operation.
+        """
+        super().initialize_domain_object(domain_name)
+        if not self.domain:
+            return {'status': 'error', 'message': 'Domain not found.'}
+        if self.state(domain_name)["message"] == 'Running':
+            return {'status': 'error', 'message': 'Domain is not paused.'}
+        if self.state(domain_name)["message"] == 'Paused':
+            self.domain.resume()
+            timeout, elapsed_time, interval = 30, 0, 2
+            while elapsed_time < timeout:
+                sleep(interval)
+                elapsed_time += interval
+                if self.state(domain_name)["message"] == 'Running':
+                    return {'status': 'success', 'message': 'Domain unpaused successfully'}
+        else:
+            return {'status': 'error', 'message': 'Failed to unpause domain.'}
 
     def start(self, domain_name: str) -> dict:
         """
@@ -147,16 +173,19 @@ class Domains(LibvirtHandler):
             dict: A dictionary containing the result of the operation.
         """
         super().initialize_domain_object(domain_name)
-        if self.domain: 
-            if self.domain.isActive() == 1:
-                return {'status': 'error', 'message': 'Domain already running'}
-            else:
-                self.domain.create()
-                sleep(2)
-                if self.domain.isActive() == 1:
-                    return {'status': 'success', 'message': 'Domain started successfully.'}
-        else:
+        if not self.domain:
             return {'status': 'error', 'message': 'Domain not found.'}
+        if self.state(domain_name)["message"] == 'Running':
+            return {'status': 'error', 'message': 'Domain already running.'}
+        if self.state(domain_name)["message"] == 'Paused':
+            return self.unpause(domain_name)
+        self.domain.create()
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.state(domain_name)["message"] == 'Running':
+                return {'status': 'success', 'message': 'Domain started successfully.'}
     
     def stop(self, domain_name: str) -> dict:
         """
@@ -166,25 +195,21 @@ class Domains(LibvirtHandler):
             dict: A dictionary containing the result of the operation.
         """
         super().initialize_domain_object(domain_name)
-        if self.domain:
-            if self.domain.isActive() == 0:
-                return {'status': 'error', 'message': 'Domain already stopped'}
-            else:
-                self.domain.shutdown()
-                timeout = 30
-                elapsed_time = 0
-                interval = 2  # Vérifie toutes les 2 secondes
-
-                while elapsed_time < timeout:
-                    sleep(interval)
-                    elapsed_time += interval
-                    if self.domain.isActive() == 0:
-                        return {'status': 'success', 'message': 'Domain stopped successfully.'}
-            self.domain.destroy()
-            return {'status': 'warning', 'message': 'Domain forced to stop (shutdown failed).'}
-        else:
+        if not self.domain:
             return {'status': 'error', 'message': 'Domain not found.'}
-
+        if self.domain.isActive() == 0:
+            return {'status': 'error', 'message': 'Domain already stopped.'}
+        if self.state(domain_name)["message"] == 'Paused':
+            return {'status': 'error', 'message': 'Domain is paused, failed to stop.'}
+        self.domain.shutdown()
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.domain.isActive() == 0:
+                return {'status': 'success', 'message': 'Domain stopped successfully.'}
+        return self.force_stop(domain_name)
+        
     def force_stop(self, domain_name: str) -> dict:
         """
         Stops a domain immediately.
@@ -193,16 +218,18 @@ class Domains(LibvirtHandler):
             dict: A dictionary containing the result of the operation.
         """
         super().initialize_domain_object(domain_name)
-        if self.domain:
-            if self.domain.isActive() == 0:
-                return {'status': 'error', 'message': 'Domain already stopped'}
-            else:
-                self.domain.destroy()
-                sleep(2)
-                if self.domain.isActive() == 0:
-                    return {'status': 'success', 'message': 'Domain stopped successfully.'}
-        else:
+        if not self.domain:
             return {'status': 'error', 'message': 'Domain not found.'}
+        if self.domain.isActive() == 0:
+            return {'status': 'error', 'message': 'Domain already stopped.'}
+        self.domain.destroy()
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.domain.isActive() == 0:
+                return {'status': 'success', 'message': 'Domain stopped successfully.'}
+        return {'status': 'error', 'message': 'Failed to stop domain.'}
     
     def delete(self, domain_name: str) -> dict:
         """
@@ -212,15 +239,19 @@ class Domains(LibvirtHandler):
             dict: A dictionary containing the result of the operation.
         """
         super().initialize_domain_object(domain_name)
-        if self.domain:
-            if self.domain.isActive() == 1:
-                return {'status': 'error', 'message': 'Domain is running. Stop the domain before deleting it.'}
-            else:
-                self.domain.undefine()
-                sleep(2)
-                return {'status': 'success', 'message': 'Domain deleted successfully.'}
-        else:
+        if not self.domain:
             return {'status': 'error', 'message': 'Domain not found.'}
+        if self.domain.isActive() == 1:
+            return {'status': 'error', 'message': 'Domain is running. Stop the domain before deleting it.'}
+        self.domain.undefine()
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.domain.isActive() == 0:
+                return {'status': 'success', 'message': 'Domain deleted successfully.'}
+        return {'status': 'error', 'message': 'Failed to delete domain.'}
+        
     
     def restart(self, domain_name: str) -> dict:
         """
@@ -230,16 +261,39 @@ class Domains(LibvirtHandler):
             dict: A dictionary containing the result of the operation.
         """
         super().initialize_domain_object(domain_name)
-        if self.domain:
-            if self.domain.isActive() == 1:
-                self.domain.reboot(1)
-                sleep(2)
-                if self.domain.isActive() == 1:
-                    return {'status': 'success', 'message': 'Domain restarted successfully.'}
-            else:
-                return {'status': 'error', 'message': 'Domain is not running.'}
-        else:
+        if not self.domain:
             return {'status': 'error', 'message': 'Domain not found.'}
+        if not self.state(domain_name)["message"] == 'Running':
+            return {'status': 'error', 'message': 'Domain is not running.'}
+        self.domain.reboot(1)
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.domain.isActive() == 1:
+                return {'status': 'success', 'message': 'Domain restarted successfully.'}
+        return {'status': 'error', 'message': 'Failed to restart the domain.'}
+
+    def pause(self, domain_name: str) -> dict:
+        """
+        Pauses a domain.
+
+        Returns:
+            dict: A dictionary containing the result of the operation.
+        """
+        super().initialize_domain_object(domain_name)
+        if not self.domain:
+            return {'status': 'error', 'message': 'Domain not found.'}
+        if not self.state(domain_name)["message"] == 'Running':
+            return {'status': 'error', 'message': 'Domain is not running.'}
+        self.domain.suspend()
+        timeout, elapsed_time, interval = 30, 0, 2
+        while elapsed_time < timeout:
+            sleep(interval)
+            elapsed_time += interval
+            if self.state(domain_name)["message"] == 'Paused':
+                return {'status': 'success', 'message': 'Domain paused successfully.'}
+        return {'status': 'error', 'message': 'Failed to pause domain.'}
 
     def create(self, domain_name: str) -> dict:
         """
