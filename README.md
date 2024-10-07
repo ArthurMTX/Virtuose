@@ -78,8 +78,8 @@ Before you begin, make sure you have the following installed on your local machi
 
     
 ```bash
-git clone https://github.com/yourusername/virtuose.git
-cd virtuose
+git clone https://gitlab.com/virtuose-ema/virtuose-app.git
+cd virtuose-app
 ``` 
 
 Set up environment variables:
