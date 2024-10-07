@@ -2,7 +2,7 @@
 
 <div align="center">
   <!-- You are encouraged to replace this logo with your own! Otherwise you can also remove it. -->
-  <img src="img/Virtuose.png" alt="logo" width="140"  height="auto" />
+  <img src="frontend/static/assets//Virtuose.png" alt="logo" width="140"  height="auto" />
   <br/>
 
   <h3><b>Virtuose</b></h3>
