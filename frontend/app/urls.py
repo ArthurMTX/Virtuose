@@ -25,7 +25,7 @@ urlpatterns = [
     path('host_informations/', services.get_host_informations, name='host_informations'),
     path('host_memory/', services.get_host_memory, name='host_memory'),
     path('domains_list/', services.get_all_domains, name='domains_list'),
-    path('domain_by_name/<str:name>/', services.get_domain_by_name, name='domain_by_name'),
+    path('domain_informations/<str:dom_name>/', services.get_domain_informations, name='domain_informations'),
 
     # === SERVICES: VM ACTIONS ===
     path('release_port/', views.release_port, name='release_port'),

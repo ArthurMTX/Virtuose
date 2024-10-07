@@ -177,25 +177,29 @@ Permet d'interagir avec les VMs (démarrer, arrêter, redémarrer, supprimer, vo
 
 @login_required
 def vm_list(request):
-    vms_list = json.loads(get_all_domains(request).content)
-    vms = []
-
-    if vms_list:
-        # Récupère les informations des VMs et les affiche
-        for vm_name in vms_list:
-            vm_info = get_domain_by_name(request, vm_name)
-            if vm_info:
-               vm_info['os_logo'] = get_os_logo(vm_info.get('os'))
-               vms.append(vm_info)
-            
-            # TODO: Delete this block
-            vm_info['os'] = 'OS'
-            vm_info['name'] = vm_name
-            vm_info['state'] = 'unknown'
-            vm_info['memory_gb'] = 'RAM'
-            vm_info['vcpu'] = 'VCPU'
-    else:
-        print("No VMs found")
+    try:
+        # Réupérer la liste des VMs
+        vms_list = json.loads(get_all_domains(request).content)
+        if not vms_list:
+            return render(request, 'app/vm_list.html', {'vms': []})
+        
+        # Récupérer les informations de chaque VM
+        vms = [
+            {
+                'os_logo': get_os_logo(vm_info.get('os')),
+                'os': 'OS',  # TODO: get OS name
+                'name': vm_name,
+                'state': vm_info.get('state').lower(),
+                'memory_gb': vm_info.get('memory'),
+                'vcpus': vm_info.get('vcpus'),
+            }
+            for vm_name in vms_list
+            for vm_info in [json.loads(get_domain_informations(request, vm_name).content)]
+            if vm_info
+        ]
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        vms = []
 
     return render(request, 'app/vm_list.html', {'vms': vms})
 
