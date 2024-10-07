@@ -1,8 +1,8 @@
 <a name="readme-top"></a>
 
 <div align="center">
-  <!-- You are encouraged to replace this logo with your own! Otherwise you can also remove it. -->
-  <img src="frontend/static/assets//Virtuose.png" alt="logo" width="140"  height="auto" />
+  
+  <img src="https://file.mtx.dev/Virtuose-899.png" alt="logo" width="140"  height="auto" />
   <br/>
 
   <h3><b>Virtuose</b></h3>
