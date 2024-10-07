@@ -40,34 +40,6 @@ def get_all_domains(request):
 
 
 """
-Permet de récupérer un domaine par son UUID
-"""
-
-
-def get_domain_by_uuid(uuid):
-    response = requests.get(f"{API_URL}/domains/UUID/{uuid}")
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return None
-
-
-"""
-Permet de récupérer un domaine par son nom
-"""
-
-
-def get_domain_by_name(request, name):
-    response = requests.get(f"{API_URL}/domains/{name}")
-    if response.status_code == 200:
-        data = response.json()
-        return JsonResponse(data, safe=False)
-    else:
-        print(f"Failed to get domain '{name}', status code: {response.status_code}")
-        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
-
-
-"""
 Permet de récupérer un objet domaine par son UUID
 """
 
@@ -161,6 +133,7 @@ def get_host_memory(request):
 Permet de récupérer les templates disponibles sur l'hôte
 """
 
+
 def get_templates():
     response = requests.get(f"{API_URL}/pools/list/templates/")
     if response.status_code == 200:
@@ -184,6 +157,7 @@ def get_templates():
 Permet de créer une VM sur l'hôte avec les paramètres passés en argument
 """
 
+
 def create_vm(name, template_name):
     response = requests.post(f"{API_URL}/domains/create/", 
                              json={
@@ -198,6 +172,7 @@ def create_vm(name, template_name):
 Permet de démarrer un domaine par son nom
 """
 
+
 def start_domain(request, dom_name):
     response = requests.get(f"{API_URL}/domains/start/{dom_name}")
     if response.status_code == 200:
@@ -210,6 +185,7 @@ def start_domain(request, dom_name):
 """
 Permet d'arrêter un domaine par son nom
 """
+
 
 def stop_domain(request, dom_name):
     response = requests.get(f"{API_URL}/domains/stop/{dom_name}")
@@ -224,6 +200,7 @@ def stop_domain(request, dom_name):
 Permet de forcer l'arrêt d'un domaine par son nom
 """
 
+
 def force_stop_domain(request, dom_name):
     response = requests.get(f"{API_URL}/domains/force_stop/{dom_name}")
     if response.status_code == 200:
@@ -237,6 +214,7 @@ def force_stop_domain(request, dom_name):
 Permet de supprimer un domaine par son nom
 """
 
+
 def delete_domain(request, dom_name):
     response = requests.post(f"{API_URL}/domains/delete/{dom_name}")
     if response.status_code == 200:
@@ -245,3 +223,17 @@ def delete_domain(request, dom_name):
         print(f"Failed to delete domain '{dom_name}', status code: {response.status_code}")
         return JsonResponse({'error': 'API backend inaccessible'}, status=500)
     
+
+"""
+Permet d'optenir les informations d'un domaine par son nom
+"""
+
+
+def get_domain_informations(request, dom_name):
+    response = requests.get(f"{API_URL}/domains/information/{dom_name}")
+    if response.status_code == 200:
+        data = response.json()
+        return JsonResponse(data, safe=False)
+    else:
+        print(f"Failed to get domain '{dom_name}' information, status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)

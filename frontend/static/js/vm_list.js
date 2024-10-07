@@ -1,14 +1,14 @@
 /**
- * Récupère le token CSRF pour les requêtes POST
+ * Utilitaire : Récupère le token CSRF pour les requêtes POST
  */
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie) {
         const cookies = document.cookie.split(';');
         cookies.forEach(cookie => {
-            cookie = cookie.trim();
-            if (cookie.startsWith(`${name}=`)) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            const cookiePair = cookie.trim();
+            if (cookiePair.startsWith(`${name}=`)) {
+                cookieValue = decodeURIComponent(cookiePair.substring(name.length + 1));
             }
         });
     }
@@ -16,36 +16,49 @@ function getCookie(name) {
 }
 
 /**
- * Map des actions pour un affichage lisible du texte
+ * Utilitaire : Récupère l'icône correspondant à l'état de la VM
  */
-const actionTextMap = {
-    start: 'Démarrage du',
-    stop: 'Arrêt du',
-    force_stop: 'Arrêt forcé du',
-    kill: 'Arrêt forcé du',
-    restart: 'Redémarrage du',
-    delete: 'Suppression du',
-    default: 'Action sur le'
-};
+function getVmStateIcon(state) {
+    const stateIcons = {
+        running: '<i class="fa-solid fa-check" style="color: #74c93b;"></i>',
+        starting: '<i class="fa-solid fa-hourglass-half" style="color: #fbff00;"></i>',
+        paused: '<i class="fa-solid fa-pause" style="color: #ffbb00;"></i>',
+        shutdown: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
+        shutoff: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
+        pmsuspended: '<i class="fa-solid fa-stop" style="color: #d30d0d;"></i>',
+        crashed: '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>',
+        blocked: '<i class="fa-solid fa-burst" style="color: #cd13b4;"></i>',
+        unknown: '<i class="fa-solid fa-question" style="color: #185ed8;"></i>',
+        default: '<i class="fa-solid fa-question" style="color: #185ed8;"></i>'
+    };
+    return stateIcons[state] || stateIcons['default'];
+}
 
 /**
  * Modifie le texte du loader en fonction de l'action et de la VM
  */
 function updateLoaderText(action, vmName) {
+    const actionTextMap = {
+        start: 'Démarrage du',
+        stop: 'Arrêt du',
+        force_stop: 'Arrêt forcé du',
+        kill: 'Arrêt forcé du',
+        restart: 'Redémarrage du',
+        delete: 'Suppression du',
+        default: 'Action sur le'
+    };
     const actionText = actionTextMap[action] || actionTextMap.default;
     $('#loader-text').text(`${actionText} domaine ${vmName}...`);
 }
 
 /**
- * Affiche et masque le loader et l'overlay
+ * Gestion de l'affichage du loader
  */
 function toggleLoader(visible) {
     if (visible) {
-        $('#loader').show();
-        $('#overlay').show();
+        $('#loader, #overlay').show();
     } else {
-        $('#loader').hide();
-        $('#overlay').hide();
+        $('#loader, #overlay').hide();
     }
 }
 
@@ -56,9 +69,8 @@ function showToast(message, vmName = 'Notification') {
     const toastContainer = document.querySelector('.toast-container');
     const existingToasts = toastContainer.querySelectorAll('.toast');
 
-    // Vérifie si une notification identique n'est pas déjà affichée
     if ([...existingToasts].some(toast => toast.querySelector('.toast-body').textContent === message)) {
-        return;
+        return; // Ne pas afficher de notifications en double
     }
 
     const toastTemplate = document.querySelector('.toast');
@@ -75,152 +87,169 @@ function showToast(message, vmName = 'Notification') {
 }
 
 /**
- * Gère les actions des VMs avec requêtes AJAX
+ * Met à jour les actions possibles d'une VM en fonction de son état
  */
-$('.dropdown-item').click(function() {
-    const action = $(this).text().trim().toLowerCase();
+function updateVmActions(vmRow, state) {
+    const actions = vmRow.querySelectorAll('.dropdown-item');
+    actions.forEach(action => {
+        const actionText = action.textContent.trim().toLowerCase();
+
+        if (state === 'running') {
+            // Si la VM est en cours d'exécution, "Start" doit être désactivé
+            if (actionText === 'start') {
+                action.classList.add('dropdown-item-disabled');
+            } else if (['stop', 'kill', 'restart'].includes(actionText)) {
+                action.classList.remove('dropdown-item-disabled');
+            }
+        } else if (['shutoff', 'shutdown'].includes(state)) {
+            // Si la VM est arrêtée, seules "Start" doit être activée, "Stop", "Restart", "Kill" doivent être désactivées
+            if (actionText === 'start') {
+                action.classList.remove('dropdown-item-disabled');
+            } else if (['stop', 'restart', 'kill'].includes(actionText)) {
+                action.classList.add('dropdown-item-disabled');
+            }
+            // Permettre toujours l'accès à "Info" et "Delete"
+            if (['info', 'delete'].includes(actionText)) {
+                action.classList.remove('dropdown-item-disabled');
+            }
+        } else {
+            // Pour les autres états, toutes les actions sont activées par défaut sauf "Start"
+            if (actionText === 'start') {
+                action.classList.add('dropdown-item-disabled');
+            } else {
+                action.classList.remove('dropdown-item-disabled');
+            }
+        }
+    });
+}
+
+/**
+ * Met à jour l'icône et les actions de la VM
+ */
+function updateVmStateAndActions(vmRow, state) {
+    const stateIcon = getVmStateIcon(state);
+    vmRow.querySelector('.vm-state').innerHTML = stateIcon;
+    updateVmActions(vmRow, state);
+}
+
+/**
+ * Gère les actions sur une VM avec requêtes AJAX
+ */
+function handleVmAction(event) {
+    const action = event.target.textContent.trim().toLowerCase();
     const vmName = $(this).closest('.vm').find('.vm-name').text().trim();
     const csrfToken = getCookie('csrftoken');
 
-    // Met à jour le texte du loader
-    updateLoaderText(action, vmName);
+    if (action === 'info') return;
 
-    // Affiche le loader et l'overlay
+    updateLoaderText(action, vmName);
     toggleLoader(true);
 
     const finalAction = action === 'kill' ? 'force_stop' : action;
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', `/domains/${finalAction}/${vmName}/`, true);
-    xhr.setRequestHeader('X-CSRFToken', csrfToken);
-
-    let responseBuffer = '';
-
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState >= 3) {
-            responseBuffer = xhr.responseText;
-
-            const lines = responseBuffer.split('\n');
-            responseBuffer = lines.pop();
-
-            lines.forEach(line => {
-                if (line) {
-                    try {
-                        const response = JSON.parse(line.trim());
-                        showToast(response.message, response.status.charAt(0).toUpperCase() + response.status.slice(1));
-                    } catch (e) {
-                        console.error('Erreur lors du parsing de la réponse JSON :', e);
-                    }
-                }
-            });
-
-            if (xhr.readyState === 4) {
-                try {
-                    const finalResponse = JSON.parse(responseBuffer.trim());
-                    showToast(finalResponse.message, finalResponse.status.charAt(0).toUpperCase() + finalResponse.status.slice(1));
-                } catch (e) {
-                    console.error('Erreur lors du parsing final de la réponse JSON :', e);
-                }
-                toggleLoader(false);  // Cacher le loader après la fin de la requête
-            }
+    fetch(`/domains/${finalAction}/${vmName}/`, {
+        method: 'GET',
+        headers: {
+            'X-CSRFToken': csrfToken
         }
-    };
-
-    xhr.onerror = function() {
-        console.error('Échec de la requête.');
-        toggleLoader(false);  // Cacher le loader en cas d'erreur
-    };
-
-    xhr.send();
-});
+    }).then(response => response.text())
+    .then(text => {
+        const lines = text.split('\n');
+        lines.forEach(line => {
+            if (line) {
+                const response = JSON.parse(line.trim());
+                showToast(response.message, response.status.charAt(0).toUpperCase() + response.status.slice(1));
+            }
+        });
+        toggleLoader(false);
+    })
+    .catch(() => {
+        toggleLoader(false);
+        console.error('Erreur lors de la requête.');
+    });
+}
 
 /**
- * Reformatage du contenu des balises <pre> dans les modales pour les rendre plus lisibles
+ * Rafraîchit les informations d'une VM spécifique et met à jour son état
+ */
+function refreshVmDetails(vmName, vmTableBody) {
+    fetch(`/domain_informations/${vmName}/`)
+        .then(response => response.json())
+        .then(vmInfo => {
+            let vmRow = vmTableBody.querySelector(`tr[data-id="${vmInfo.name}"]`);
+
+            if (vmRow) {
+                updateVmStateAndActions(vmRow, vmInfo.state.toLowerCase());
+                vmRow.querySelector('.vm-name').textContent = vmInfo.name;
+                vmRow.querySelector('td:nth-child(4)').textContent = vmInfo.memory;
+                vmRow.querySelector('td:nth-child(5)').textContent = vmInfo.vcpus;
+            } else {
+                // Créer une nouvelle ligne si la VM n'existe pas
+                const vmRowHtml = `
+                    <tr data-id="${vmInfo.name}">
+                        <td>
+                            <div class="os-info">
+                                <div class="dropdown">
+                                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fa-solid fa-gears"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><h6 class="dropdown-header">${vmInfo.name}</h6></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-circle-info"></i> Info</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-play"></i> Start</a></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-stop"></i> Stop</a></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-skull"></i> Kill</a></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-rotate"></i> Restart</a></li>
+                                        <li><a class="dropdown-item"><i class="icon-action fa-solid fa-trash"></i> Delete</a></li>
+                                    </ul>
+                                </div>
+                                <div class="vm-state">${getVmStateIcon(vmInfo.state)}</div>
+                            </div>
+                        </td>
+                        <td>${vmInfo.os}</td>
+                        <td class="vm-name">${vmInfo.name}</td>
+                        <td>${vmInfo.memory}</td>
+                        <td>${vmInfo.vcpus}</td>
+                    </tr>
+                `;
+                vmTableBody.insertAdjacentHTML('beforeend', vmRowHtml);
+            }
+        })
+        .catch(error => console.error(`Erreur lors du lookup pour ${vmName}:`, error));
+}
+
+/**
+ * Rafraîchit la liste des VMs
+ */
+function refreshVmList() {
+    const vmTableBody = document.querySelector('#vmTable tbody');
+    
+    fetch('/domains_list') 
+        .then(response => response.json())
+        .then(vmNames => {
+            vmNames.forEach(vmName => {
+                // Rafraîchir les détails pour chaque VM
+                refreshVmDetails(vmName, vmTableBody); 
+            });
+        })
+        .catch(error => console.error('Erreur lors du rafraîchissement des VMs:', error));
+}
+
+/**
+ * Initialisation au chargement du DOM
  */
 $(document).ready(function() {
-    // Rafraîchissement de la liste des VMs toutes les 2 secondes
+    $('.modal-body pre').each(function() {
+        let rawContent = $(this).text();
+        let beautifiedContent = js_beautify(rawContent);
+        let trimmedContent = beautifiedContent.replace(/^\s+/gm, '');
+        $(this).text(trimmedContent);
+    });
+
+    // Rafraîchit la liste toutes les 2 secondes
     setInterval(refreshVmList, 2000);
-
-    // Variable pour stocker la dernière liste de VMs
-    let currentVmNames = [];
-
-    function refreshVmList() {
-        fetch('/domains_list')  // Appel à l'API pour récupérer la liste des VMs
-            .then(response => response.json())
-            .then(data => {
-                const vmTableBody = $('tbody'); // Sélectionne le tbody de ton tableau des VMs
-                const newVmNames = data;  // La nouvelle liste de noms de VMs
-
-                // Mise à jour des lignes existantes
-                newVmNames.forEach(vmName => {
-                    const existingRow = vmTableBody.find(`tr[data-id="${vmName}"]`);
-                    if (existingRow.length) {
-                        // La ligne existe déjà, on peut mettre à jour son contenu texte si nécessaire
-                        existingRow.find('.vm-name').text(vmName);
-                        // Tu peux aussi mettre à jour d'autres colonnes ici si besoin
-                    } else {
-                        // Si la ligne n'existe pas, on la crée
-                        const vmRow = `
-                            <tr data-id="${vmName}">
-                                <td>
-                                    <div class="os-info">
-                                        <div class="dropdown">
-                                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                <i class="fa-solid fa-gears"></i>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><h6 class="dropdown-header">${vmName}</h6></li>
-                                                <li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#vmInfoModal${vmName}">
-                                                    <i class="icon-action fa-solid fa-circle-info"></i> Info
-                                                </a></li>
-                                                <li><hr class="dropdown-divider"></li>
-                                                <li><a class="dropdown-item">
-                                                    <i class="icon-action fa-solid fa-play"></i> Start
-                                                </a></li>
-                                                <li><a class="dropdown-item">
-                                                    <i class="icon-action fa-solid fa-stop"></i> Stop
-                                                </a></li>
-                                                <li><a class="dropdown-item">
-                                                    <i class="icon-action fa-solid fa-skull"></i> Kill
-                                                </a></li>
-                                                <li><a class="dropdown-item">
-                                                    <i class="icon-action fa-solid fa-rotate"></i> Restart
-                                                </a></li>
-                                                <li><a class="dropdown-item">
-                                                    <i class="icon-action fa-solid fa-trash"></i> Delete
-                                                </a></li>
-                                            </ul>
-                                        </div>
-                                        <div class="vm-state">
-                                            <i class="fa-solid fa-question" style="color: #185ed8;"></i> <!-- Placeholder pour l'icône d'état -->
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="os-info">
-                                        <img src="/static/assets/os/default.png" alt="OS logo" width="50" height="50">
-                                        <p>OS</p>
-                                    </div>
-                                </td>
-                                <td class="vm-name">${vmName}</td>
-                                <td>RAM</td>
-                                <td>VCPU</td>
-                            </tr>
-                        `;
-                        vmTableBody.append(vmRow);  // Ajout de la nouvelle ligne
-                    }
-                });
-
-                // Suppression des lignes qui ne sont plus dans la nouvelle liste de VMs
-                currentVmNames.forEach(vmName => {
-                    if (!newVmNames.includes(vmName)) {
-                        vmTableBody.find(`tr[data-id="${vmName}"]`).remove();  // Supprime la ligne si le VM a disparu
-                    }
-                });
-
-                // Mise à jour de la liste courante
-                currentVmNames = [...newVmNames];
-            })
-            .catch(error => console.error('Erreur lors du rafraîchissement des VMs:', error));
-    }
+    
+    // Gestion des actions des VMs
+    $('.dropdown-item').on('click', handleVmAction); 
 });
