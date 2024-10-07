@@ -1,5 +1,6 @@
 from app.models.conLibvirt import LibvirtHandler
 import subprocess
+import xml.etree.ElementTree as ET
 
 
 class Pool(LibvirtHandler):
@@ -15,7 +16,7 @@ class Pool(LibvirtHandler):
         self.storage_path = "/opt/virtuose/storage/"
         self.pool = None
 
-    def listing_storage_volume(self, pool_name):
+    def listing_storage_volume(self, pool_name) -> dict:
         """
         Returns a list of all storage volumes.
 
@@ -26,7 +27,7 @@ class Pool(LibvirtHandler):
         if self.pool:
             self.pool.refresh(0)
             volumes = self.pool.listVolumes()
-            return volumes
+            return {"status": "success", "message": volumes}
         else:
             return {"status": "error", "message": "Pool not found."}
     
@@ -40,9 +41,61 @@ class Pool(LibvirtHandler):
         Returns:
             bool: True if the template exists, False otherwise.
         """
-        print(f"{template_name}.qcow2")
-        print(self.listing_storage_volume("templates"))
         return f"{template_name}.qcow2" in self.listing_storage_volume("templates")
+
+    def listing_all_pool(self) -> list:
+        """
+        Returns a list of all storage pools.
+
+        Returns:
+            list: A list of storage pools.
+        """
+        pools = self.conn.listStoragePools()
+        return pools
+    
+    def pool_path(self, pool_name: str) -> dict:
+        """
+        Returns the path of a storage pool.
+
+        Args:
+            pool_name (str): The name of the storage pool.
+        """
+        super().initialize_pool_object(pool_name)
+        if not self.pool:
+            return {"status": "error", "message": "Pool not found."}
+        self.pool.refresh(0)
+        pool_xml = self.pool.XMLDesc()
+        root = ET.fromstring(pool_xml)
+        path_element = root.find('./target/path')
+        return {"status": "success", "message": path_element.text}
+
+    def pool_information(self, pool_name: str) -> dict:
+        """
+        Returns information about a storage pool.
+
+        Args:
+            pool_name (str): The name of the storage pool.
+        """
+        super().initialize_pool_object(pool_name)
+        if not self.pool:
+            return {"status": "error", "message": "Pool not found."}
+        self.pool.refresh(0)
+        pool_info = self.pool.info()
+        return {"status": "success", "message": {"Path": self.pool_path(pool_name)["message"],"capacity_MB": round(((pool_info[1]) / 1024 ** 2), 2), "allocation_MB": round( ((pool_info[2]) / 1024 ** 2), 2)} }
+    
+    def volume_information(self, volume_name: str) -> dict:
+        """
+        Returns information about a storage volume.
+
+        Args:
+            volume_name (str): The name of the storage volume.
+        """
+        for pool in self.listing_all_pool():
+            if volume_name in self.listing_storage_volume(pool)["message"]:
+                volume = self.pool.storageVolLookupByName(volume_name)
+                vol_info = volume.info()    
+                return {"status": "success", "message": {"capacity_MB": round(((vol_info[1]) / 1024 ** 2), 2), "allocation_MB": round( ((vol_info[2]) / 1024 ** 2), 2)} }
+        return {"status": "error", "message": "Volume not found."}
 
     def create_linked_clone(self, template_name, clone_name):
         """

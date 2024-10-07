@@ -1,11 +1,13 @@
-from fastapi import FastAPI, Response
+from fastapi import FastAPI
 from pydantic import BaseModel
 
 from controler.hypervisorHandler import hypervisor_information,hypervisor_hostname, hypervisor_memory_stats
 from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, \
                                     domain_delete, domain_create, domain_restart, domain_state, \
                                     domain_information, domain_pause
-from controler.poolsHandler import listing_volume_in_pool, valid_template
+from controler.poolsHandler import listing_volume_in_pool, valid_template, volume_information, \
+                                    all_volumes_information, all_pools_information, get_pool_information, \
+                                    listing_all_volumes, pools_list
 
 app = FastAPI()
 
@@ -180,10 +182,76 @@ def api_domain_create(vm_form: DomainCreationForm):
 
 ##### POOLS ROUTES #####
 
-@app.get("/api/pools/list/{pool_name}")
+@app.get("/api/pools/list")
+def api_pools_list():
+    """
+    Returns a list of all storage pools.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return pools_list(QEMU_URI)
+
+@app.get("/api/pools/informations/{pool_name}")
+def api_pools_information(pool_name: str):
+    """
+    Returns information about all storage pools.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return get_pool_information(QEMU_URI, pool_name)
+
+@app.get("/api/pools/all_informations")
+def api_pools_all_informations():
+    """
+    Returns information about all storage pools.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return all_pools_information(QEMU_URI)
+
+# VOLUMES ROUTES
+
+@app.get("/api/volumes/informations")
+def api_pools_volumes_list():
+    """
+    Returns information about all storage volumes.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return all_volumes_information(QEMU_URI)
+
+@app.get("/api/volumes/informations/{volume_name}")
+def api_pools_volume_information(volume_name: str):
+    """
+    Returns information about a storage volume.
+    
+    Args:
+        pool_name (str): The name of the pool.
+        volume_name (str): The name of the storage volume.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return volume_information(QEMU_URI, volume_name)
+
+@app.get("/api/volumes/list")
+def api_pools_list():
+    """
+    Returns a list of all storage volumes name in all pool.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return listing_all_volumes(QEMU_URI)
+
+@app.get("/api/volumes/list/{pool_name}")
 def api_pools_list(pool_name: str):
     """
-    Returns a list of all storage volumes.
+    Returns a list of all storage volumes in a pool.
     
     Args:
         pool_name (str): The name of the pool.
@@ -193,15 +261,3 @@ def api_pools_list(pool_name: str):
     """
     return listing_volume_in_pool(QEMU_URI, pool_name)
 
-@app.get("/api/pools/valid_template/{template_name}")
-def api_pools_valid_template(template_name: str):
-    """
-    Checks if a template exists in the template folder.
-    
-    Args:
-        template_name (str): The name of the template disk image.
-    
-    Returns:
-        dict: A dictionary containing the result of the operation.
-    """
-    return valid_template(QEMU_URI, template_name)
