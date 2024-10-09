@@ -237,3 +237,31 @@ def get_domain_informations(request, dom_name):
     
     data = response.json()
     return JsonResponse(data, safe=False)
+
+
+"""
+Permet d'optenir les informations de tous les pools
+"""
+def get_pools_informations(request):
+    response = requests.get(f"{API_URL}/pools/all_informations")
+    
+    if response.status_code != 200:
+        print(f"Failed to get pool information, status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    
+    data = response.json()
+    return JsonResponse(data, safe=False)
+
+
+"""
+Permet d'optenir les informations d'un pool par son nom
+"""
+def get_pool_informations(request, pool_name):
+    response = requests.get(f"{API_URL}/pools/informations/{pool_name}")
+    
+    if response.status_code != 200:
+        print(f"Failed to get pool information '{pool_name}', status code: {response.status_code}")
+        return JsonResponse({'error': 'API backend inaccessible'}, status=500)
+    
+    data = response.json()
+    return JsonResponse(data, safe=False)

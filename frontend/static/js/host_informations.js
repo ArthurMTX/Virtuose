@@ -48,7 +48,13 @@ $(document).ready(function() {
                 y: {
                     beginAtZero: false
                 }
-            }
+            },
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 15
+                }
+            }   
         }
     });
 
@@ -78,6 +84,12 @@ $(document).ready(function() {
                     min: 10,
                     max: 50,
                   }
+            },
+            legend: {
+                labels: {
+                    fontColor: "white",
+                    fontSize: 15
+                }
             }
         }
     });
