@@ -298,3 +298,37 @@ def host_infos(request):
         return render(request, 'app/host.html', {'error': 'Failed to get host informations'})
 
     return render(request, 'app/host.html', {'host_infos': host_infos, 'host_memory': host_memory})
+
+
+"""
+Render la page des pools de stockage
+"""
+
+
+@login_required
+def pools_infos(request):
+    # Obtenir les informations pour le pool "templates"
+    templates_response = get_pool_informations(request, "templates")
+    if templates_response.status_code == 200:
+        pool_templates = json.loads(templates_response.content)['message']
+    else:
+        pool_templates = None
+
+    # Obtenir les informations pour le pool "default"
+    default_response = get_pool_informations(request, "default")
+    if default_response.status_code == 200:
+        pool_default = json.loads(default_response.content)['message']
+    else:
+        pool_default = None
+
+    # Si l'un des pools n'a pas pu être récupéré, renvoyer une erreur
+    if pool_templates is None or pool_default is None:
+        pool_who_failed = "templates" if pool_templates is None else "default"
+        print(f"Failed to get pool informations for {pool_who_failed}")
+        return render(request, 'app/pools.html', {'error': 'Failed to get pool informations for ' + pool_who_failed})
+
+    # Renvoyer les deux pools à la vue
+    return render(request, 'app/pools.html', {
+        'pool_templates': pool_templates,
+        'pool_default': pool_default
+    })

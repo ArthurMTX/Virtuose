@@ -62,6 +62,16 @@ CORES_THREADS_LABEL = "Cœurs & Threads"
 CORES_PER_SOCKET_LABEL = "Cœurs par socket"
 THREADS_PER_CORE_LABEL = "Threads par cœur"
 
+# Pool pages
+POOL_INFO_PAGE_TITLE = "Informations des pools"
+PATH_LABEL = "Chemin du pool"
+CAPACITY_LABEL = "Capacité"
+ALLOCATION_LABEL = "Allocation"
+CAPACITY_PERCENTAGE_LABEL = "Pourcentage de capacité"
+CAPACITY_VS_ALLOCATION_LABEL = "Capacité vs Allocation"
+TEMPLATE_POOL_LABEL = "Pool de templates"
+DEFAULT_POOL_LABEL = "Pool des machines virtuelles"
+
 # List VM page
 LIST_VM_PAGE_TITLE = "Liste des machines virtuelles"
 LIST_VM_OS_LABEL = "Système d'exploitation"

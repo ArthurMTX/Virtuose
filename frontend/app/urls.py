@@ -19,13 +19,16 @@ urlpatterns = [
     path('profile/securite', views.securite, name='profile/securite'),
     path('profile/vmlist', views.vm_list, name='profile/vmlist'),
     path('profile/newvm', views.new_vm, name='profile/newvm'),
-    path('profile/host', views.host_infos, name='profile/host'),
 
     # === SERVICES: HOST & VM INFORMATION ===
+    path('profile/host', views.host_infos, name='profile/host'),
     path('host_informations/', services.get_host_informations, name='host_informations'),
     path('host_memory/', services.get_host_memory, name='host_memory'),
     path('domains_list/', services.get_all_domains, name='domains_list'),
     path('domain_informations/<str:dom_name>/', services.get_domain_informations, name='domain_informations'),
+
+    # === SERVICES: POOLS ===
+    path('profile/pools', views.pools_infos, name='profile/pools'),
 
     # === SERVICES: VM ACTIONS ===
     path('release_port/', views.release_port, name='release_port'),
