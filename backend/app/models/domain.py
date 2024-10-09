@@ -240,8 +240,10 @@ class Domains(LibvirtHandler):
         """
         super().initialize_domain_object(domain_name)
         if not self.domain:
+            print("Domain not found.")
             return {'status': 'error', 'message': 'Domain not found.'}
         if self.domain.isActive() == 1:
+            print("Domain is running. Stop the domain before deleting it.")
             return {'status': 'error', 'message': 'Domain is running. Stop the domain before deleting it.'}
         self.domain.undefine()
         timeout, elapsed_time, interval = 30, 0, 2
@@ -249,6 +251,7 @@ class Domains(LibvirtHandler):
             sleep(interval)
             elapsed_time += interval
             if self.domain.isActive() == 0:
+                print("Domain deleted successfully.")
                 return {'status': 'success', 'message': 'Domain deleted successfully.'}
         return {'status': 'error', 'message': 'Failed to delete domain.'}
         

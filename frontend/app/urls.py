@@ -33,4 +33,5 @@ urlpatterns = [
     path('domains/stop/<str:dom_name>/', services.stop_domain, name='stop_domain'),
     path('domains/force_stop/<str:dom_name>/', services.force_stop_domain, name='force_stop_domain'),
     path('domains/delete/<str:dom_name>/', services.delete_domain, name='delete_domain'),
+    path('domains/restart/<str:dom_name>/', services.restart_domain, name='restart_domain'),
 ]

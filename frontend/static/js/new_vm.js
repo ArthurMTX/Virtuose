@@ -20,15 +20,12 @@ document.querySelector('.form-create-vm form').addEventListener('submit', async 
         let data = await response.json();
         toggleLoader(false);  // Cache le loader après la réponse
 
-        console.log('Réponse de la requête:', data);
-
         if (data.status === 'success') {
             // Affiche une notification de succès avec le nom de la VM
             showToast(`La machine virtuelle ${vmName} a été créée avec succès.`, 'Succès', false);
         } else {
             if (data.errors) {
                 let errorMessages = extractErrorMessages(data.errors);  // Utilise la fonction pour extraire les erreurs
-                console.error('Erreurs de validation:', errorMessages);
                 showToast(errorMessages, 'Erreur', true);  // Affiche les messages d'erreur
             } else {
                 // Affiche un message d'erreur général
@@ -89,7 +86,6 @@ function toggleLoader(visible, text = '') {
  * @param {boolean} isError - Si vrai, stylise le toast comme une erreur.
  */
 function showToast(message, action, isError) {
-    console.log('showToast', message, action, isError);
     const toastContainer = document.getElementById('toastContainer');
 
     // Création d'un nouvel élément toast
