@@ -67,24 +67,43 @@ function toggleLoader(visible) {
  */
 function showToast(message, vmName = 'Notification') {
     const toastContainer = document.querySelector('.toast-container');
-    const existingToasts = toastContainer.querySelectorAll('.toast');
 
-    if ([...existingToasts].some(toast => toast.querySelector('.toast-body').textContent === message)) {
-        return; // Ne pas afficher de notifications en double
-    }
+    // Crée un nouvel élément toast
+    const newToast = document.createElement('div');
+    newToast.classList.add('toast');
+    newToast.setAttribute('role', 'alert');
+    newToast.setAttribute('aria-live', 'assertive');
+    newToast.setAttribute('aria-atomic', 'true');
 
-    const toastTemplate = document.querySelector('.toast');
-    const newToast = toastTemplate.cloneNode(true);
-    newToast.querySelector('.toast-header strong').textContent = vmName;
-    newToast.querySelector('.toast-body').textContent = message;
-    newToast.classList.add('hide');
+    // Génération de l'heure actuelle pour l'horodatage
+    const now = new Date();
+    const timestamp = now.toLocaleTimeString(); // Format de l'heure locale (HH:MM:SS)
+
+    // Structure HTML du toast avec le message et le nom de la VM
+    newToast.innerHTML = `
+        <div class="toast-header">
+            <strong class="me-auto">${vmName}</strong>
+            <small>${timestamp}</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            ${message}
+        </div>
+    `;
+
+    // Ajout du toast au conteneur
     toastContainer.appendChild(newToast);
 
+    // Création de l'instance Toast Bootstrap pour l'afficher
     const toastInstance = new bootstrap.Toast(newToast);
     toastInstance.show();
 
-    newToast.addEventListener('hidden.bs.toast', () => newToast.remove());
+    // Suppression du toast une fois qu'il est caché
+    newToast.addEventListener('hidden.bs.toast', function () {
+        newToast.remove();
+    });
 }
+
 
 /**
  * Met à jour les actions possibles d'une VM en fonction de son état
@@ -137,10 +156,22 @@ function updateVmStateAndActions(vmRow, state) {
  */
 function handleVmAction(event) {
     const action = event.target.textContent.trim().toLowerCase();
-    const vmName = $(this).closest('.vm').find('.vm-name').text().trim();
+    const vmRow = $(this).closest('.vm');  // Sélectionne la ligne de la VM
+    const vmName = vmRow.find('.vm-name').text().trim();
     const csrfToken = getCookie('csrftoken');
 
-    if (action === 'info') return;
+    if (action === 'info') {
+        // Récupérer les infos brutes de la VM et afficher dans un modal
+        fetch(`/domain_informations/${vmName}/`)
+            .then(response => response.json())
+            .then(vmInfo => {
+                const modalBody = document.querySelector(`#vmInfoModal${vmName} .modal-body pre`);
+                modalBody.textContent = JSON.stringify(vmInfo, null, 2);  // Formater l'info brute avec JSON.stringify
+                $(`#vmInfoModal${vmName}`).modal('show');  // Affiche le modal Bootstrap
+            })
+            .catch(error => console.error('Erreur lors de la récupération des informations de la VM:', error));
+        return;  // On arrête ici car l'action 'info' ne déclenche pas d'autre 
+    }
 
     updateLoaderText(action, vmName);
     toggleLoader(true);
@@ -158,7 +189,10 @@ function handleVmAction(event) {
         lines.forEach(line => {
             if (line) {
                 const response = JSON.parse(line.trim());
-                showToast(response.message, response.status.charAt(0).toUpperCase() + response.status.slice(1));
+                showToast(response.message, 
+                    response.status.charAt(0).toUpperCase() + response.status.slice(1)
+                    + " : " + vmName
+                );
             }
         });
         toggleLoader(false);
@@ -184,6 +218,11 @@ function refreshVmDetails(vmName, vmTableBody) {
                 vmRow.querySelector('td:nth-child(4)').textContent = vmInfo.memory;
                 vmRow.querySelector('td:nth-child(5)').textContent = vmInfo.vcpus;
             } else {
+
+                if (vmInfo.name === 'undefined') {
+                    return
+                }
+
                 // Créer une nouvelle ligne si la VM n'existe pas
                 const vmRowHtml = `
                     <tr data-id="${vmInfo.name}">
@@ -224,13 +263,36 @@ function refreshVmDetails(vmName, vmTableBody) {
  */
 function refreshVmList() {
     const vmTableBody = document.querySelector('#vmTable tbody');
-    
+    const tableHeader = document.querySelector('#vmTable thead');
+    const noVmMessage = document.querySelector('#noVmMessage');
+
     fetch('/domains_list') 
         .then(response => response.json())
         .then(vmNames => {
+            const currentVmsInTable = Array.from(vmTableBody.querySelectorAll('tr')).map(row => row.getAttribute('data-id'));
+            
+            // Supprimer les lignes des VMs qui ne sont plus dans la liste des VMs retournée par l'API
+            currentVmsInTable.forEach(vmId => {
+                if (!vmNames.includes(vmId)) {
+                    const vmRow = vmTableBody.querySelector(`tr[data-id="${vmId}"]`);
+                    if (vmRow) {
+                        vmRow.remove();  // Supprimer la ligne du tableau
+                    }
+                }
+            });
+
+            // Vérifier si des VMs existent
+            if (vmNames.length === 0) {
+                tableHeader.style.display = 'none'; // Cacher l'en-tête si aucune VM
+                noVmMessage.style.display = 'block'; // Afficher le message
+            } else {
+                tableHeader.style.display = ''; // Afficher l'en-tête
+                noVmMessage.style.display = 'none'; // Cacher le message
+            }
+
+            // Rafraîchir les détails pour chaque VM
             vmNames.forEach(vmName => {
-                // Rafraîchir les détails pour chaque VM
-                refreshVmDetails(vmName, vmTableBody); 
+                refreshVmDetails(vmName, vmTableBody);
             });
         })
         .catch(error => console.error('Erreur lors du rafraîchissement des VMs:', error));

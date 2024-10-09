@@ -41,7 +41,7 @@ class Pool(LibvirtHandler):
         Returns:
             bool: True if the template exists, False otherwise.
         """
-        return f"{template_name}.qcow2" in self.listing_storage_volume("templates")
+        return f"{template_name}" in self.listing_storage_volume("templates")['message']
 
     def listing_all_pool(self) -> list:
         """
@@ -106,7 +106,7 @@ class Pool(LibvirtHandler):
             clone_name (str): The name of the clone disk image.
         """
         if self._isValidTemplate(template_name):
-            command = ['qemu-img', 'create', '-f', 'qcow2', '-F', 'qcow2', '-b', f"/opt/virtuose/templates/{template_name}.qcow2", f"/opt/virtuose/storage/{clone_name}.qcow2"]
+            command = ['qemu-img', 'create', '-f', 'qcow2', '-F', 'qcow2', '-b', f"/opt/virtuose/templates/{template_name}", f"/opt/virtuose/storage/{clone_name}.qcow2"]
             result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if result.returncode == 0:
                 return {'status': 'success', 'message': 'Linked clone created successfully.'}
