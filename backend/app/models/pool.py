@@ -41,7 +41,7 @@ class Pool(LibvirtHandler):
         Returns:
             bool: True if the template exists, False otherwise.
         """
-        return f"{template_name}" in self.listing_storage_volume("templates")['message']
+        return f"{template_name}" in self.listing_storage_volume("templates")["message"]
 
     def listing_all_pool(self) -> list:
         """
@@ -115,12 +115,41 @@ class Pool(LibvirtHandler):
         else:
             return {'status': 'error', 'message': 'Template does not exist'}
         
-    def delete_disk(self, name):
+    def delete_storage_volume(self, volume_name: str) -> dict:
         """
-        Deletes a disk image.
+        Deletes a volume.
 
         Args:
-            name (str): The name of the disk image.
+            volume_name (str): The name of the volume.
         """
-        # Implementation needed
-        pass
+        super().initialize_pool_object("default")
+        if not self.pool:
+            return {"status": "error", "message": "Pool not found."}
+        self.pool.refresh(0)
+        if volume_name not in self.listing_storage_volume("default")["message"]:
+            return {"status": "error", "message": "Volume not found."}
+        if self.is_volume_used_by_domain(volume_name):
+            return {"status": "error", "message": "Volume is used by a domain."}
+        volume = self.pool.storageVolLookupByName(volume_name)
+        try:
+            volume.wipe(0)
+            volume.delete(0)
+        except Exception as e:
+            return {"status": "error", "message": str(e)}
+        return {"status": "success", "message": "Disk image deleted."}
+    
+    def is_volume_used_by_domain(self, volume_name: str) -> bool:
+        """
+        Checks if a volume is used by a domain.
+
+        Args:
+            volume_name (str): The name of the volume.
+        """
+        for domain in self.conn.listAllDomains(0):
+            domain_xml = domain.XMLDesc()
+            root = ET.fromstring(domain_xml)
+            for disk in root.findall('./devices/disk'):
+                for source in disk.findall('./source'):
+                    if volume_name in source.attrib['file']:
+                        return True
+        return False

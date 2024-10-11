@@ -76,6 +76,19 @@ def all_pools_information(QEMU_URI: str) -> dict:
 
 ######## VOLUMES FUNCTIONS ########
 
+def delete_volume(QEMU_URI: str, volume_name: str) -> dict:
+    """
+    Deletes a storage volume.
+
+    Args:
+        QEMU_URI (str): The URI of the QEMU service.
+        volume_name (str): The name of the storage volume.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return Pool(QEMU_URI).delete_storage_volume(volume_name)
+
 def listing_volume_in_pool(QEMU_URI: str, pool_name: str ) -> dict:
     """
     Returns a list of all storage volumes.
