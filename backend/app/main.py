@@ -5,7 +5,7 @@ from controler.hypervisorHandler import hypervisor_information,hypervisor_hostna
 from controler.domainsHandler import domain_list, domain_start, domain_stop, domain_force_stop, \
                                     domain_delete, domain_create, domain_restart, domain_state, \
                                     domain_information, domain_pause
-from controler.poolsHandler import listing_volume_in_pool, valid_template, volume_information, \
+from controler.poolsHandler import listing_volume_in_pool, delete_volume, volume_information, \
                                     all_volumes_information, all_pools_information, get_pool_information, \
                                     listing_all_volumes, pools_list
 
@@ -260,4 +260,17 @@ def api_pools_list(pool_name: str):
         dict: A dictionary containing the result of the operation.
     """
     return listing_volume_in_pool(QEMU_URI, pool_name)
+
+@app.post("/api/volumes/delete/{volume_name}")
+def api_pools_delete_volume(volume_name: str):
+    """
+    Deletes a storage volume.
+    
+    Args:
+        volume_name (str): The name of the storage volume.
+    
+    Returns:
+        dict: A dictionary containing the result of the operation.
+    """
+    return delete_volume(QEMU_URI, volume_name)
 

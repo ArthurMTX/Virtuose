@@ -85,7 +85,6 @@ class Domains(LibvirtHandler):
                 return {'status': 'warning', 'message': 'Domain not running.'}
             else:
                 return {'status': 'error', 'message': 'Failed to retrieve IP information.'}
-
     
     def information(self, domain_name: str) -> dict:
         """
@@ -250,8 +249,7 @@ class Domains(LibvirtHandler):
         while elapsed_time < timeout:
             sleep(interval)
             elapsed_time += interval
-            if self.domain.isActive() == 0:
-                print("Domain deleted successfully.")
+            if domain_name not in self.list_all():
                 return {'status': 'success', 'message': 'Domain deleted successfully.'}
         return {'status': 'error', 'message': 'Failed to delete domain.'}
         

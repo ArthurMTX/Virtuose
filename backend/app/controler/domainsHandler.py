@@ -94,7 +94,16 @@ def domain_delete(QEMU_URI: str, domain_name: str) -> dict:
     Returns:
         dict: A dictionary containing the result of the operation.
     """
-    return Domains(QEMU_URI).delete(domain_name)
+    volume_full_name = f"{domain_name}.qcow2"
+    msg_returned :dict = Domains(QEMU_URI).delete(domain_name)
+    if msg_returned["status"] == "success":
+        msg_returned_pool :dict = Pool(QEMU_URI).delete_storage_volume(volume_full_name)
+        if msg_returned_pool["status"] == "success":
+            return {"status": "success", "message": "Domain and storage volume deleted successfully."}
+        else:
+            return {"status": "error", "message": f"{msg_returned_pool["message"]} Domain deleted successfully."}
+    else:
+        return msg_returned
 
 def domain_restart(QEMU_URI: str, domain_name: str) -> dict:
     """
@@ -108,7 +117,6 @@ def domain_restart(QEMU_URI: str, domain_name: str) -> dict:
         dict: A dictionary containing the result of the operation.
     """
     return Domains(QEMU_URI).restart(domain_name)
-
 
 def domain_pause(QEMU_URI: str, domain_name: str) -> dict:
     """
