@@ -1,0 +1,1 @@
+QEMU_URI = "qemu:///system"
