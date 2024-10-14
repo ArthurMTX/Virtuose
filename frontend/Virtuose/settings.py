@@ -44,6 +44,8 @@ LOGIN_URL = '/login/'
 
 # Application definition
 
+AUTH_USER_MODEL = 'app.CustomUser'
+
 INSTALLED_APPS = [
     'app',
     'tailwind',
@@ -82,6 +84,11 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'app.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -98,8 +105,7 @@ ROOT_URLCONF = 'Virtuose.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
