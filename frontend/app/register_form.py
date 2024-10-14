@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from . import context_processors
 
 """
@@ -9,13 +9,8 @@ Formulaire pour l'inscription d'un utilisateur, ajout de l'email en plus du user
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-
-    """
-    Définition des champs du formulaire
-    """
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ("username", "email", "password1", "password2")
         labels = {
             "username": context_processors.USERNAME_LABEL,
@@ -24,12 +19,16 @@ class CustomUserCreationForm(UserCreationForm):
             "password2": context_processors.CONFIRM_PASSWORD_LABEL,
         }
 
-    """
-    Fonction pour sauvegarder l'utilisateur dans la base de données
-    """
-    def save(self, commit=True):
-        user = super().save(commit=False)
-        user.email = self.cleaned_data["email"]
-        if commit:
-            user.save()
-        return user
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        UserModel = get_user_model()
+        if UserModel.objects.filter(email=email).exists():
+            raise forms.ValidationError('Un utilisateur avec cet email existe déjà.')
+        return email
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        UserModel = get_user_model()
+        if UserModel.objects.filter(username=username).exists():
+            raise forms.ValidationError('Un utilisateur avec ce nom d\'utilisateur existe déjà.')
+        return username
